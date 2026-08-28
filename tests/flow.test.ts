@@ -179,7 +179,7 @@ async function runAcceptanceTests() {
 
   // Send Email with Attachment
   const emailRes = await sendResultEmail({
-    toEmail: "student.test@example.com",
+    toEmail: "delivered@resend.dev",
     pdfPath: testPdfPath,
     pdfFilename: pdfUploadedReq.pdfFilename!,
     data: {

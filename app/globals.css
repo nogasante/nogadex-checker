@@ -1,32 +1,36 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --font-heading: var(--font-heading), var(--font-sans), sans-serif;
+  --color-brand-red: #d91e2e;
+  --color-brand-red-hover: #b81423;
+  --color-brand-red-dark: #8c0c18;
+}
+
 @layer base {
-  :root {
-    --background: #0b0f19;
-    --foreground: #f8fafc;
-    --card: #131b2e;
-    --card-foreground: #f8fafc;
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --accent: #38bdf8;
-    --border: #1e293b;
+  body {
+    background-color: #080d1a;
+    color: #f1f5f9;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  body {
-    background-color: #0b0f19;
-    color: #f8fafc;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.025em;
   }
 }
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b0f19;
+  background: #080d1a;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -38,24 +42,37 @@
   background: #334155;
 }
 
-/* Glassmorphism helpers */
-.glass-panel {
-  background: rgba(19, 27, 46, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Authentic Premium Surface */
+.nogadex-card {
+  background: #0f172a;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
 }
 
-.glass-card {
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+.nogadex-card-interactive {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
 }
 
-.glow-blue {
-  box-shadow: 0 0 50px -10px rgba(37, 99, 235, 0.3);
+.nogadex-card-interactive:hover {
+  border-color: rgba(217, 30, 46, 0.4);
+  transform: translateY(-2px);
 }
 
-.glow-emerald {
-  box-shadow: 0 0 50px -10px rgba(16, 185, 129, 0.25);
+/* MoMo Badges */
+.momo-mtn {
+  background: #ffcc00;
+  color: #000000;
+}
+
+.momo-telecel {
+  background: #e60000;
+  color: #ffffff;
+}
+
+.momo-at {
+  background: #004b93;
+  color: #ffffff;
 }

@@ -1,24 +1,29 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Outfit } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const outfit = Outfit({
+  variable: "--font-heading",
   subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "WAEC Result Checker + PDF Delivery | Nogadex Consults",
+  title: "WAEC Result Checker + Official PDF Delivery | Nogadex Consults",
   description:
-    "Get your WAEC result (WASSCE, NOVDEC, BECE, GBCE, ABCE) checked and receive an official PDF copy directly in your email for GH₵30.",
+    "Check your WASSCE, NOVDEC, BECE, GBCE result and receive the official high-resolution PDF certificate directly in your email for GH₵30.00.",
   keywords: [
-    "WAEC Result Checker",
-    "WASSCE Result Ghana",
+    "WAEC Result Checker Ghana",
+    "WASSCE Result 2025",
     "NOVDEC Result Checker",
     "BECE Result Checker",
     "Nogadex Consults",
@@ -35,13 +40,15 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${plusJakarta.variable} ${outfit.variable} h-full antialiased font-sans`}
     >
       <body
         suppressHydrationWarning
-        className="min-h-full flex flex-col bg-[#0b0f19] text-slate-100 selection:bg-blue-600 selection:text-white"
+        className="min-h-full flex flex-col bg-[#080d1a] text-slate-100 selection:bg-red-600 selection:text-white"
       >
-        {children}
+        <ClerkProvider>
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );
