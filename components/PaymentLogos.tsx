@@ -3,53 +3,56 @@ import Image from "next/image";
 
 /**
  * Authentic Ghanaian Telco & Card payment channel badges
- * Loaded directly from official brand assets
+ * Loaded directly from official circular brand assets
  */
 
 export function PaymentChannelsBar() {
   return (
-    <div className="space-y-1.5 pt-2">
-      <div className="flex items-center justify-center gap-2 flex-wrap">
+    <div className="space-y-2 pt-2">
+      <div className="flex items-center justify-center gap-3">
         
-        {/* MTN Ghana */}
-        <div className="h-8 px-2.5 bg-[#FFCC00] rounded-lg border border-[#E5B800] flex items-center justify-center shadow-2xs overflow-hidden">
+        {/* MTN Circular Badge */}
+        <div className="w-8 h-8 rounded-full overflow-hidden shadow-xs hover:scale-105 transition-transform flex items-center justify-center">
           <Image
-            src="/payments/mtn.png"
+            src="/payments/mtn-circle.png"
             alt="MTN Ghana"
-            width={48}
-            height={24}
-            className="h-5 w-auto object-contain"
+            width={32}
+            height={32}
+            className="w-full h-full object-cover"
+            priority
           />
         </div>
 
-        {/* AT (AirtelTigo) Ghana */}
-        <div className="h-8 px-2.5 bg-white rounded-lg border border-slate-200 flex items-center justify-center shadow-2xs overflow-hidden">
+        {/* Telecel Circular Badge */}
+        <div className="w-8 h-8 rounded-full overflow-hidden shadow-xs hover:scale-105 transition-transform flex items-center justify-center">
           <Image
-            src="/payments/at.png"
-            alt="AT Ghana"
-            width={40}
-            height={24}
-            className="h-5 w-auto object-contain"
-          />
-        </div>
-
-        {/* Telecel Ghana */}
-        <div className="h-8 px-2.5 bg-[#E60000] rounded-lg border border-[#CC0000] flex items-center justify-center shadow-2xs overflow-hidden">
-          <Image
-            src="/payments/telecel.png"
+            src="/payments/telecel-circle.png"
             alt="Telecel Ghana"
-            width={48}
-            height={24}
-            className="h-5 w-auto object-contain"
+            width={32}
+            height={32}
+            className="w-full h-full object-cover"
+            priority
           />
         </div>
 
-        {/* Visa & Mastercard */}
-        <div className="h-8 px-2.5 bg-white rounded-lg border border-slate-200 flex items-center justify-center gap-1.5 shadow-2xs">
+        {/* AT Circular Badge */}
+        <div className="w-8 h-8 rounded-full overflow-hidden shadow-xs hover:scale-105 transition-transform flex items-center justify-center">
+          <Image
+            src="/payments/at-circle.png"
+            alt="AT Ghana"
+            width={32}
+            height={32}
+            className="w-full h-full object-cover"
+            priority
+          />
+        </div>
+
+        {/* Card Badge */}
+        <div className="h-8 px-2.5 bg-slate-50 rounded-full border border-slate-200/90 flex items-center justify-center gap-1.5 shadow-2xs">
           <span className="text-[11px] font-black italic text-[#1434CB] tracking-tight">VISA</span>
           <div className="flex items-center -space-x-1">
-            <span className="w-3.5 h-3.5 rounded-full bg-[#EB001B] inline-block" />
-            <span className="w-3.5 h-3.5 rounded-full bg-[#F79E1B] opacity-90 inline-block" />
+            <span className="w-3 h-3 rounded-full bg-[#EB001B] inline-block" />
+            <span className="w-3 h-3 rounded-full bg-[#F79E1B] opacity-90 inline-block" />
           </div>
         </div>
 
