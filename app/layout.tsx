@@ -36,6 +36,30 @@ export const metadata: Metadata = {
     "Nogadex Consults",
     "WAEC PDF Delivery",
   ],
+  openGraph: {
+    title: "WAEC Result Checker & Printable PDF Delivery | Nogadex Consults",
+    description:
+      "Check your WASSCE, NOVDEC & BECE results online and get your official printable PDF result slip delivered to your phone & email. Fast & secure.",
+    url: "https://results.nogadexconsults.app",
+    siteName: "Nogadex Consults",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 800,
+        alt: "Nogadex Consults WAEC Results Checker",
+      },
+    ],
+    locale: "en_GH",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "WAEC Result Checker & PDF Delivery | Nogadex Consults",
+    description:
+      "Check WASSCE, NOVDEC & BECE results with instant PDF delivery. GH₵30.00.",
+    images: ["/logo.png"],
+  },
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
