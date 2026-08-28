@@ -197,20 +197,61 @@ function StatusContent({ requestId }: { requestId: string }) {
           </div>
         )}
 
-        {/* Pending Verification CTA */}
+        {/* Pending / Cancelled Payment Recovery Actions */}
         {request && !isPaid && (
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="text-xs">
-              <div className="font-semibold text-slate-900">Completed Mobile Money prompt?</div>
-              <div className="text-slate-500">Click below to check status with Paystack</div>
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+            <div className="text-xs space-y-0.5">
+              <div className="font-bold text-slate-900">Payment Pending or Cancelled?</div>
+              <div className="text-slate-600 leading-relaxed">
+                If you were deducted by Mobile Money or Bank Card, click <strong>Verify Payment</strong>. If you cancelled or want to try another payment method, click <strong>Pay Now</strong>.
+              </div>
             </div>
-            <button
-              onClick={() => verifyPayment(refFromQuery || requestId, true)}
-              disabled={verifying}
-              className="w-full sm:w-auto px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer"
-            >
-              {verifying ? "Verifying..." : "Verify Payment"}
-            </button>
+
+            <div className="flex flex-col sm:flex-row gap-2 pt-1">
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    setVerifying(true);
+                    const res = await fetch("/api/payments/initialize", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        fullName: request.fullName,
+                        indexNumber: request.indexNumber,
+                        examType: request.examType,
+                        examYear: request.examYear,
+                        dateOfBirth: "2000-01-01", // fallback for retry
+                        email: request.email,
+                        whatsappNumber: request.whatsappNumber || "0540000000",
+                      }),
+                    });
+                    const data = await res.json();
+                    if (data.authorizationUrl) {
+                      window.location.href = data.authorizationUrl;
+                    }
+                  } catch (e) {
+                    console.error(e);
+                  } finally {
+                    setVerifying(false);
+                  }
+                }}
+                disabled={verifying}
+                className="flex-1 h-10 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+              >
+                <span>Pay Now with MoMo / Card (GH₵30)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => verifyPayment(refFromQuery || requestId, true)}
+                disabled={verifying}
+                className="h-10 px-4 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${verifying ? "animate-spin" : ""}`} />
+                <span>{verifying ? "Checking..." : "Verify Payment"}</span>
+              </button>
+            </div>
           </div>
         )}
 

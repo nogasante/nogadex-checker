@@ -30,7 +30,7 @@ export const StudentSubmissionSchema = z.object({
       "Date of birth must be in YYYY-MM-DD format"
     ),
   examType: z.enum(
-    ["WASSCE", "NOVDEC", "BECE_SCHOOL", "BECE_PRIVATE", "GBCE", "ABCE"],
+    ["WASSCE", "NOVDEC", "BECE_SCHOOL", "BECE_PRIVATE", "GBCE", "ABCE", "BECE"],
     { message: "Please select a valid examination type" }
   ),
   examYear: z
@@ -50,12 +50,9 @@ export const StudentSubmissionSchema = z.object({
   whatsappNumber: z
     .string()
     .trim()
-    .optional()
-    .refine((val) => {
-      if (!val || val === "") return true;
-      // Allow phone with optional +, 9-15 digits
-      return /^\+?[0-9\s\-()]{9,18}$/.test(val);
-    }, "Please enter a valid phone number or leave empty"),
+    .min(9, "WhatsApp number is required so we can reach you if details need clarification")
+    .max(20, "WhatsApp number is too long")
+    .regex(/^\+?[0-9\s\-()]{9,20}$/, "Please enter a valid WhatsApp number (e.g. 054 123 4567)"),
 });
 
 export type StudentSubmissionInput = z.infer<typeof StudentSubmissionSchema>;
