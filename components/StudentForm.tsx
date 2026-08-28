@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Loader2, ArrowRight } from "lucide-react";
+import {
+  MtnMomoLogo,
+  TelecelLogo,
+  AtMoneyLogo,
+  CardLogos,
+} from "./PaymentLogos";
 
 const EXAM_OPTIONS = [
   { value: "WASSCE", label: "WASSCE (School)" },
@@ -264,12 +270,12 @@ export function StudentForm() {
           </button>
         </div>
 
-        {/* Payment Channels */}
-        <div className="flex items-center justify-center gap-2 pt-1">
-          <span className="px-2 py-0.5 rounded text-[9px] font-bold momo-mtn">MTN MoMo</span>
-          <span className="px-2 py-0.5 rounded text-[9px] font-bold momo-telecel">Telecel</span>
-          <span className="px-2 py-0.5 rounded text-[9px] font-bold momo-at">AT Money</span>
-          <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-600 border border-slate-200">Card</span>
+        {/* Official Payment Channels */}
+        <div className="flex items-center justify-center gap-2 pt-2">
+          <MtnMomoLogo className="h-6 w-auto shadow-2xs" />
+          <TelecelLogo className="h-6 w-auto shadow-2xs" />
+          <AtMoneyLogo className="h-6 w-auto shadow-2xs" />
+          <CardLogos className="h-6 w-auto shadow-2xs" />
         </div>
 
       </form>
