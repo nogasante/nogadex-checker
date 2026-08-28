@@ -23,7 +23,7 @@ export interface SendEmailResult {
 }
 
 /**
- * Sends the student their WAEC result PDF via email
+ * Sends the student their WAEC result PDF via email with Nogadex branding
  */
 export async function sendResultEmail({
   toEmail,
@@ -37,28 +37,43 @@ export async function sendResultEmail({
   }
 
   const pdfBuffer = fs.readFileSync(pdfPath);
-  const subject = "Your WAEC Result — Nogadex Consults";
+  const logoPath = path.join(process.cwd(), "public", "logo.png");
+  const hasLogo = fs.existsSync(logoPath);
+  const logoBuffer = hasLogo ? fs.readFileSync(logoPath) : null;
+
+  const subject = `Your WAEC Result (${data.examType} ${data.examYear}) — Nogadex Consults`;
   const htmlContent = generateResultEmailHtml(data);
   const textContent = generateResultEmailText(data);
   const fromAddress =
-    process.env.EMAIL_FROM || "Nogadex Consults <results@nogadex.com>";
+    process.env.EMAIL_FROM || "Nogadex Consults <onboarding@resend.dev>";
 
   // 1. Try Resend API if API key is configured
   if (process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
+
+      const attachments: Array<{ filename: string; content: Buffer; cid?: string }> = [
+        {
+          filename: pdfFilename,
+          content: pdfBuffer,
+        },
+      ];
+
+      if (logoBuffer) {
+        attachments.push({
+          filename: "logo.png",
+          content: logoBuffer,
+          cid: "nogadex-logo",
+        });
+      }
+
       const result = await resend.emails.send({
         from: fromAddress,
         to: toEmail,
         subject,
         html: htmlContent,
         text: textContent,
-        attachments: [
-          {
-            filename: pdfFilename,
-            content: pdfBuffer,
-          },
-        ],
+        attachments,
       });
 
       if (result.error) {
@@ -99,18 +114,28 @@ export async function sendResultEmail({
         },
       });
 
+      const smtpAttachments: Array<{ filename: string; path?: string; content?: Buffer; cid?: string }> = [
+        {
+          filename: pdfFilename,
+          path: pdfPath,
+        },
+      ];
+
+      if (hasLogo) {
+        smtpAttachments.push({
+          filename: "logo.png",
+          path: logoPath,
+          cid: "nogadex-logo",
+        });
+      }
+
       const info = await transporter.sendMail({
         from: fromAddress,
         to: toEmail,
         subject,
         text: textContent,
         html: htmlContent,
-        attachments: [
-          {
-            filename: pdfFilename,
-            path: pdfPath,
-          },
-        ],
+        attachments: smtpAttachments,
       });
 
       return {
@@ -137,20 +162,6 @@ export async function sendResultEmail({
   console.log(`Attachment: ${pdfFilename} (${pdfBuffer.length} bytes)`);
   console.log(`Request ID: ${data.requestId}`);
   console.log("==================================================");
-
-  // Optionally store email mock artifact to scratch
-  try {
-    const emailLogDir = path.join(process.cwd(), "storage", "email-logs");
-    if (!fs.existsSync(emailLogDir)) {
-      fs.mkdirSync(emailLogDir, { recursive: true });
-    }
-    fs.writeFileSync(
-      path.join(emailLogDir, `${data.requestId}-${Date.now()}.html`),
-      htmlContent
-    );
-  } catch (err) {
-    console.warn("Could not save local email log:", err);
-  }
 
   return {
     success: true,
