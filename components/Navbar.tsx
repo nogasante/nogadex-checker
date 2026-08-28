@@ -7,36 +7,35 @@ export function Navbar() {
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233534908166";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 h-15 flex items-center justify-between">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         
-        {/* Brand Logo & Name */}
-        <Link href="/" className="flex items-center gap-2.5 group select-none">
-          <div className="w-8 h-8 rounded-xl overflow-hidden shadow-sm shrink-0 transition-transform group-hover:scale-105">
+        {/* Brand */}
+        <Link href="/" className="flex items-center gap-2.5 select-none">
+          <div className="w-7 h-7 rounded-lg overflow-hidden shrink-0">
             <Image
               src="/logo.png"
               alt="Nogadex Logo"
-              width={32}
-              height={32}
+              width={28}
+              height={28}
               className="w-full h-full object-contain"
               priority
             />
           </div>
-          <span className="text-base font-bold text-slate-900 tracking-tight">
-            nogadex<span className="text-red-600">.consults</span>
+          <span className="text-sm font-bold text-slate-900 tracking-tight">
+            Nogadex Consults
           </span>
         </Link>
 
-        {/* WhatsApp Helpline */}
+        {/* WhatsApp Link */}
         <a
           href={`https://wa.me/${whatsappNumber}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 transition-all cursor-pointer select-none"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-          <span>Support Desk</span>
+          <span>WhatsApp Support</span>
         </a>
 
       </div>
