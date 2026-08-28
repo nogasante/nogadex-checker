@@ -49,38 +49,47 @@ export async function POST(req: NextRequest) {
     let isSuccess = false;
     let paidAmount = 30.0;
     let channel = "paystack";
+    let failureReason = "Payment was not completed";
 
     if (isPaystackConfigured) {
       const verifyRes = await verifyPaystackTransaction(request.paymentReference || reference);
       
-      if (verifyRes.status && verifyRes.data.status === "success") {
+      if (verifyRes.status && verifyRes.data && verifyRes.data.status === "success") {
         isSuccess = true;
         paidAmount = verifyRes.data.amount / 100; // convert pesewas to GHS
-        channel = verifyRes.data.channel;
+        channel = verifyRes.data.channel || "paystack";
       } else {
+        // Payment was abandoned, cancelled, or failed on Paystack
+        const paystackStatus = verifyRes.data?.status || "abandoned";
+        failureReason = `Payment was ${paystackStatus}`;
+        
         await prisma.resultRequest.update({
           where: { id: request.id },
           data: {
-            paymentStatus: "FAILED",
-            processingStatus: "FAILED",
+            paymentStatus: paystackStatus === "failed" ? "FAILED" : "PENDING",
+            processingStatus: "AWAITING_PAYMENT",
           },
         });
 
         return NextResponse.json({
           success: false,
-          paymentStatus: "FAILED",
-          message: "Payment was not successful on Paystack",
+          paymentStatus: paystackStatus === "failed" ? "FAILED" : "PENDING",
+          message: failureReason,
+          requestId: request.requestId,
         });
       }
     } else {
-      // In dev mode when Paystack keys are placeholders, allow simulated dev verification
-      if (process.env.NODE_ENV !== "production" || isSimulated) {
+      // In dev mode when Paystack is not configured, only proceed if explicitly simulated by test runner
+      if (isSimulated === true) {
         isSuccess = true;
+        channel = "simulated_test";
       } else {
-        return NextResponse.json(
-          { error: "Paystack is not configured on this server" },
-          { status: 500 }
-        );
+        return NextResponse.json({
+          success: false,
+          paymentStatus: "PENDING",
+          message: "Payment is pending live Paystack confirmation.",
+          requestId: request.requestId,
+        });
       }
     }
 
@@ -110,7 +119,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      { error: "Unable to verify payment" },
+      { error: "Unable to verify payment", paymentStatus: "PENDING" },
       { status: 400 }
     );
   } catch (error: unknown) {

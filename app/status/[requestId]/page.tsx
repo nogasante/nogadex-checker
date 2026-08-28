@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   Download,
   MessageCircle,
+  CreditCard,
 } from "lucide-react";
 
 interface RequestData {
@@ -43,6 +44,7 @@ function StatusContent({ requestId }: { requestId: string }) {
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
+  const [paymentNotice, setPaymentNotice] = useState("");
 
   const supportNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233534908166";
@@ -60,6 +62,7 @@ function StatusContent({ requestId }: { requestId: string }) {
 
       setRequest(data.request);
 
+      // Only attempt verification if payment is currently pending
       if (data.request.paymentStatus === "PENDING" && refFromQuery) {
         verifyPayment(refFromQuery);
       }
@@ -71,25 +74,32 @@ function StatusContent({ requestId }: { requestId: string }) {
     }
   };
 
-  const verifyPayment = async (reference: string, isSimulated = false) => {
+  const verifyPayment = async (reference: string) => {
     try {
       setVerifying(true);
+      setPaymentNotice("");
+
       const res = await fetch("/api/payments/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reference, requestId, isSimulated }),
+        body: JSON.stringify({ reference, requestId }),
       });
 
       const data = await res.json();
-      if (data.success) {
+
+      if (data.success && data.paymentStatus === "PAID") {
         const refreshedRes = await fetch(`/api/requests/${requestId}`);
         const refreshedData = await refreshedRes.json();
         if (refreshedData.success) {
           setRequest(refreshedData.request);
         }
+      } else {
+        // Payment was abandoned or cancelled
+        setPaymentNotice(data.message || "Payment not received yet. If you cancelled the transaction, please complete payment below.");
       }
     } catch (err) {
       console.error("Verification check failed:", err);
+      setPaymentNotice("Could not verify with Paystack. Click 'Verify Payment' to check again.");
     } finally {
       setVerifying(false);
     }
@@ -102,10 +112,10 @@ function StatusContent({ requestId }: { requestId: string }) {
       if (request?.processingStatus !== "COMPLETED") {
         fetchStatus();
       }
-    }, 10000);
+    }, 12000);
 
     return () => clearInterval(interval);
-  }, [requestId, refFromQuery]);
+  }, [requestId]);
 
   const whatsappMessage = request
     ? `Hello Nogadex Consults, I am following up on my WAEC result request.\nName: ${request.fullName}\nIndex: ${request.indexNumber}\nExam: ${request.examType} (${request.examYear})\nRequest ID: #${request.requestId}`
@@ -113,7 +123,7 @@ function StatusContent({ requestId }: { requestId: string }) {
 
   const isPaid = request?.paymentStatus === "PAID";
   const isCompleted = request?.processingStatus === "COMPLETED";
-  const isFailed = request?.processingStatus === "FAILED";
+  const isFailed = request?.paymentStatus === "FAILED" || request?.processingStatus === "FAILED";
 
   return (
     <div className="max-w-lg mx-auto space-y-6">
@@ -173,20 +183,28 @@ function StatusContent({ requestId }: { requestId: string }) {
               <span>Unable to find order</span>
             </div>
             <p className="leading-relaxed text-red-800">{error}</p>
-            <p className="text-[11px] text-red-700 pt-1">
-              Please ensure your Request ID matches the one sent to your SMS or email (e.g. <span className="font-mono font-bold">NGX-100234</span>).
-            </p>
           </div>
         )}
 
-        {/* Live Status Summary */}
+        {/* Payment Incomplete / Cancelled Notice */}
+        {!isPaid && paymentNotice && (
+          <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 text-xs flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <span className="font-bold block">Payment Incomplete</span>
+              <p className="text-amber-800 leading-relaxed">{paymentNotice}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Live Status Summary Card */}
         {request && (
           <div
             className={`p-4 rounded-xl border space-y-2 transition-all ${
               isCompleted
                 ? "bg-emerald-50/70 border-emerald-200"
                 : isFailed
-                ? "bg-amber-50/70 border-amber-200"
+                ? "bg-red-50/70 border-red-200"
                 : isPaid
                 ? "bg-slate-50 border-slate-200"
                 : "bg-amber-50/50 border-amber-200/80"
@@ -196,7 +214,7 @@ function StatusContent({ requestId }: { requestId: string }) {
               {isCompleted ? (
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               ) : isFailed ? (
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
               ) : isPaid ? (
                 <Clock className="w-4 h-4 text-slate-700 shrink-0 animate-pulse" />
               ) : (
@@ -206,7 +224,7 @@ function StatusContent({ requestId }: { requestId: string }) {
                 {isCompleted
                   ? "Result Checked & Slip Delivered"
                   : isFailed
-                  ? "Verification Issue"
+                  ? "Payment Incomplete / Cancelled"
                   : isPaid
                   ? "Payment Confirmed — Generating PDF"
                   : "Awaiting Payment"}
@@ -215,12 +233,12 @@ function StatusContent({ requestId }: { requestId: string }) {
 
             <p className="text-xs text-slate-600 leading-relaxed">
               {isCompleted
-                ? `Your official WAEC printable result slip was generated and sent to ${request.email}. You can also download it directly below.`
+                ? `Your official WAEC printable result slip was generated and sent to ${request.email}. You can download it directly below.`
                 : isFailed
-                ? "There was an issue verifying this candidate record on the WAEC portal (e.g. index number mismatch or unreleased results). Our team is reviewing this, or you can chat with us on WhatsApp."
+                ? "Payment was not completed. Your result cannot be processed until payment of GH₵30.00 is received."
                 : isPaid
                 ? "We received your payment and are currently retrieving your official grades from WAEC."
-                : "Payment is still pending. If you were already debited on your phone, click 'Verify Payment' below."}
+                : "Payment has not been confirmed yet. If you were debited, click 'Verify Payment'. If you cancelled or closed the window, click 'Pay with MoMo / Card'."}
             </p>
           </div>
         )}
@@ -232,7 +250,7 @@ function StatusContent({ requestId }: { requestId: string }) {
           </h3>
 
           <div className="space-y-2 text-xs">
-            {/* Step 1 */}
+            {/* Step 1: Payment */}
             <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
@@ -244,12 +262,12 @@ function StatusContent({ requestId }: { requestId: string }) {
               <div className="flex-1 flex justify-between items-center">
                 <span className="font-medium text-slate-900">Payment</span>
                 <span className="text-[11px] font-semibold text-slate-500">
-                  {isPaid ? "Received (GH₵30.00)" : "Pending"}
+                  {isPaid ? "Received (GH₵30.00)" : "Pending (GH₵30.00)"}
                 </span>
               </div>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2: WAEC Verification */}
             <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
@@ -265,12 +283,12 @@ function StatusContent({ requestId }: { requestId: string }) {
               <div className="flex-1 flex justify-between items-center">
                 <span className="font-medium text-slate-900">WAEC Portal Verification</span>
                 <span className="text-[11px] font-semibold text-slate-500">
-                  {isCompleted ? "Grades Retrieved" : isPaid ? "Processing…" : "In queue"}
+                  {isCompleted ? "Grades Retrieved" : isPaid ? "Processing…" : "Waiting for payment"}
                 </span>
               </div>
             </div>
 
-            {/* Step 3 */}
+            {/* Step 3: PDF Delivery */}
             <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
@@ -332,18 +350,22 @@ function StatusContent({ requestId }: { requestId: string }) {
           </div>
         )}
 
-        {/* PENDING STATE ACTION: Verify Payment Button */}
+        {/* PENDING STATE ACTIONS: Verify & Complete Payment */}
         {request && !isPaid && (
-          <div className="pt-2">
+          <div className="pt-2 space-y-2.5">
             <button
               type="button"
-              onClick={() => verifyPayment(refFromQuery || requestId, true)}
+              onClick={() => verifyPayment(refFromQuery || requestId)}
               disabled={verifying}
               className="w-full h-12 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white shadow-md shadow-red-600/20 transition-all cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${verifying ? "animate-spin" : ""}`} />
-              <span>{verifying ? "Verifying Payment…" : "Verify Payment"}</span>
+              <span>{verifying ? "Checking with Paystack…" : "Verify Payment"}</span>
             </button>
+
+            <p className="text-center text-[11px] text-slate-500">
+              Paid via MoMo prompt on your phone? Click Verify Payment above.
+            </p>
           </div>
         )}
 
