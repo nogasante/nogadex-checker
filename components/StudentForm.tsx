@@ -6,16 +6,17 @@ import { AlertCircle, Loader2, ArrowRight, ShieldCheck, AlertTriangle, Edit3, X 
 import { PaymentChannelsBar } from "./PaymentLogos";
 
 const EXAM_OPTIONS = [
-  { value: "WASSCE", label: "WASSCE (School Candidates)" },
-  { value: "NOVDEC", label: "NOVDEC (Private Candidates)" },
-  { value: "BECE", label: "BECE (School Candidates)" },
-  { value: "BECE_PVT", label: "BECE (Private Candidates)" },
-  { value: "GBCE", label: "GBCE (Business Certificate)" },
-  { value: "ABCE", label: "ABCE (Advanced Business)" },
+  { value: "WASSCE", label: "WASSCE (School)" },
+  { value: "NOVDEC", label: "NOVDEC (Private)" },
+  { value: "BECE", label: "BECE (School)" },
+  { value: "BECE_PVT", label: "BECE (Private)" },
+  { value: "GBCE", label: "GBCE" },
+  { value: "ABCE", label: "ABCE" },
 ];
 
-const RECENT_YEARS = [
-  { value: "2025", label: "2025 (Most Recent)" },
+const EXAM_YEARS = [
+  { value: "2026", label: "2026 (Current Year)" },
+  { value: "2025", label: "2025 (Most Recent Released)" },
   { value: "2024", label: "2024" },
   { value: "2023", label: "2023" },
   { value: "2022", label: "2022" },
@@ -26,10 +27,6 @@ const RECENT_YEARS = [
   { value: "2017", label: "2017" },
   { value: "2016", label: "2016" },
   { value: "2015", label: "2015" },
-  { value: "2014", label: "2014" },
-  { value: "2013", label: "2013" },
-  { value: "2012", label: "2012" },
-  { value: "2011", label: "2011" },
   { value: "2010", label: "2010 & Older" },
 ];
 
@@ -78,7 +75,7 @@ export function StudentForm() {
       return;
     }
     if (!formData.dateOfBirth) {
-      setErrorMessage("Please enter your Date of Birth (required to verify record on WAEC).");
+      setErrorMessage("Please enter Date of Birth (required to verify candidate on WAEC).");
       return;
     }
     if (!formData.email.trim() || !formData.email.includes("@")) {
@@ -86,7 +83,7 @@ export function StudentForm() {
       return;
     }
     if (!formData.whatsappNumber.trim() || formData.whatsappNumber.length < 9) {
-      setErrorMessage("Please enter a valid WhatsApp number so we can reach you if needed.");
+      setErrorMessage("Please enter a valid WhatsApp number so our support team can reach you if needed.");
       return;
     }
 
@@ -143,7 +140,7 @@ export function StudentForm() {
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800">
               1. Choose Examination
             </h2>
-            <span className="text-[10px] text-slate-400 font-medium">All Ghana Exams</span>
+            <span className="text-[10px] text-slate-400 font-medium">WAEC Ghana</span>
           </div>
 
           {/* Exam Type Segmented Grid */}
@@ -157,7 +154,7 @@ export function StudentForm() {
                   type="button"
                   key={t.value}
                   onClick={() => handleExamTypeSelect(t.value)}
-                  className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
+                  className={`py-2.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
                     isSelected
                       ? "bg-white text-slate-900 shadow-xs font-bold ring-1 ring-slate-950/5"
                       : "text-slate-600 hover:text-slate-900"
@@ -173,7 +170,7 @@ export function StudentForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-slate-700">
-                Exam Year
+                Examination Year
               </label>
               <select
                 name="examYear"
@@ -181,7 +178,7 @@ export function StudentForm() {
                 onChange={handleChange}
                 className="w-full h-11 input-clean px-3.5 text-slate-900 font-mono cursor-pointer"
               >
-                {RECENT_YEARS.map((y) => (
+                {EXAM_YEARS.map((y) => (
                   <option key={y.value} value={y.value}>
                     {y.label}
                   </option>
@@ -241,17 +238,17 @@ export function StudentForm() {
                 type="date"
                 name="dateOfBirth"
                 required
-                max="2015-12-31"
+                max="2016-12-31"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
                 className="w-full h-11 input-clean px-3.5 text-slate-900 cursor-pointer"
               />
-              <p className="text-[10px] text-slate-400">Required by WAEC to verify record</p>
+              <p className="text-[10px] text-slate-400">Required by WAEC to verify candidate</p>
             </div>
           </div>
         </div>
 
-        {/* GROUP 3: DELIVERY & WHATSAPP SUPPORT CONTACT */}
+        {/* GROUP 3: DELIVERY & CONTACT */}
         <div className="space-y-3">
           <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800">
@@ -353,7 +350,7 @@ export function StudentForm() {
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 text-xs flex items-start gap-2.5">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <p className="leading-relaxed">
-                Please double-check your <strong>Index Number</strong> and <strong>Date of Birth</strong>. WAEC charges a card fee for every check attempt.
+                Please double-check your <strong>Index Number</strong> and <strong>Date of Birth</strong>. WAEC vouchers cannot be refunded once assigned.
               </p>
             </div>
 
