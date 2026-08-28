@@ -105,12 +105,25 @@ export function generateWaecAutofillScript(details: WaecCandidateDetails): strin
     cexamyear.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  // 7. Focus PIN Input & Highlight
-  const pin = document.getElementById('pin') || document.querySelector('input[name="pin"]');
-  if (pin) {
-    pin.focus();
-    pin.style.outline = "3px solid #dc2626";
-    pin.style.backgroundColor = "#fef2f2";
+  // 7. Auto-fill Serial & PIN if available
+  const serialEl = document.getElementById('serial') || document.querySelector('input[name="serial"]');
+  if (serialEl && "${details.serial || ""}") {
+    serialEl.value = "${details.serial || ""}";
+    serialEl.dispatchEvent(new Event('input', { bubbles: true }));
+    serialEl.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  const pinEl = document.getElementById('pin') || document.querySelector('input[name="pin"]');
+  if (pinEl) {
+    if ("${details.pin || ""}") {
+      pinEl.value = "${details.pin || ""}";
+      pinEl.dispatchEvent(new Event('input', { bubbles: true }));
+      pinEl.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      pinEl.focus();
+      pinEl.style.outline = "3px solid #dc2626";
+      pinEl.style.backgroundColor = "#fef2f2";
+    }
   }
 
   console.log("%c[Nogadex WAEC Assistant]%c ✅ Populated: ${details.fullName} (#${details.indexNumber})", "color: #16a34a; font-weight: bold;", "color: #0f172a;");

@@ -13,6 +13,8 @@ export interface WaecCandidateDetails {
   dateOfBirth: string; // YYYY-MM-DD
   examType: string;
   examYear: string;
+  serial?: string;
+  pin?: string;
 }
 
 export interface WaecPortalFieldMapping {

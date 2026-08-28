@@ -41,6 +41,10 @@ model ResultRequest {
   // Processing Details
   processingStatus  String    @default("AWAITING_PAYMENT") // AWAITING_PAYMENT, PAID, READY_TO_PROCESS, PROCESSING, RESULT_CHECKED, PDF_UPLOADED, EMAIL_SENT, COMPLETED, FAILED
   
+  // Voucher Details (Auto-purchased from InConsult or assigned from pool)
+  voucherSerial     String?
+  voucherPin        String?
+  
   // PDF Details
   pdfPath           String?
   pdfFilename       String?

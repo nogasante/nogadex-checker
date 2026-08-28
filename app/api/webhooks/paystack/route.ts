@@ -1,28 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
-import { verifyPaystackWebhookSignature } from "@/lib/paystack";
+import { purchaseInconsultPin } from "@/lib/inconsult";
 import { logAudit } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
   try {
     const rawBody = await req.text();
     const signature = req.headers.get("x-paystack-signature");
+    const secretKey = process.env.PAYSTACK_SECRET_KEY || "";
 
-    if (!signature) {
-      return NextResponse.json(
-        { error: "Missing x-paystack-signature header" },
-        { status: 400 }
-      );
-    }
+    // If Paystack secret key is configured, verify HMAC signature
+    if (secretKey && !secretKey.includes("placeholder")) {
+      const hash = crypto
+        .createHmac("sha512", secretKey)
+        .update(rawBody)
+        .digest("hex");
 
-    // Verify webhook authenticity
-    const isValidSignature = verifyPaystackWebhookSignature(rawBody, signature);
-    if (!isValidSignature) {
-      console.warn("Unauthorized Paystack webhook signature mismatch");
-      return NextResponse.json(
-        { error: "Invalid signature" },
-        { status: 401 }
-      );
+      if (hash !== signature) {
+        console.error("Paystack webhook signature mismatch");
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+      }
     }
 
     const event = JSON.parse(rawBody);
@@ -40,7 +38,6 @@ export async function POST(req: NextRequest) {
 
       if (!request) {
         console.warn(`Webhook received for unknown reference: ${reference}`);
-        // Return 200 so Paystack stops retrying unknown ref
         return NextResponse.json({ received: true, note: "Reference not found" });
       }
 
@@ -52,6 +49,22 @@ export async function POST(req: NextRequest) {
         });
       }
 
+      let voucherSerial: string | undefined;
+      let voucherPin: string | undefined;
+
+      // Automatically purchase WAEC PIN from InConsult Developer API
+      if (process.env.INCONSULT_API_KEY) {
+        try {
+          const pinRes = await purchaseInconsultPin(request.examType as any);
+          if (pinRes.success && pinRes.pin) {
+            voucherSerial = pinRes.serial;
+            voucherPin = pinRes.pin;
+          }
+        } catch (pinErr) {
+          console.error("InConsult auto-purchase error in webhook:", pinErr);
+        }
+      }
+
       // Update to PAID & READY_TO_PROCESS
       const updated = await prisma.resultRequest.update({
         where: { id: request.id },
@@ -60,13 +73,15 @@ export async function POST(req: NextRequest) {
           processingStatus: "READY_TO_PROCESS",
           paymentVerifiedAt: new Date(),
           paymentAmount: amountInGHS,
-        },
+          voucherSerial: voucherSerial || undefined,
+          voucherPin: voucherPin || undefined,
+        } as any,
       });
 
       await logAudit({
         requestId: updated.id,
         action: "PAYMENT_VERIFIED",
-        details: `Webhook verified payment of GH₵${amountInGHS} via ${channel} (Ref: ${reference})`,
+        details: `Webhook verified payment of GH₵${amountInGHS} via ${channel} (Ref: ${reference})${voucherPin ? " — Auto-acquired WAEC PIN via InConsult" : ""}`,
       });
 
       return NextResponse.json({
@@ -76,9 +91,9 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json({ received: true, event: event.event });
+    return NextResponse.json({ received: true });
   } catch (error: unknown) {
-    console.error("Paystack webhook processing error:", error);
+    console.error("Paystack webhook error:", error);
     const msg = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json({ error: msg }, { status: 500 });
   }

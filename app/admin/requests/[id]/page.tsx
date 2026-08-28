@@ -48,6 +48,8 @@ interface RequestDetail {
   pdfFilename?: string;
   pdfFileSize?: number;
   pdfUploadedAt?: string;
+  voucherSerial?: string;
+  voucherPin?: string;
   emailStatus: string;
   emailSentAt?: string;
   emailError?: string;
@@ -233,7 +235,11 @@ export default function RequestDetailPage({
 
   const hasPdf = Boolean(request.pdfPath);
   const isCompleted = request.processingStatus === "COMPLETED";
-  const autofillScript = generateWaecAutofillScript(request);
+  const autofillScript = generateWaecAutofillScript({
+    ...request,
+    serial: request.voucherSerial,
+    pin: request.voucherPin,
+  });
   const candidateSummary = formatCandidateSummary(request);
 
   return (
@@ -517,6 +523,27 @@ export default function RequestDetailPage({
                 )}
               </div>
             </div>
+
+            {/* Auto-Acquired InConsult WAEC Voucher PIN & Serial */}
+            {request.voucherPin && (
+              <div className="col-span-1 sm:col-span-2 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/30 flex items-center justify-between">
+                <div>
+                  <span className="text-emerald-400 block text-[10px] font-bold uppercase tracking-wider">
+                    Auto-Purchased InConsult WAEC Voucher
+                  </span>
+                  <div className="flex items-center gap-3 mt-1 font-mono text-xs text-white">
+                    <span>Serial: <strong className="text-emerald-300">{request.voucherSerial || "N/A"}</strong></span>
+                    <span>PIN: <strong className="text-emerald-300">{request.voucherPin}</strong></span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => copyToClipboard(`Serial: ${request.voucherSerial || "N/A"}, PIN: ${request.voucherPin}`, "voucherPin")}
+                  className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-semibold hover:bg-emerald-500/30 transition-colors cursor-pointer"
+                >
+                  {copiedKey === "voucherPin" ? "Copied!" : "Copy PIN"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

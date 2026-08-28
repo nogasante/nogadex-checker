@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyPaystackTransaction } from "@/lib/paystack";
+import { purchaseInconsultPin } from "@/lib/inconsult";
 import { logAudit } from "@/lib/audit";
 
 export async function POST(req: NextRequest) {
@@ -33,12 +34,15 @@ export async function POST(req: NextRequest) {
 
     // Idempotency check: if already verified as PAID, return immediately
     if (request.paymentStatus === "PAID") {
+      const r = request as any;
       return NextResponse.json({
         success: true,
         alreadyVerified: true,
         paymentStatus: "PAID",
         processingStatus: request.processingStatus,
         requestId: request.requestId,
+        voucherSerial: r.voucherSerial,
+        voucherPin: r.voucherPin,
       });
     }
 
@@ -94,6 +98,22 @@ export async function POST(req: NextRequest) {
     }
 
     if (isSuccess) {
+      let voucherSerial: string | undefined;
+      let voucherPin: string | undefined;
+
+      // Automatically purchase WAEC PIN from InConsult Developer API
+      if (process.env.INCONSULT_API_KEY) {
+        try {
+          const pinRes = await purchaseInconsultPin(request.examType as any);
+          if (pinRes.success && pinRes.pin) {
+            voucherSerial = pinRes.serial;
+            voucherPin = pinRes.pin;
+          }
+        } catch (pinErr) {
+          console.error("InConsult auto-purchase error:", pinErr);
+        }
+      }
+
       const updated = await prisma.resultRequest.update({
         where: { id: request.id },
         data: {
@@ -101,20 +121,25 @@ export async function POST(req: NextRequest) {
           processingStatus: "READY_TO_PROCESS",
           paymentVerifiedAt: new Date(),
           paymentAmount: paidAmount,
-        },
+          voucherSerial: voucherSerial || undefined,
+          voucherPin: voucherPin || undefined,
+        } as any,
       });
 
       await logAudit({
         requestId: updated.id,
         action: "PAYMENT_VERIFIED",
-        details: `Payment of GH₵${paidAmount} verified via ${channel} (Ref: ${request.paymentReference})`,
+        details: `Payment of GH₵${paidAmount} verified via ${channel} (Ref: ${request.paymentReference})${voucherPin ? " — Auto-acquired WAEC PIN via InConsult" : ""}`,
       });
 
+      const u = updated as any;
       return NextResponse.json({
         success: true,
         paymentStatus: "PAID",
         processingStatus: updated.processingStatus,
         requestId: updated.requestId,
+        voucherSerial: u.voucherSerial,
+        voucherPin: u.voucherPin,
       });
     }
 
