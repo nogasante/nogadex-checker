@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getAdminSession } from "@/lib/auth";
 import { logAudit } from "@/lib/audit";
-import fs from "fs";
-import path from "path";
+import { savePdfFile, getPdfBuffer } from "@/lib/storage";
 
 // 15 MB limit
 const MAX_PDF_SIZE_BYTES = 15 * 1024 * 1024;
@@ -75,21 +74,15 @@ export async function POST(
     
     const safeFilename = `${request.requestId}-${sanitizedStudentName || "Candidate"}-WAEC-Result.pdf`;
 
-    // Ensure storage folder exists
-    const storageDir = path.join(process.cwd(), "storage", "pdfs");
-    if (!fs.existsSync(storageDir)) {
-      fs.mkdirSync(storageDir, { recursive: true });
-    }
-
-    const targetFilePath = path.join(storageDir, `${request.requestId}.pdf`);
-    fs.writeFileSync(targetFilePath, buffer);
+    // Save using cross-platform / Vercel serverless storage helper
+    const stored = await savePdfFile(request.requestId, buffer);
 
     const updated = await prisma.resultRequest.update({
       where: { id: request.id },
       data: {
-        pdfPath: targetFilePath,
+        pdfPath: stored.path,
         pdfFilename: safeFilename,
-        pdfFileSize: buffer.length,
+        pdfFileSize: stored.size,
         pdfUploadedAt: new Date(),
         processingStatus: "PDF_UPLOADED",
       },
@@ -99,13 +92,13 @@ export async function POST(
       requestId: updated.id,
       action: "PDF_UPLOADED",
       adminEmail: session.email,
-      details: `Uploaded result PDF: ${safeFilename} (${Math.round(buffer.length / 1024)} KB)`,
+      details: `Uploaded result PDF: ${safeFilename} (${Math.round(stored.size / 1024)} KB)`,
     });
 
     return NextResponse.json({
       success: true,
       filename: safeFilename,
-      size: buffer.length,
+      size: stored.size,
       uploadedAt: updated.pdfUploadedAt,
       processingStatus: updated.processingStatus,
     });
@@ -133,14 +126,21 @@ export async function GET(
       },
     });
 
-    if (!request || !request.pdfPath || !fs.existsSync(request.pdfPath)) {
+    if (!request || !request.pdfPath) {
       return NextResponse.json(
         { error: "PDF document not found" },
         { status: 404 }
       );
     }
 
-    const fileBuffer = fs.readFileSync(request.pdfPath);
+    const fileBuffer = await getPdfBuffer(request.pdfPath);
+    if (!fileBuffer) {
+      return NextResponse.json(
+        { error: "PDF file could not be retrieved from storage" },
+        { status: 404 }
+      );
+    }
+
     const filename = request.pdfFilename || `${request.requestId}-Result.pdf`;
 
     return new NextResponse(fileBuffer, {

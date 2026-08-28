@@ -1,6 +1,6 @@
-import fs from "fs";
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
+import { getPdfBuffer } from "@/lib/storage";
 import {
   ResultEmailData,
   generateResultEmailHtml,
@@ -30,12 +30,11 @@ export async function sendResultEmail({
   pdfFilename,
   data,
 }: SendResultEmailParams): Promise<SendEmailResult> {
-  // Check if PDF file exists
-  if (!fs.existsSync(pdfPath)) {
-    throw new Error(`Attachment PDF file not found at: ${pdfPath}`);
+  // Retrieve PDF file buffer from serverless/local storage
+  const pdfBuffer = await getPdfBuffer(pdfPath);
+  if (!pdfBuffer) {
+    throw new Error(`Attachment PDF file could not be read from: ${pdfPath}`);
   }
-
-  const pdfBuffer = fs.readFileSync(pdfPath);
   const subject = `Your WAEC Result (${data.examType} ${data.examYear}) — Nogadex Consults`;
   const htmlContent = generateResultEmailHtml(data);
   const textContent = generateResultEmailText(data);
