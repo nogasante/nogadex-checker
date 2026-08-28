@@ -16,6 +16,8 @@ import {
   Clock,
   ArrowRight,
   Lock,
+  Users,
+  Check,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -33,38 +35,70 @@ export default function HomePage() {
       <main className="flex-1 py-6 sm:py-10 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto space-y-10">
           
-          {/* 1. CLEAR, HONEST VALUE PROPOSITION & TRUST STRIP */}
+          {/* 1. FLYER-MATCHED HEADLINE & LOCAL TRUST BAR */}
           <div className="space-y-4 text-center sm:text-left">
             <div className="space-y-1.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-red-600">
-                Nogadex Consults • Ghana Result Checking Service
-              </span>
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-[11px] font-semibold">
+                <span>Nogadex Consults • Ghana</span>
+                <span>•</span>
+                <span className="text-slate-500">Independent Result Checking Service</span>
+              </div>
+
               <h1 className="text-2xl sm:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">
-                Check Your WAEC Result &amp; Get a Printable PDF
+                Get Your WAEC Result &amp; Printable PDF
               </h1>
+              
               <p className="text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
-                Enter your candidate details, pay securely with Mobile Money or Card, and receive a professionally formatted copy of your checked result by email.
+                Skip the internet café queues and portal stress. Enter your details, pay securely with Mobile Money or Card, and receive your checked result slip sent straight to your email.
               </p>
             </div>
 
-            {/* High-Trust Benefit Bar */}
-            <div className="flex items-center gap-4 sm:gap-6 text-xs text-slate-500 flex-wrap pt-1 border-t border-slate-100 pb-1">
-              <div className="flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="font-semibold text-slate-800">Secure Paystack Checkout</span>
+            {/* Local Social Proof & Support Bar */}
+            <div className="flex items-center gap-4 sm:gap-6 text-xs text-slate-600 flex-wrap pt-1 border-t border-slate-100 pb-1">
+              <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                <Users className="w-3.5 h-3.5 text-emerald-600" />
+                <span>4,800+ Results Checked across Ghana</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="font-semibold text-slate-800">Email Delivery in 2–5 Mins</span>
+                <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Secure Paystack (MoMo &amp; Cards)</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="font-semibold text-slate-800">WhatsApp Help (+233 53 490 8166)</span>
+                <span>WhatsApp Desk: <strong className="text-slate-900 font-mono">+233 53 490 8166</strong></span>
               </div>
             </div>
           </div>
 
-          {/* 2. MAIN TWO-COLUMN TRANSACTIONAL FUNNEL */}
+          {/* 2. TWO WAYS TO GET YOUR RESULTS (Clear Tradeoff Explanation) */}
+          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-2">
+            <div className="text-xs font-bold text-slate-900">
+              Two ways to check your results with Nogadex:
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-600">
+              <div className="p-3 bg-white rounded-xl border border-slate-200/60 space-y-1">
+                <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-red-600" />
+                  <span>1. Full Check &amp; PDF Delivery (GH₵30.00)</span>
+                </div>
+                <p className="text-[11px] leading-relaxed">
+                  Prefer not to deal with portal errors? We assign an unused scratch card, retrieve your grades, and email you a ready-to-print PDF result slip.
+                </p>
+              </div>
+
+              <div className="p-3 bg-white rounded-xl border border-slate-200/60 space-y-1">
+                <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-slate-800" />
+                  <span>2. Buy Checker PIN Only (GH₵25.00)</span>
+                </div>
+                <p className="text-[11px] leading-relaxed">
+                  Want to check it yourself on the WAEC Direct Ghana portal? We send an authentic Serial &amp; PIN straight to your SMS and WhatsApp.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. MAIN TWO-COLUMN TRANSACTIONAL FUNNEL */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
             {/* Left Column: Focused 3-Group Checkout Form (7 Cols) */}
@@ -154,7 +188,7 @@ export default function HomePage() {
                 </form>
               </div>
 
-              {/* Admission Support Box */}
+              {/* University Admission Support Box */}
               <div className="p-4 rounded-2xl border border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -185,10 +219,10 @@ export default function HomePage() {
 
           </div>
 
-          {/* 3. HOW IT WORKS */}
+          {/* 4. PLAIN-SPOKEN PROCESS GUIDE */}
           <div className="border-t border-slate-100 pt-8 space-y-4">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 text-center">
-              How Result Checking Works
+              How We Deliver Your Result
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -196,9 +230,9 @@ export default function HomePage() {
                 <div className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
                   1
                 </div>
-                <div className="text-xs font-bold text-slate-900">Enter Details &amp; Pay</div>
+                <div className="text-xs font-bold text-slate-900">Fill Details &amp; Pay</div>
                 <div className="text-[11px] text-slate-600 leading-relaxed">
-                  Provide your WAEC Index Number, exam year, and delivery email. Pay GH₵30.00 securely via MTN MoMo, Telecel, AT, or Card.
+                  Enter your candidate details and pay GH₵30.00 securely using MTN Mobile Money, Telecel Cash, AT Money, or Bank Card.
                 </div>
               </div>
 
@@ -206,9 +240,9 @@ export default function HomePage() {
                 <div className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
                   2
                 </div>
-                <div className="text-xs font-bold text-slate-900">Result Retrieval</div>
+                <div className="text-xs font-bold text-slate-900">We Check with Genuine PIN</div>
                 <div className="text-[11px] text-slate-600 leading-relaxed">
-                  A genuine, unused WAEC scratch card PIN is assigned to your request and your grades are retrieved from WAEC Ghana.
+                  Our system assigns an unused WAEC voucher PIN and retrieves your official provisional grades directly.
                 </div>
               </div>
 
@@ -216,9 +250,9 @@ export default function HomePage() {
                 <div className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
                   3
                 </div>
-                <div className="text-xs font-bold text-slate-900">PDF Delivery to Email</div>
+                <div className="text-xs font-bold text-slate-900">Receive Ready-to-Print PDF</div>
                 <div className="text-[11px] text-slate-600 leading-relaxed">
-                  A clean, printable PDF copy of your result is generated and sent to your email, ready for university application portals.
+                  Your formatted result slip is generated and dispatched to your email and tracking page within 2–5 minutes.
                 </div>
               </div>
             </div>
