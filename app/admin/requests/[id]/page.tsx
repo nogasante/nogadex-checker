@@ -21,6 +21,8 @@ import {
   MessageCircle,
   ShoppingCart,
   KeyRound,
+  Sparkles,
+  Clipboard,
 } from "lucide-react";
 import {
   formatCandidateSummary,
@@ -132,6 +134,74 @@ export default function RequestDetailPage({
     } finally {
       setSavingPin(false);
     }
+  };
+
+function parseVoucherText(raw: string): { pin?: string; serial?: string } {
+  if (!raw) return {};
+  const clean = raw.replace(/\r/g, "\n");
+  let pin: string | undefined;
+  let serial: string | undefined;
+
+  // 1. Explicit PIN match
+  const explicitPin = clean.match(/pin(?:\s*code|\s*no\.?)?[:\s\-=]+([0-9]{10,14})/i);
+  if (explicitPin) {
+    pin = explicitPin[1];
+  } else {
+    // Look for any 10-14 digit standalone number
+    const pinMatches = clean.match(/\b\d{10,14}\b/g);
+    if (pinMatches && pinMatches.length > 0) {
+      pin = pinMatches[0];
+    }
+  }
+
+  // 2. Explicit Serial match
+  const explicitSerial = clean.match(/serial(?:\s*number|\s*no\.?)?[:\s\-=]+([A-Za-z0-9\-_]{6,20})/i);
+  if (explicitSerial) {
+    serial = explicitSerial[1];
+  } else {
+    // Look for Ghanaian WAEC serial pattern (e.g. WGH1234567, WSS12345, GH12345)
+    const autoSerial = clean.match(/\b([A-Za-z]{2,5}\d{5,14})\b/i);
+    if (autoSerial) {
+      serial = autoSerial[1];
+    }
+  }
+
+  return { pin, serial };
+}
+
+  const handleSmartClipboardPaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) {
+        setActionMessage({ type: "error", text: "Clipboard is empty." });
+        return;
+      }
+      const { pin, serial } = parseVoucherText(text);
+      if (!pin && !serial) {
+        setActionMessage({
+          type: "error",
+          text: "Could not find a valid WAEC PIN in clipboard text.",
+        });
+        return;
+      }
+      if (pin) setCustomPin(pin);
+      if (serial) setCustomSerial(serial);
+      setActionMessage({
+        type: "success",
+        text: `⚡ Auto-detected: PIN: ${pin || "N/A"}${serial ? ` | Serial: ${serial}` : ""}`,
+      });
+    } catch (e) {
+      setActionMessage({
+        type: "error",
+        text: "Please allow clipboard access or paste the text in the box below.",
+      });
+    }
+  };
+
+  const handleRawTextPaste = (raw: string) => {
+    const { pin, serial } = parseVoucherText(raw);
+    if (pin) setCustomPin(pin);
+    if (serial) setCustomSerial(serial);
   };
 
   useEffect(() => {
@@ -565,11 +635,32 @@ export default function RequestDetailPage({
                   <KeyRound className="w-3.5 h-3.5 text-red-400" />
                   <span>WAEC Voucher &amp; Instant Autofill Script</span>
                 </div>
-                {effectivePin && (
-                  <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                    PIN Attached
-                  </span>
-                )}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={handleSmartClipboardPaste}
+                    title="Click to automatically read and parse voucher PIN & Serial from your clipboard"
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 transition-colors cursor-pointer"
+                  >
+                    <Sparkles className="w-3 h-3 text-purple-400" />
+                    <span>⚡ Smart Auto-Detect</span>
+                  </button>
+                  {effectivePin && (
+                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      PIN Attached
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Raw Text Auto-Parser Bar */}
+              <div>
+                <input
+                  type="text"
+                  placeholder="Or paste full SMS / WhatsApp text here (e.g. 'Serial: WGH... PIN: 123...')"
+                  onChange={(e) => handleRawTextPaste(e.target.value)}
+                  className="w-full h-7 px-2.5 rounded-lg bg-black/20 border border-white/10 text-slate-300 text-[11px] focus:outline-none focus:border-purple-500 placeholder:text-slate-500"
+                />
               </div>
 
               {/* Quick Paste Inputs */}
