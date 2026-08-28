@@ -104,14 +104,14 @@ export function StudentForm() {
   };
 
   return (
-    <div className="w-full surface-card rounded-2xl sm:rounded-3xl p-5 sm:p-7 space-y-5">
+    <div className="w-full surface-card-light rounded-2xl sm:rounded-3xl p-5 sm:p-7 space-y-5">
       
-      {/* Examination Type Picker (iOS/Linear Style Segmented Controls) */}
+      {/* Examination Type Picker */}
       <div className="space-y-2">
-        <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-          Examination Type
+        <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
+          Select Examination
         </label>
-        <div className="grid grid-cols-2 gap-1.5 p-1 surface-inset rounded-xl">
+        <div className="grid grid-cols-2 gap-1.5 p-1 surface-inset-light rounded-xl">
           {EXAM_OPTIONS.map((t) => {
             const isSelected =
               formData.examType === t.value ||
@@ -123,8 +123,8 @@ export function StudentForm() {
                 onClick={() => handleExamTypeSelect(t.value)}
                 className={`py-2.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
                   isSelected
-                    ? "bg-[#d91e2e] text-white shadow-sm shadow-black/40 font-bold"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
+                    ? "bg-red-600 text-white shadow-sm font-bold"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
                 }`}
               >
                 {t.label}
@@ -136,8 +136,8 @@ export function StudentForm() {
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+        <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
           <span>{errorMessage}</span>
         </div>
       )}
@@ -147,7 +147,7 @@ export function StudentForm() {
         
         {/* Full Name */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-medium text-slate-300">
+          <label className="block text-xs font-semibold text-slate-700">
             Candidate Full Name
           </label>
           <input
@@ -157,14 +157,14 @@ export function StudentForm() {
             value={formData.fullName}
             onChange={handleChange}
             placeholder="e.g. Kwabena Mensah"
-            className="w-full h-11 input-tech rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 font-medium"
+            className="w-full h-11 input-tech-light rounded-xl px-3.5 text-base sm:text-sm placeholder-slate-400 font-medium"
           />
         </div>
 
         {/* Index Number & Exam Year */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-slate-300">
+            <label className="block text-xs font-semibold text-slate-700">
               WAEC Index Number
             </label>
             <input
@@ -175,19 +175,19 @@ export function StudentForm() {
               value={formData.indexNumber}
               onChange={handleChange}
               placeholder="e.g. 1010101001"
-              className="w-full h-11 input-tech rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 font-mono"
+              className="w-full h-11 input-tech-light rounded-xl px-3.5 text-base sm:text-sm placeholder-slate-400 font-mono"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-slate-300">
+            <label className="block text-xs font-semibold text-slate-700">
               Examination Year
             </label>
             <select
               name="examYear"
               value={formData.examYear}
               onChange={handleChange}
-              className="w-full h-11 bg-[#0f172a] input-tech rounded-xl px-3 text-base sm:text-sm text-white font-mono cursor-pointer"
+              className="w-full h-11 input-tech-light rounded-xl px-3 text-base sm:text-sm text-slate-900 font-mono cursor-pointer"
             >
               {years.map((y) => (
                 <option key={y} value={y}>
@@ -201,7 +201,7 @@ export function StudentForm() {
         {/* Date of Birth & Email */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-slate-300">
+            <label className="block text-xs font-semibold text-slate-700">
               Date of Birth
             </label>
             <input
@@ -210,12 +210,12 @@ export function StudentForm() {
               required
               value={formData.dateOfBirth}
               onChange={handleChange}
-              className="w-full h-11 input-tech rounded-xl px-3 text-base sm:text-sm text-white cursor-pointer"
+              className="w-full h-11 input-tech-light rounded-xl px-3 text-base sm:text-sm text-slate-900 cursor-pointer"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="block text-xs font-medium text-slate-300">
+            <label className="block text-xs font-semibold text-slate-700">
               Delivery Email Address
             </label>
             <input
@@ -227,16 +227,16 @@ export function StudentForm() {
               value={formData.email}
               onChange={handleChange}
               placeholder="name@gmail.com"
-              className="w-full h-11 input-tech rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500"
+              className="w-full h-11 input-tech-light rounded-xl px-3.5 text-base sm:text-sm placeholder-slate-400"
             />
           </div>
         </div>
 
         {/* WhatsApp (Optional) */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-medium text-slate-300 flex items-center justify-between">
+          <label className="block text-xs font-semibold text-slate-700 flex items-center justify-between">
             <span>WhatsApp Number</span>
-            <span className="text-[10px] text-slate-500 font-normal">Optional</span>
+            <span className="text-[10px] text-slate-400 font-normal">Optional for support</span>
           </label>
           <input
             type="tel"
@@ -245,7 +245,7 @@ export function StudentForm() {
             value={formData.whatsappNumber}
             onChange={handleChange}
             placeholder="054 123 4567"
-            className="w-full h-11 input-tech rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 font-mono"
+            className="w-full h-11 input-tech-light rounded-xl px-3.5 text-base sm:text-sm placeholder-slate-400 font-mono"
           />
         </div>
 
@@ -263,7 +263,7 @@ export function StudentForm() {
               </>
             ) : (
               <>
-                <span>Pay GH₵30.00 &amp; Get Result PDF</span>
+                <span>Pay GH₵30.00 &amp; Receive PDF</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
@@ -271,9 +271,9 @@ export function StudentForm() {
         </div>
 
         {/* Trust Note */}
-        <div className="flex items-center justify-center gap-1.5 pt-1 text-[11px] text-slate-400">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Includes Official WAEC Voucher PIN &amp; High-Res PDF</span>
+        <div className="flex items-center justify-center gap-1.5 pt-1 text-[11px] text-slate-500">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Includes Official WAEC Scratch Card PIN &amp; High-Res PDF</span>
         </div>
 
         {/* Supported Networks */}
@@ -281,7 +281,7 @@ export function StudentForm() {
           <span className="px-2 py-0.5 rounded text-[9px] font-bold momo-mtn">MTN MoMo</span>
           <span className="px-2 py-0.5 rounded text-[9px] font-bold momo-telecel">Telecel</span>
           <span className="px-2 py-0.5 rounded text-[9px] font-bold momo-at">AT Money</span>
-          <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-white/10 text-slate-300">Bank Card</span>
+          <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200">Bank Card</span>
         </div>
 
       </form>

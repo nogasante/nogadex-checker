@@ -7,8 +7,8 @@ export function Navbar() {
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233534908166";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#070b14]/85 backdrop-blur-md">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 h-15 flex items-center justify-between">
+    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 h-15 flex items-center justify-between">
         
         {/* Brand Logo & Name */}
         <Link href="/" className="flex items-center gap-2.5 group select-none">
@@ -22,8 +22,8 @@ export function Navbar() {
               priority
             />
           </div>
-          <span className="text-base font-bold text-white tracking-tight">
-            nogadex<span className="text-red-500">.</span>
+          <span className="text-base font-bold text-slate-900 tracking-tight">
+            nogadex<span className="text-red-600">.consults</span>
           </span>
         </Link>
 
@@ -32,10 +32,10 @@ export function Navbar() {
           href={`https://wa.me/${whatsappNumber}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08] transition-all cursor-pointer select-none"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/80 transition-all cursor-pointer select-none"
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
           <span>Support Desk</span>
         </a>
 
