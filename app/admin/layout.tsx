@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
-  GraduationCap,
   LayoutDashboard,
-  ClipboardList,
   History,
   LogOut,
   ExternalLink,
   UserCheck,
   Loader2,
+  Shield,
 } from "lucide-react";
 import { UserButton, Show } from "@clerk/nextjs";
 
@@ -32,7 +32,6 @@ export default function AdminLayout({
   const [admin, setAdmin] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // If on login page, render children directly without admin chrome
   const isLoginPage = pathname === "/admin/login";
 
   useEffect(() => {
@@ -76,30 +75,38 @@ export default function AdminLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080c14] flex items-center justify-center text-slate-400 gap-3">
-        <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-        <span className="text-sm font-medium">Verifying admin session...</span>
+      <div className="min-h-screen bg-[#080d1a] flex items-center justify-center text-slate-400 gap-2.5">
+        <Loader2 className="w-5 h-5 animate-spin text-red-500" />
+        <span className="text-xs font-medium">Verifying admin session...</span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#080c14] text-slate-100">
-      {/* Top Admin Navigation */}
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-[#0b0f19]/95 backdrop-blur-md">
+    <div className="min-h-screen flex flex-col bg-[#080d1a] text-slate-100 selection:bg-red-600 selection:text-white">
+      {/* Top Operations Header */}
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080d1a]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           
           <div className="flex items-center gap-6">
-            <Link href="/admin" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <GraduationCap className="w-5 h-5 text-white" />
+            {/* Logo */}
+            <Link href="/admin" className="flex items-center gap-2.5 group">
+              <div className="w-8 h-8 rounded-xl overflow-hidden shadow-sm shrink-0">
+                <Image
+                  src="/logo.png"
+                  alt="Nogadex Logo"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-contain"
+                  priority
+                />
               </div>
-              <div className="hidden sm:block">
+              <div>
                 <div className="text-sm font-bold text-white leading-none">
-                  Nogadex <span className="text-blue-400">Admin</span>
+                  nogadex<span className="text-red-500">.ops</span>
                 </div>
-                <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-                  WAEC Operations Console
+                <div className="text-[10px] text-slate-400 mt-0.5">
+                  WAEC Operations Desk
                 </div>
               </div>
             </Link>
@@ -110,8 +117,8 @@ export default function AdminLayout({
                 href="/admin"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   pathname === "/admin"
-                    ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-red-600/15 text-red-400 border border-red-500/25"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
                 <LayoutDashboard className="w-3.5 h-3.5" />
@@ -122,8 +129,8 @@ export default function AdminLayout({
                 href="/admin/audit-logs"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                   pathname === "/admin/audit-logs"
-                    ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+                    ? "bg-red-600/15 text-red-400 border border-red-500/25"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
                 <History className="w-3.5 h-3.5" />
@@ -133,7 +140,7 @@ export default function AdminLayout({
           </div>
 
           {/* User Profile & Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Link
               href="/"
               target="_blank"
@@ -143,8 +150,8 @@ export default function AdminLayout({
             </Link>
 
             {admin && (
-              <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-                <UserCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                 <span className="text-slate-300 font-medium">{admin.name}</span>
               </div>
             )}
@@ -155,10 +162,10 @@ export default function AdminLayout({
 
             <button
               onClick={handleLogout}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500/20 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
-              Sign Out
+              <span>Exit</span>
             </button>
           </div>
 

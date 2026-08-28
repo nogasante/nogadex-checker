@@ -14,7 +14,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Clock,
-  ShieldCheck,
   RefreshCw,
   Eye,
   Download,
@@ -111,7 +110,6 @@ export default function RequestDetailPage({
     setTimeout(() => setCopiedKey(null), 2000);
   };
 
-  // Status transition handlers
   const handleMarkChecked = async () => {
     try {
       const res = await fetch(`/api/admin/requests/${id}`, {
@@ -177,7 +175,6 @@ export default function RequestDetailPage({
       setActionMessage({ type: "error", text: msg });
     } finally {
       setUploadingPdf(false);
-      // Reset input value
       e.target.value = "";
     }
   };
@@ -200,11 +197,11 @@ export default function RequestDetailPage({
 
       setActionMessage({
         type: "success",
-        text: `Result PDF emailed successfully to ${request?.email}! Status marked COMPLETED.`,
+        text: `Result PDF emailed to ${request?.email}! Status updated to COMPLETED.`,
       });
       fetchRequest();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Email error.";
+      const msg = err instanceof Error ? err.message : "Email dispatch failed.";
       setActionMessage({ type: "error", text: msg });
     } finally {
       setSendingEmail(false);
@@ -214,8 +211,8 @@ export default function RequestDetailPage({
   if (loading && !request) {
     return (
       <div className="py-24 text-center text-slate-400 flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-        <span className="text-sm">Loading request console...</span>
+        <Loader2 className="w-6 h-6 animate-spin text-red-500" />
+        <span className="text-xs">Loading request console...</span>
       </div>
     );
   }
@@ -226,9 +223,9 @@ export default function RequestDetailPage({
         <p>Request not found.</p>
         <Link
           href="/admin"
-          className="mt-4 inline-flex items-center gap-2 text-xs text-blue-400 hover:underline"
+          className="mt-4 inline-flex items-center gap-2 text-xs text-red-400 hover:underline"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+          <ArrowLeft className="w-4 h-4" /> Back to Queue
         </Link>
       </div>
     );
@@ -241,26 +238,26 @@ export default function RequestDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* Top Breadcrumb & Status Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
-        <div className="flex items-center gap-4">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+        <div className="flex items-center gap-3.5">
           <Link
             href="/admin"
-            className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-black text-white font-mono tracking-tight">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl sm:text-2xl font-bold text-white font-mono tracking-tight">
                 #{request.requestId}
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/30">
+              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-red-600/15 text-red-400 border border-red-500/30">
                 {request.processingStatus.replace(/_/g, " ")}
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              Created on{" "}
+              Submitted on{" "}
               {new Date(request.createdAt).toLocaleString("en-GB", {
                 dateStyle: "medium",
                 timeStyle: "short",
@@ -271,7 +268,7 @@ export default function RequestDetailPage({
 
         <button
           onClick={fetchRequest}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white self-start cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-white/10 text-slate-300 hover:text-white self-start cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" /> Refresh
         </button>
@@ -280,13 +277,13 @@ export default function RequestDetailPage({
       {/* Action Notification Alert */}
       {actionMessage && (
         <div
-          className={`p-4 rounded-xl text-xs font-medium flex items-center justify-between gap-3 ${
+          className={`p-3.5 rounded-xl text-xs font-medium flex items-center justify-between gap-3 ${
             actionMessage.type === "success"
               ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
               : "bg-rose-500/10 border border-rose-500/30 text-rose-300"
           }`}
         >
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             {actionMessage.type === "success" ? (
               <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             ) : (
@@ -304,34 +301,34 @@ export default function RequestDetailPage({
       )}
 
       {/* Operations Control Bar (The 5 Workflow Steps) */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+      <div className="p-5 rounded-2xl bg-[#0d1322] border border-white/10 space-y-3.5">
         <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
           Processing Actions Workflow
         </h2>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           {/* Step 1: Open WAEC Checker Modal */}
           <button
             onClick={() => setShowCheckerModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/15 text-white border border-white/15 transition-all cursor-pointer"
           >
-            <ExternalLink className="w-4 h-4" />
-            1. OPEN WAEC CHECKER
+            <ExternalLink className="w-3.5 h-3.5" />
+            1. Open WAEC Checker
           </button>
 
           {/* Step 2: Mark Result Checked */}
           <button
             onClick={handleMarkChecked}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition-all cursor-pointer"
           >
-            <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-            2. MARK RESULT CHECKED
+            <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
+            2. Mark Result Checked
           </button>
 
           {/* Step 3: Upload PDF */}
-          <label className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20 transition-all cursor-pointer">
-            <UploadCloud className="w-4 h-4" />
-            {uploadingPdf ? "UPLOADING PDF..." : "3. UPLOAD RESULT PDF"}
+          <label className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition-all cursor-pointer">
+            <UploadCloud className="w-3.5 h-3.5 text-purple-400" />
+            {uploadingPdf ? "Uploading PDF..." : "3. Upload Result PDF"}
             <input
               type="file"
               accept="application/pdf"
@@ -346,19 +343,19 @@ export default function RequestDetailPage({
             <>
               <button
                 onClick={() => setShowPdfPreview(true)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 transition-all cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-emerald-400 border border-white/10 transition-all cursor-pointer"
               >
-                <Eye className="w-4 h-4" />
-                PREVIEW PDF
+                <Eye className="w-3.5 h-3.5" />
+                Preview PDF
               </button>
 
               <a
                 href={`/api/admin/requests/${id}/pdf`}
                 download={request.pdfFilename || `${request.requestId}-Result.pdf`}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-white/5 hover:bg-white/10 text-slate-200 border border-white/10 transition-all"
               >
-                <Download className="w-4 h-4" />
-                DOWNLOAD
+                <Download className="w-3.5 h-3.5" />
+                Download
               </a>
             </>
           )}
@@ -367,21 +364,21 @@ export default function RequestDetailPage({
           <button
             onClick={() => handleSendEmail(isCompleted)}
             disabled={!hasPdf || sendingEmail}
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               isCompleted
-                ? "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
-                : "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-600/20"
+                ? "bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10"
+                : "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/30"
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {sendingEmail ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                DISPATCHING EMAIL...
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Sending Email...</span>
               </>
             ) : (
               <>
-                <Send className="w-4 h-4" />
-                {isCompleted ? "RESEND RESULT EMAIL" : "5. SEND RESULT EMAIL"}
+                <Send className="w-3.5 h-3.5" />
+                <span>{isCompleted ? "Resend Result Email" : "4. Dispatch Result Email"}</span>
               </>
             )}
           </button>
@@ -392,27 +389,27 @@ export default function RequestDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Student Information Card (Left 7 Cols) */}
-        <div className="lg:col-span-7 glass-panel p-6 rounded-2xl space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              Student Information
+        <div className="lg:col-span-7 p-6 rounded-2xl bg-[#0d1322] border border-white/10 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+              Candidate Dossier
             </h2>
             <button
               onClick={() => copyToClipboard(candidateSummary, "summary")}
-              className="inline-flex items-center gap-1.5 text-xs text-blue-400 hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs text-red-400 hover:underline cursor-pointer"
             >
               {copiedKey === "summary" ? (
                 <Check className="w-3.5 h-3.5 text-emerald-400" />
               ) : (
                 <Copy className="w-3.5 h-3.5" />
               )}
-              Copy All Details
+              <span>Copy All</span>
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             {/* Full Name */}
-            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
+            <div className="p-3 bg-white/[0.02] rounded-xl border border-white/5">
               <span className="text-slate-400 block mb-1">Full Name</span>
               <div className="flex items-center justify-between">
                 <span className="font-bold text-white text-sm">
@@ -420,7 +417,7 @@ export default function RequestDetailPage({
                 </span>
                 <button
                   onClick={() => copyToClipboard(request.fullName, "fullName")}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-slate-400 hover:text-white p-1 cursor-pointer"
                 >
                   {copiedKey === "fullName" ? (
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -432,17 +429,17 @@ export default function RequestDetailPage({
             </div>
 
             {/* WAEC Index Number */}
-            <div className="p-3 bg-slate-900/60 rounded-xl border border-blue-900/30">
-              <span className="text-blue-400 block mb-1 font-semibold">
+            <div className="p-3 bg-white/[0.02] rounded-xl border border-red-500/20">
+              <span className="text-red-400 block mb-1 font-semibold">
                 Index Number
               </span>
               <div className="flex items-center justify-between">
-                <span className="font-mono font-bold text-cyan-300 text-sm">
+                <span className="font-mono font-bold text-white text-sm">
                   {request.indexNumber}
                 </span>
                 <button
                   onClick={() => copyToClipboard(request.indexNumber, "indexNumber")}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-slate-400 hover:text-white p-1 cursor-pointer"
                 >
                   {copiedKey === "indexNumber" ? (
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -454,7 +451,7 @@ export default function RequestDetailPage({
             </div>
 
             {/* Date of Birth */}
-            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
+            <div className="p-3 bg-white/[0.02] rounded-xl border border-white/5">
               <span className="text-slate-400 block mb-1">Date of Birth</span>
               <div className="flex items-center justify-between">
                 <span className="font-bold text-white text-sm font-mono">
@@ -462,7 +459,7 @@ export default function RequestDetailPage({
                 </span>
                 <button
                   onClick={() => copyToClipboard(request.dateOfBirth, "dob")}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-slate-400 hover:text-white p-1 cursor-pointer"
                 >
                   {copiedKey === "dob" ? (
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -474,7 +471,7 @@ export default function RequestDetailPage({
             </div>
 
             {/* Examination & Year */}
-            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
+            <div className="p-3 bg-white/[0.02] rounded-xl border border-white/5">
               <span className="text-slate-400 block mb-1">Exam &amp; Year</span>
               <div className="flex items-center justify-between">
                 <span className="font-bold text-white text-sm">
@@ -482,7 +479,7 @@ export default function RequestDetailPage({
                 </span>
                 <button
                   onClick={() => copyToClipboard(request.examYear, "year")}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-slate-400 hover:text-white p-1 cursor-pointer"
                 >
                   {copiedKey === "year" ? (
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -494,15 +491,15 @@ export default function RequestDetailPage({
             </div>
 
             {/* Email Address */}
-            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
+            <div className="p-3 bg-white/[0.02] rounded-xl border border-white/5">
               <span className="text-slate-400 block mb-1">Email (Delivery)</span>
               <div className="flex items-center justify-between">
-                <span className="font-medium text-blue-400 truncate pr-2">
+                <span className="font-medium text-slate-200 truncate pr-2">
                   {request.email}
                 </span>
                 <button
                   onClick={() => copyToClipboard(request.email, "email")}
-                  className="text-slate-400 hover:text-white p-1"
+                  className="text-slate-400 hover:text-white p-1 cursor-pointer"
                 >
                   {copiedKey === "email" ? (
                     <Check className="w-3.5 h-3.5 text-emerald-400" />
@@ -514,8 +511,8 @@ export default function RequestDetailPage({
             </div>
 
             {/* WhatsApp */}
-            <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800">
-              <span className="text-slate-400 block mb-1">WhatsApp Number</span>
+            <div className="p-3 bg-white/[0.02] rounded-xl border border-white/5">
+              <span className="text-slate-400 block mb-1">WhatsApp</span>
               <div className="flex items-center justify-between">
                 <span className="font-medium text-emerald-400">
                   {request.whatsappNumber || "Not provided"}
@@ -536,24 +533,24 @@ export default function RequestDetailPage({
         </div>
 
         {/* Payment & PDF Status Card (Right 5 Cols) */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-4">
           {/* Payment Card */}
-          <div className="glass-panel p-6 rounded-2xl space-y-3">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-800 pb-3">
-              Payment Details
+          <div className="p-5 rounded-2xl bg-[#0d1322] border border-white/10 space-y-3">
+            <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-white/10 pb-2.5">
+              Payment Verification
             </h2>
 
-            <div className="space-y-2.5 text-xs">
+            <div className="space-y-2 text-xs">
               <div className="flex justify-between items-center">
-                <span className="text-slate-400">Amount Paid:</span>
-                <span className="font-bold text-white text-sm">
+                <span className="text-slate-400">Fee Paid:</span>
+                <span className="font-bold text-white text-sm font-mono">
                   GH₵{request.paymentAmount.toFixed(2)}
                 </span>
               </div>
 
               <div className="flex justify-between items-center">
                 <span className="text-slate-400">Status:</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                   {request.paymentStatus}
                 </span>
               </div>
@@ -577,13 +574,13 @@ export default function RequestDetailPage({
           </div>
 
           {/* PDF Status Card */}
-          <div className="glass-panel p-6 rounded-2xl space-y-3">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider border-b border-slate-800 pb-3">
-              PDF Document
+          <div className="p-5 rounded-2xl bg-[#0d1322] border border-white/10 space-y-3">
+            <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider border-b border-white/10 pb-2.5">
+              Result Document
             </h2>
 
             {hasPdf ? (
-              <div className="space-y-3 text-xs">
+              <div className="space-y-2.5 text-xs">
                 <div className="flex items-center gap-2 text-emerald-400 font-semibold">
                   <FileText className="w-4 h-4 shrink-0" />
                   <span className="truncate">{request.pdfFilename}</span>
@@ -598,8 +595,8 @@ export default function RequestDetailPage({
                 </div>
               </div>
             ) : (
-              <div className="text-xs text-slate-400 py-2">
-                No PDF result uploaded yet. Please use the WAEC Assistant to check the result, save as PDF, and upload.
+              <div className="text-xs text-slate-400 py-1">
+                No PDF result uploaded yet. Use WAEC Assistant to check, save PDF, and upload.
               </div>
             )}
           </div>
@@ -608,26 +605,26 @@ export default function RequestDetailPage({
       </div>
 
       {/* Audit History Log */}
-      <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
-        <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+      <div className="p-5 rounded-2xl bg-[#0d1322] border border-white/10 space-y-3">
+        <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
           Request Audit Trail
         </h2>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400">
+              <tr className="border-b border-white/10 text-slate-400 text-[10px] uppercase">
                 <th className="py-2.5 px-3">Action</th>
                 <th className="py-2.5 px-3">Actor / Admin</th>
                 <th className="py-2.5 px-3">Details</th>
                 <th className="py-2.5 px-3 text-right">Timestamp</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-300">
+            <tbody className="divide-y divide-white/5 text-slate-300">
               {request.auditLogs && request.auditLogs.length > 0 ? (
                 request.auditLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-slate-800/20">
-                    <td className="py-2.5 px-3 font-semibold text-blue-400">
+                  <tr key={log.id} className="hover:bg-white/[0.02]">
+                    <td className="py-2.5 px-3 font-semibold text-white">
                       {log.action}
                     </td>
                     <td className="py-2.5 px-3 text-slate-400">
@@ -653,11 +650,11 @@ export default function RequestDetailPage({
 
       {/* WAEC Assistant Modal */}
       {showCheckerModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel w-full max-w-2xl rounded-2xl border border-slate-700 shadow-2xl p-6 space-y-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-2xl rounded-2xl bg-[#0d1322] border border-white/15 shadow-2xl p-6 space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
               <div>
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-base font-bold text-white">
                   WAEC Assistant &amp; Field Helper
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
@@ -674,14 +671,14 @@ export default function RequestDetailPage({
 
             {/* Step 1: Open Official WAEC portal */}
             <div className="space-y-2">
-              <h4 className="text-xs font-bold text-blue-400 uppercase tracking-wider">
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
                 Step 1: Open Official WAEC Portal
               </h4>
               <a
                 href={WAEC_GHANA_PORTAL_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white transition-colors"
               >
                 <ExternalLink className="w-4 h-4" /> Open ghana.waecdirect.org in New Tab
               </a>
@@ -689,13 +686,13 @@ export default function RequestDetailPage({
 
             {/* Step 2: Quick Copy Fields */}
             <div className="space-y-2">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
                 Step 2: Candidate Quick-Copy Fields
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 <button
                   onClick={() => copyToClipboard(request.indexNumber, "modalIndex")}
-                  className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-left hover:border-blue-500 transition-colors"
+                  className="p-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-left hover:border-red-500 transition-colors cursor-pointer"
                 >
                   <span className="text-[10px] text-slate-400 block">Index Number</span>
                   <span className="font-mono font-bold text-white">
@@ -705,7 +702,7 @@ export default function RequestDetailPage({
 
                 <button
                   onClick={() => copyToClipboard(request.examYear, "modalYear")}
-                  className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-left hover:border-blue-500 transition-colors"
+                  className="p-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-left hover:border-red-500 transition-colors cursor-pointer"
                 >
                   <span className="text-[10px] text-slate-400 block">Exam Year</span>
                   <span className="font-mono font-bold text-white">
@@ -715,7 +712,7 @@ export default function RequestDetailPage({
 
                 <button
                   onClick={() => copyToClipboard(request.examType, "modalExam")}
-                  className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-left hover:border-blue-500 transition-colors"
+                  className="p-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-left hover:border-red-500 transition-colors cursor-pointer"
                 >
                   <span className="text-[10px] text-slate-400 block">Exam Type</span>
                   <span className="font-bold text-white truncate block">
@@ -725,7 +722,7 @@ export default function RequestDetailPage({
 
                 <button
                   onClick={() => copyToClipboard(request.dateOfBirth, "modalDob")}
-                  className="p-2.5 bg-slate-900 border border-slate-800 rounded-xl text-left hover:border-blue-500 transition-colors"
+                  className="p-2.5 bg-white/[0.04] border border-white/10 rounded-xl text-left hover:border-red-500 transition-colors cursor-pointer"
                 >
                   <span className="text-[10px] text-slate-400 block">Date of Birth</span>
                   <span className="font-mono font-bold text-white">
@@ -738,13 +735,13 @@ export default function RequestDetailPage({
             {/* Step 3: Browser Console Autofill Snippet */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Terminal className="w-3.5 h-3.5 text-cyan-400" />
+                <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5 text-red-400" />
                   Browser Console Autofill Snippet (Optional)
                 </h4>
                 <button
                   onClick={() => copyToClipboard(autofillScript, "script")}
-                  className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:underline"
+                  className="inline-flex items-center gap-1 text-[11px] text-red-400 hover:underline cursor-pointer"
                 >
                   {copiedKey === "script" ? (
                     <Check className="w-3 h-3 text-emerald-400" />
@@ -758,7 +755,7 @@ export default function RequestDetailPage({
                 readOnly
                 value={autofillScript}
                 rows={4}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-[11px] text-slate-300 focus:outline-none"
+                className="w-full bg-black/40 border border-white/10 rounded-xl p-3 font-mono text-[11px] text-slate-300 focus:outline-none"
               />
               <p className="text-[11px] text-slate-500">
                 You can paste this snippet into your browser DevTools Console on the WAEC portal to auto-fill index and year.
@@ -772,7 +769,7 @@ export default function RequestDetailPage({
             <div className="flex justify-end">
               <button
                 onClick={() => setShowCheckerModal(false)}
-                className="px-5 py-2 rounded-xl text-xs font-bold bg-slate-800 text-white hover:bg-slate-700"
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-white/10 text-white hover:bg-white/20 cursor-pointer"
               >
                 Close Assistant
               </button>
@@ -783,16 +780,16 @@ export default function RequestDetailPage({
 
       {/* PDF Inline Preview Modal */}
       {showPdfPreview && hasPdf && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel w-full max-w-4xl h-[85vh] rounded-2xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-4xl h-[85vh] rounded-2xl bg-[#0d1322] border border-white/15 shadow-2xl flex flex-col overflow-hidden">
+            <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#080d1a]">
               <div className="flex items-center gap-2 text-white font-bold text-sm">
                 <FileText className="w-4 h-4 text-emerald-400" />
                 <span>{request.pdfFilename}</span>
               </div>
               <button
                 onClick={() => setShowPdfPreview(false)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-slate-400 hover:text-white p-1 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { GraduationCap, Lock, Mail, Loader2, AlertCircle, ArrowLeft } from "lucide-react";
+import Image from "next/image";
+import { Lock, Mail, Loader2, AlertCircle, ArrowLeft } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function AdminLoginPage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Invalid credentials.");
+        throw new Error(data.error || "Invalid staff credentials.");
       }
 
       router.push("/admin");
@@ -40,31 +41,41 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-4 bg-[#080c14] relative overflow-hidden">
-      {/* Ambient background glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <Link href="/" className="inline-flex items-center gap-2 mb-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <GraduationCap className="w-5 h-5 text-white" />
+    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-8 bg-[#080d1a] text-slate-100 selection:bg-red-600 selection:text-white">
+      <div className="w-full max-w-sm space-y-6">
+        
+        {/* Header */}
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl overflow-hidden shadow-md shrink-0">
+              <Image
+                src="/logo.png"
+                alt="Nogadex Logo"
+                width={40}
+                height={40}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
-            <span className="text-xl font-bold text-white tracking-tight">
-              Nogadex <span className="text-blue-400">Admin</span>
+            <span className="text-lg font-bold text-white tracking-tight">
+              nogadex<span className="text-red-500">.ops</span>
             </span>
-          </Link>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">
-            Staff Portal Login
-          </h1>
-          <p className="text-xs text-slate-400">
-            Sign in to process WAEC result requests and manage PDF deliveries.
-          </p>
+          </div>
+
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Staff Portal Login
+            </h1>
+            <p className="text-xs text-slate-400 mt-1">
+              Authorized personnel result processing console
+            </p>
+          </div>
         </div>
 
-        <div className="glass-panel p-6 sm:p-8 rounded-2xl shadow-2xl">
+        {/* Card */}
+        <div className="p-6 rounded-2xl bg-[#0d1322] border border-white/10 shadow-2xl">
           {error && (
-            <div className="mb-5 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2.5">
+            <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
               <span>{error}</span>
             </div>
@@ -72,8 +83,7 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-blue-400" />
+              <label className="block text-xs font-medium text-slate-300 mb-1">
                 Staff Email Address
               </label>
               <input
@@ -82,13 +92,12 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@nogadex.com"
-                className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                className="w-full h-11 bg-white/[0.04] border border-white/10 rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-blue-400" />
+              <label className="block text-xs font-medium text-slate-300 mb-1">
                 Password
               </label>
               <input
@@ -97,7 +106,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                className="w-full h-11 bg-white/[0.04] border border-white/10 rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
               />
             </div>
 
@@ -105,33 +114,30 @@ export default function AdminLoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 text-sm transition-all cursor-pointer disabled:opacity-60"
+                className="w-full h-11 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg shadow-red-900/30 flex items-center justify-center gap-2 text-xs transition-all cursor-pointer disabled:opacity-60"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Authenticating...
+                    <span>Authenticating...</span>
                   </>
                 ) : (
-                  "Sign In to Dashboard"
+                  "Sign In to Console"
                 )}
               </button>
             </div>
           </form>
 
-          <div className="mt-6 pt-4 border-t border-slate-800 text-center">
+          <div className="mt-5 pt-4 border-t border-white/10 text-center">
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
             >
-              <ArrowLeft className="w-3.5 h-3.5" /> Back to Public Checker
+              <ArrowLeft className="w-3.5 h-3.5" /> Back to Public Site
             </Link>
           </div>
         </div>
 
-        <div className="text-center text-[11px] text-slate-500">
-          Default seed credentials: <code className="text-slate-400 font-mono">admin@nogadex.com</code> / <code className="text-slate-400 font-mono">AdminPassword2026!</code>
-        </div>
       </div>
     </div>
   );
