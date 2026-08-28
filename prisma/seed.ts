@@ -4,26 +4,27 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function main() {
-  const adminEmail = process.env.ADMIN_INITIAL_EMAIL || "admin@nogadex.com";
   const adminPassword = process.env.ADMIN_INITIAL_PASSWORD || "AdminPassword2026!";
+  const passwordHash = await bcrypt.hash(adminPassword, 10);
 
-  const existingAdmin = await prisma.user.findUnique({
-    where: { email: adminEmail },
-  });
+  const adminEmails = [
+    { email: "admin@nogadex.com", name: "Nogadex Administrator" },
+    { email: "nanasante2000@gmail.com", name: "Nana Asante" },
+    { email: "nogasante@st.knust.edu.gh", name: "Nana Asante (KNUST)" },
+  ];
 
-  if (!existingAdmin) {
-    const passwordHash = await bcrypt.hash(adminPassword, 10);
-    const admin = await prisma.user.create({
-      data: {
-        email: adminEmail,
-        name: "Nogadex Administrator",
+  for (const a of adminEmails) {
+    const admin = await prisma.user.upsert({
+      where: { email: a.email },
+      update: { passwordHash },
+      create: {
+        email: a.email,
+        name: a.name,
         passwordHash,
         role: "ADMIN",
       },
     });
-    console.log(`✅ Default admin created: ${admin.email} (Password: ${adminPassword})`);
-  } else {
-    console.log(`ℹ️ Admin user ${adminEmail} already exists.`);
+    console.log(`✅ Admin account configured: ${admin.email}`);
   }
 }
 
