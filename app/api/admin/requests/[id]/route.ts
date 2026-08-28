@@ -58,7 +58,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await req.json();
-    const { processingStatus, notes, actionType } = body;
+    const { processingStatus, notes, actionType, voucherPin, voucherSerial } = body;
 
     const request = await prisma.resultRequest.findFirst({
       where: {
@@ -73,6 +73,8 @@ export async function PATCH(
     const updateData: any = {};
     if (processingStatus) updateData.processingStatus = processingStatus;
     if (notes !== undefined) updateData.notes = notes;
+    if (voucherPin !== undefined) updateData.voucherPin = voucherPin;
+    if (voucherSerial !== undefined) updateData.voucherSerial = voucherSerial;
 
     const updated = await prisma.resultRequest.update({
       where: { id: request.id },
@@ -88,6 +90,9 @@ export async function PATCH(
     } else if (actionType === "RESULT_MARKED_CHECKED") {
       auditAction = "RESULT_MARKED_CHECKED";
       auditDetails = `Admin confirmed WAEC result was checked and verified`;
+    } else if (voucherPin) {
+      auditAction = "VOUCHER_ATTACHED";
+      auditDetails = `Voucher PIN manually entered/updated`;
     }
 
     await logAudit({

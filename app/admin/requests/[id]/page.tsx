@@ -20,6 +20,7 @@ import {
   Loader2,
   MessageCircle,
   ShoppingCart,
+  KeyRound,
 } from "lucide-react";
 import {
   formatCandidateSummary,
@@ -82,6 +83,9 @@ export default function RequestDetailPage({
   const [showPdfPreview, setShowPdfPreview] = useState(false);
   const [uploadingPdf, setUploadingPdf] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [customPin, setCustomPin] = useState("");
+  const [customSerial, setCustomSerial] = useState("");
+  const [savingPin, setSavingPin] = useState(false);
   const [actionMessage, setActionMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -94,11 +98,39 @@ export default function RequestDetailPage({
       const data = await res.json();
       if (data.success) {
         setRequest(data.request);
+        if (data.request.voucherPin) setCustomPin(data.request.voucherPin);
+        if (data.request.voucherSerial) setCustomSerial(data.request.voucherSerial);
       }
     } catch (err) {
       console.error("Failed to load request detail:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSavePin = async () => {
+    try {
+      setSavingPin(true);
+      const res = await fetch(`/api/admin/requests/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          voucherPin: customPin,
+          voucherSerial: customSerial,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setActionMessage({
+          type: "success",
+          text: "Voucher PIN attached to order successfully!",
+        });
+        fetchRequest();
+      }
+    } catch (e) {
+      setActionMessage({ type: "error", text: "Failed to save voucher PIN." });
+    } finally {
+      setSavingPin(false);
     }
   };
 
@@ -235,10 +267,12 @@ export default function RequestDetailPage({
 
   const hasPdf = Boolean(request.pdfPath);
   const isCompleted = request.processingStatus === "COMPLETED";
+  const effectivePin = customPin || request.voucherPin || "";
+  const effectiveSerial = customSerial || request.voucherSerial || "";
   const autofillScript = generateWaecAutofillScript({
     ...request,
-    serial: request.voucherSerial,
-    pin: request.voucherPin,
+    serial: effectiveSerial,
+    pin: effectivePin,
   });
   const candidateSummary = formatCandidateSummary(request);
 
@@ -524,26 +558,88 @@ export default function RequestDetailPage({
               </div>
             </div>
 
-            {/* Auto-Acquired InConsult WAEC Voucher PIN & Serial */}
-            {request.voucherPin && (
-              <div className="col-span-1 sm:col-span-2 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/30 flex items-center justify-between">
-                <div>
-                  <span className="text-emerald-400 block text-[10px] font-bold uppercase tracking-wider">
-                    Auto-Purchased InConsult WAEC Voucher
-                  </span>
-                  <div className="flex items-center gap-3 mt-1 font-mono text-xs text-white">
-                    <span>Serial: <strong className="text-emerald-300">{request.voucherSerial || "N/A"}</strong></span>
-                    <span>PIN: <strong className="text-emerald-300">{request.voucherPin}</strong></span>
-                  </div>
+            {/* WAEC Voucher Manager & Quick Script Generator */}
+            <div className="col-span-1 sm:col-span-2 p-3.5 bg-white/[0.03] rounded-xl border border-white/10 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-200">
+                  <KeyRound className="w-3.5 h-3.5 text-red-400" />
+                  <span>WAEC Voucher &amp; Instant Autofill Script</span>
                 </div>
-                <button
-                  onClick={() => copyToClipboard(`Serial: ${request.voucherSerial || "N/A"}, PIN: ${request.voucherPin}`, "voucherPin")}
-                  className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-semibold hover:bg-emerald-500/30 transition-colors cursor-pointer"
-                >
-                  {copiedKey === "voucherPin" ? "Copied!" : "Copy PIN"}
-                </button>
+                {effectivePin && (
+                  <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    PIN Attached
+                  </span>
+                )}
               </div>
-            )}
+
+              {/* Quick Paste Inputs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div>
+                  <label className="text-[10px] text-slate-400 block mb-1">
+                    Voucher PIN Code (Required)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 123456789012"
+                    value={customPin}
+                    onChange={(e) => setCustomPin(e.target.value.trim())}
+                    className="w-full h-8 px-2.5 rounded-lg bg-black/40 border border-white/15 text-white font-mono text-xs focus:outline-none focus:border-red-500"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-slate-400 block mb-1">
+                    Serial Number (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. WGH202512345"
+                    value={customSerial}
+                    onChange={(e) => setCustomSerial(e.target.value.trim())}
+                    className="w-full h-8 px-2.5 rounded-lg bg-black/40 border border-white/15 text-white font-mono text-xs focus:outline-none focus:border-red-500"
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => copyToClipboard(autofillScript, "dossierScript")}
+                  className="flex-1 min-w-[160px] h-8 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md shadow-emerald-900/30"
+                >
+                  {copiedKey === "dossierScript" ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Script Copied to Clipboard!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy 1-Click WAEC Script {customPin ? "(PIN Included)" : ""}</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSavePin}
+                  disabled={savingPin || !customPin}
+                  className="h-8 px-3 rounded-lg bg-white/10 hover:bg-white/15 text-slate-200 text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {savingPin ? "Saving..." : "Save PIN"}
+                </button>
+
+                <a
+                  href={WAEC_GHANA_PORTAL_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="h-8 px-3 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                  <ExternalLink className="w-3 h-3" />
+                  <span>Open WAEC</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
