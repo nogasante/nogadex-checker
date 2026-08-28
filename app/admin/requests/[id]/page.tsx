@@ -784,29 +784,81 @@ export default function RequestDetailPage({
         </div>
       )}
 
-      {/* PDF Inline Preview Modal */}
+      {/* PDF Preview Modal with Mobile Fallback */}
       {showPdfPreview && hasPdf && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
           <div className="w-full max-w-4xl h-[85vh] rounded-2xl bg-[#0c1220] border border-white/15 shadow-2xl flex flex-col overflow-hidden">
-            <div className="p-3 border-b border-white/10 flex items-center justify-between bg-[#070b14]">
+            {/* Modal Header */}
+            <div className="p-3 sm:p-4 border-b border-white/10 flex items-center justify-between bg-[#070b14] gap-2">
               <div className="flex items-center gap-2 text-white font-bold text-xs sm:text-sm truncate">
                 <FileText className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span className="truncate">{request.pdfFilename}</span>
+                {request.pdfFileSize && (
+                  <span className="text-[10px] text-slate-500 font-normal shrink-0">
+                    ({(request.pdfFileSize / (1024 * 1024)).toFixed(2)} MB)
+                  </span>
+                )}
               </div>
-              <button
-                onClick={() => setShowPdfPreview(false)}
-                className="text-slate-400 hover:text-white p-1 cursor-pointer shrink-0"
-              >
-                <X className="w-5 h-5" />
-              </button>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={`/api/admin/requests/${id}/pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download={request.pdfFilename}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Open / Download</span>
+                </a>
+
+                <button
+                  onClick={() => setShowPdfPreview(false)}
+                  className="text-slate-400 hover:text-white p-1 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            <div className="flex-1 bg-slate-950">
-              <iframe
-                src={`/api/admin/requests/${id}/pdf`}
-                className="w-full h-full border-none"
-                title="Result PDF Preview"
-              />
+            {/* Modal Body with Fallback */}
+            <div className="flex-1 bg-slate-950 relative flex flex-col">
+              {/* Mobile Quick Action Banner */}
+              <div className="sm:hidden p-2.5 bg-white/[0.04] border-b border-white/10 flex items-center justify-between text-xs">
+                <span className="text-slate-400 text-[11px]">
+                  Viewing on phone?
+                </span>
+                <a
+                  href={`/api/admin/requests/${id}/pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-red-400 font-bold hover:underline flex items-center gap-1"
+                >
+                  <span>Open Fullscreen</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+
+              <object
+                data={`/api/admin/requests/${id}/pdf`}
+                type="application/pdf"
+                className="w-full flex-1"
+              >
+                <div className="h-full flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-3">
+                  <FileText className="w-12 h-12 text-slate-600" />
+                  <p className="text-xs">
+                    Your mobile browser does not display inline PDF previews.
+                  </p>
+                  <a
+                    href={`/api/admin/requests/${id}/pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white"
+                  >
+                    <Download className="w-4 h-4" /> Open / Download PDF
+                  </a>
+                </div>
+              </object>
             </div>
           </div>
         </div>
