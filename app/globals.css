@@ -3,11 +3,12 @@
 @layer base {
   :root {
     --brand-red: #d91e2e;
-    --brand-red-hover: #f02a3c;
-    --brand-red-dark: #b81423;
+    --brand-red-hover: #b81423;
   }
 
-  body {
+  html, body {
+    background-color: #ffffff;
+    color: #0f172a;
     font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -20,36 +21,43 @@
   }
 }
 
-/* Light Mode Surface & Card Utilities (For Public Student Portal) */
-.surface-card-light {
-  background-color: #ffffff;
+/* Modern Clean Input on Pure White Canvas */
+.input-clean {
+  background-color: #f8fafc;
   border: 1px solid #e2e8f0;
-  box-shadow: 
-    0 1px 3px 0 rgba(0, 0, 0, 0.05),
-    0 10px 25px -5px rgba(0, 0, 0, 0.04);
-}
-
-.surface-inset-light {
-  background-color: #f1f5f9;
-  border: 1px solid #e2e8f0;
-}
-
-.input-tech-light {
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
   color: #0f172a;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  font-size: 15px;
+  border-radius: 12px;
   transition: all 120ms ease-in-out;
 }
 
-.input-tech-light:hover {
-  border-color: #94a3b8;
+.input-clean:hover {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
 }
 
-.input-tech-light:focus {
+.input-clean:focus {
+  background-color: #ffffff;
   outline: none;
-  border-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+  border-color: #d91e2e;
+  box-shadow: 0 0 0 3px rgba(217, 30, 46, 0.12);
+}
+
+/* Tactile Red Brand Button */
+.btn-brand {
+  background: #d91e2e;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 14px;
+  transition: all 120ms ease-in-out;
+}
+
+.btn-brand:hover {
+  background: #b81423;
+}
+
+.btn-brand:active {
+  transform: scale(0.985);
 }
 
 /* Dark Mode Precision Surfaces (For Admin Operations Desk) */
@@ -98,41 +106,4 @@
     0 0 0 1px #d91e2e,
     0 0 0 3px rgba(217, 30, 46, 0.25),
     inset 0 1px 2px rgba(0, 0, 0, 0.15);
-}
-
-/* Primary Button */
-.btn-primary-tech {
-  background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%);
-  box-shadow: 
-    0 1px 2px 0 rgba(0, 0, 0, 0.1),
-    0 4px 12px -2px rgba(220, 38, 38, 0.35);
-  transition: all 140ms ease-in-out;
-}
-
-.btn-primary-tech:hover {
-  background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 
-    0 2px 4px 0 rgba(0, 0, 0, 0.15),
-    0 6px 16px -2px rgba(220, 38, 38, 0.45);
-}
-
-.btn-primary-tech:active {
-  transform: scale(0.985);
-  background: linear-gradient(180deg, #b91c1c 0%, #991b1b 100%);
-}
-
-/* Payment Badges */
-.momo-mtn {
-  background-color: #ffcc00;
-  color: #000000;
-}
-
-.momo-telecel {
-  background-color: #e60000;
-  color: #ffffff;
-}
-
-.momo-at {
-  background-color: #002d62;
-  color: #ffffff;
 }
