@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: "WAEC Result Checker & Printable PDF Delivery | Nogadex Consults",
     description:
       "Check your WASSCE, NOVDEC & BECE results online and get your official printable PDF result slip delivered to your phone & email. Fast & secure.",
-    url: "https://results.nogadexconsults.app",
+    url: "https://nogadexconsults.app",
     siteName: "Nogadex Consults",
     images: [
       {

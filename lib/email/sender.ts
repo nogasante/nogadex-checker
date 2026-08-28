@@ -39,7 +39,7 @@ export async function sendResultEmail({
   const htmlContent = generateResultEmailHtml(data);
   const textContent = generateResultEmailText(data);
   const fromAddress =
-    process.env.EMAIL_FROM || "Nogadex Consults <results@results.nogadexconsults.app>";
+    process.env.EMAIL_FROM || "Nogadex Consults <results@nogadexconsults.app>";
 
   // 1. Try Resend API if API key is configured
   if (process.env.RESEND_API_KEY) {
