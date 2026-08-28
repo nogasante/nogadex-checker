@@ -51,6 +51,19 @@ export default function AdminDashboardPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
+  const [inconsultStock, setInconsultStock] = useState<number | null>(null);
+
+  const fetchInconsultStock = async () => {
+    try {
+      const res = await fetch("/api/admin/inconsult/stock");
+      const data = await res.json();
+      if (data.success && data.stock) {
+        setInconsultStock(data.stock.available ?? 0);
+      }
+    } catch (e) {
+      console.log("InConsult stock check note:", e);
+    }
+  };
 
   const fetchStats = async () => {
     try {
@@ -73,15 +86,15 @@ export default function AdminDashboardPage() {
         processingStatus,
         examYear,
         page: page.toString(),
-        limit: "15",
+        limit: "25",
       });
 
       const res = await fetch(`/api/admin/requests?${params.toString()}`);
       const data = await res.json();
 
       if (data.success) {
-        setRequests(data.requests);
-        setTotalPages(data.pagination.totalPages || 1);
+        setRequests(data.requests || []);
+        setTotalPages(data.pagination?.totalPages || 1);
       }
     } catch (err) {
       console.error("Failed to fetch requests:", err);
@@ -92,6 +105,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchStats();
+    fetchInconsultStock();
   }, []);
 
   useEffect(() => {
@@ -167,6 +181,22 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          {inconsultStock !== null && (
+            <a
+              href="https://incbusinesshub.org/dashboard/inventory"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Click to manage InConsult store inventory"
+              className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+                inconsultStock > 0
+                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                  : "bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20"
+              }`}
+            >
+              <span>🎫 InConsult: <strong>{inconsultStock} PINs</strong></span>
+            </a>
+          )}
+
           <button
             onClick={handlePurgeAllOrders}
             disabled={loading}
