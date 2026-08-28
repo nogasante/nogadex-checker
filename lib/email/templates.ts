@@ -7,6 +7,9 @@ export interface ResultEmailData {
   supportPhone: string;
 }
 
+export const NOGADEX_LOGO_CDN_URL =
+  "https://raw.githubusercontent.com/nogasante/nogadex-checker/master/public/logo.png";
+
 export function generateResultEmailHtml(data: ResultEmailData): string {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -16,21 +19,21 @@ export function generateResultEmailHtml(data: ResultEmailData): string {
   <title>Your WAEC Result — Nogadex Consults</title>
 </head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #070b14; margin: 0; padding: 16px 8px; color: #f8fafc; -webkit-font-smoothing: antialiased;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 540px; margin: 0 auto; background-color: #0d1322; border: 1px solid #1e293b; border-radius: 16px; overflow: hidden;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 540px; margin: 0 auto; background-color: #0d1322; border: 1px solid #1e293b; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
     
-    <!-- Top Header with Brand Badge -->
+    <!-- Top Header with Official CDN Logo -->
     <tr>
-      <td style="background-color: #070b14; border-bottom: 1px solid #1e293b; padding: 20px 20px; text-align: left;">
+      <td style="background-color: #070b14; border-bottom: 1px solid #1e293b; padding: 18px 20px; text-align: left;">
         <table border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td style="vertical-align: middle; padding-right: 12px;">
-              <table border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td style="width: 36px; height: 36px; background-color: #dc2626; border-radius: 10px; text-align: center; vertical-align: middle; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 22px; font-weight: 900; color: #ffffff; line-height: 36px; mso-line-height-rule: exactly;">
-                    n
-                  </td>
-                </tr>
-              </table>
+              <img 
+                src="${NOGADEX_LOGO_CDN_URL}" 
+                alt="Nogadex Logo" 
+                width="40" 
+                height="40" 
+                style="display: block; width: 40px; height: 40px; border-radius: 10px; border: 0; object-fit: contain;" 
+              />
             </td>
             <td style="vertical-align: middle;">
               <div style="font-size: 19px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; line-height: 1.1;">
