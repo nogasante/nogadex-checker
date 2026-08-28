@@ -1,5 +1,4 @@
 import fs from "fs";
-import path from "path";
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
 import {
@@ -37,10 +36,6 @@ export async function sendResultEmail({
   }
 
   const pdfBuffer = fs.readFileSync(pdfPath);
-  const logoPath = path.join(process.cwd(), "public", "logo.png");
-  const hasLogo = fs.existsSync(logoPath);
-  const logoBuffer = hasLogo ? fs.readFileSync(logoPath) : null;
-
   const subject = `Your WAEC Result (${data.examType} ${data.examYear}) — Nogadex Consults`;
   const htmlContent = generateResultEmailHtml(data);
   const textContent = generateResultEmailText(data);
@@ -52,20 +47,13 @@ export async function sendResultEmail({
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
 
-      const attachments: Array<{ filename: string; content: Buffer; cid?: string }> = [
+      // ONLY attach the single Result PDF (no extra image files to clutter attachments)
+      const attachments = [
         {
           filename: pdfFilename,
           content: pdfBuffer,
         },
       ];
-
-      if (logoBuffer) {
-        attachments.push({
-          filename: "logo.png",
-          content: logoBuffer,
-          cid: "nogadex-logo",
-        });
-      }
 
       const result = await resend.emails.send({
         from: fromAddress,
@@ -114,28 +102,18 @@ export async function sendResultEmail({
         },
       });
 
-      const smtpAttachments: Array<{ filename: string; path?: string; content?: Buffer; cid?: string }> = [
-        {
-          filename: pdfFilename,
-          path: pdfPath,
-        },
-      ];
-
-      if (hasLogo) {
-        smtpAttachments.push({
-          filename: "logo.png",
-          path: logoPath,
-          cid: "nogadex-logo",
-        });
-      }
-
       const info = await transporter.sendMail({
         from: fromAddress,
         to: toEmail,
         subject,
         text: textContent,
         html: htmlContent,
-        attachments: smtpAttachments,
+        attachments: [
+          {
+            filename: pdfFilename,
+            path: pdfPath,
+          },
+        ],
       });
 
       return {
