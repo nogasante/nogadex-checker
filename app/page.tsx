@@ -1,21 +1,14 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { StudentForm } from "@/components/StudentForm";
-import {
-  FileText,
-  MailCheck,
-  ShieldCheck,
-  Clock,
-  Check,
-  MessageCircle,
-} from "lucide-react";
+import { Check, MessageCircle } from "lucide-react";
 
 export default function HomePage() {
   const whatsappNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233534908166";
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#080d1a] text-slate-100 selection:bg-red-600 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#070b14] text-slate-100 selection:bg-red-600 selection:text-white">
       <Navbar />
 
       <main className="flex-1 py-8 sm:py-12 px-4 sm:px-6">
@@ -23,7 +16,7 @@ export default function HomePage() {
           
           {/* Header intro */}
           <div className="text-center space-y-2">
-            <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight text-white">
+            <h1 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-[-0.02em] text-white">
               WAEC Result Checker &amp; PDF Delivery
             </h1>
             <p className="text-xs sm:text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
@@ -34,8 +27,8 @@ export default function HomePage() {
           {/* Form Card (The Core Product) */}
           <StudentForm />
 
-          {/* What You Receive (Human Checklist instead of generic 3-card grid) */}
-          <div className="rounded-2xl bg-[#0d1322] border border-white/10 p-5 space-y-3.5">
+          {/* What You Receive */}
+          <div className="rounded-2xl surface-card p-5 sm:p-6 space-y-3.5">
             <div className="text-xs font-bold uppercase tracking-wider text-slate-300">
               What your GH₵30.00 fee covers
             </div>
@@ -61,23 +54,23 @@ export default function HomePage() {
           </div>
 
           {/* Genuine Student FAQs */}
-          <div className="space-y-4">
-            <h2 className="text-sm font-bold text-slate-200 tracking-tight">
+          <div className="space-y-3">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Common Questions
             </h2>
 
-            <div className="space-y-3 text-xs text-slate-400">
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+            <div className="space-y-2.5 text-xs text-slate-400">
+              <div className="p-4 rounded-xl surface-elevated space-y-1">
                 <div className="font-semibold text-slate-200">How long does delivery take?</div>
                 <div>Results are checked and dispatched within 2 to 5 minutes once payment is confirmed via Mobile Money or Card.</div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+              <div className="p-4 rounded-xl surface-elevated space-y-1">
                 <div className="font-semibold text-slate-200">Can I use this PDF for university admission applications?</div>
                 <div>Yes. The generated PDF displays your candidate photo, school name, subject grades, and official verification serials suitable for printing and upload to KNUST, UG, UCC, or other tertiary portals.</div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+              <div className="p-4 rounded-xl surface-elevated space-y-1">
                 <div className="font-semibold text-slate-200">What if my index number is incorrect?</div>
                 <div>Contact our support desk on WhatsApp (+{whatsappNumber}) with your payment reference and we will immediately update your details before checking.</div>
               </div>

@@ -3,16 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
-  CreditCard,
   AlertCircle,
   Loader2,
-  Calendar,
-  User,
-  Hash,
-  Mail,
-  Phone,
   ArrowRight,
   ShieldCheck,
+  Check,
 } from "lucide-react";
 
 const EXAM_OPTIONS = [
@@ -55,7 +50,6 @@ export function StudentForm() {
   };
 
   const handleExamTypeSelect = (typeValue: string) => {
-    // Map BECE_PVT to BECE for backend consistency
     const backendType = typeValue === "BECE_PVT" ? "BECE" : typeValue;
     setFormData((prev) => ({ ...prev, examType: backendType }));
     if (errorMessage) setErrorMessage("");
@@ -66,19 +60,19 @@ export function StudentForm() {
     setErrorMessage("");
 
     if (!formData.fullName.trim()) {
-      setErrorMessage("Please enter your full name.");
+      setErrorMessage("Please enter candidate full name.");
       return;
     }
     if (!formData.indexNumber.trim() || formData.indexNumber.length < 6) {
-      setErrorMessage("Please enter a valid WAEC Index Number.");
+      setErrorMessage("Please enter a valid 10-digit WAEC Index Number.");
       return;
     }
     if (!formData.dateOfBirth) {
-      setErrorMessage("Please select your Date of Birth.");
+      setErrorMessage("Please select Date of Birth.");
       return;
     }
     if (!formData.email.trim() || !formData.email.includes("@")) {
-      setErrorMessage("Please provide a valid email address.");
+      setErrorMessage("Please provide a valid delivery email address.");
       return;
     }
 
@@ -110,14 +104,14 @@ export function StudentForm() {
   };
 
   return (
-    <div className="w-full bg-[#0d1322] border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-2xl shadow-black/40">
+    <div className="w-full surface-card rounded-2xl sm:rounded-3xl p-5 sm:p-7 space-y-5">
       
-      {/* Segmented Exam Picker (2-Column Grid for perfect mobile fit) */}
-      <div className="mb-4">
-        <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
+      {/* Examination Type Picker (iOS/Linear Style Segmented Controls) */}
+      <div className="space-y-2">
+        <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
           Examination Type
         </label>
-        <div className="grid grid-cols-2 gap-1.5 p-1 bg-black/30 rounded-xl border border-white/5">
+        <div className="grid grid-cols-2 gap-1.5 p-1 surface-inset rounded-xl">
           {EXAM_OPTIONS.map((t) => {
             const isSelected =
               formData.examType === t.value ||
@@ -127,10 +121,10 @@ export function StudentForm() {
                 type="button"
                 key={t.value}
                 onClick={() => handleExamTypeSelect(t.value)}
-                className={`py-2.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center ${
+                className={`py-2.5 px-3 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
                   isSelected
-                    ? "bg-red-600 text-white shadow-sm"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-[#d91e2e] text-white shadow-sm shadow-black/40 font-bold"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
                 }`}
               >
                 {t.label}
@@ -142,18 +136,18 @@ export function StudentForm() {
 
       {/* Error Alert */}
       {errorMessage && (
-        <div className="mb-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
+        <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
           <span>{errorMessage}</span>
         </div>
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-3.5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         
         {/* Full Name */}
-        <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1">
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-slate-300">
             Candidate Full Name
           </label>
           <input
@@ -163,14 +157,14 @@ export function StudentForm() {
             value={formData.fullName}
             onChange={handleChange}
             placeholder="e.g. Kwabena Mensah"
-            className="w-full h-11 bg-white/[0.04] border border-white/10 rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-medium"
+            className="w-full h-11 input-tech rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 font-medium"
           />
         </div>
 
         {/* Index Number & Exam Year */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-slate-300">
               WAEC Index Number
             </label>
             <input
@@ -181,19 +175,19 @@ export function StudentForm() {
               value={formData.indexNumber}
               onChange={handleChange}
               placeholder="e.g. 1010101001"
-              className="w-full h-11 bg-white/[0.04] border border-white/10 rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 font-mono transition-all"
+              className="w-full h-11 input-tech rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 font-mono"
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-slate-300">
               Examination Year
             </label>
             <select
               name="examYear"
               value={formData.examYear}
               onChange={handleChange}
-              className="w-full h-11 bg-[#0f172a] border border-white/10 rounded-xl px-3 text-base sm:text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 font-mono transition-all cursor-pointer"
+              className="w-full h-11 bg-[#0f172a] input-tech rounded-xl px-3 text-base sm:text-sm text-white font-mono cursor-pointer"
             >
               {years.map((y) => (
                 <option key={y} value={y}>
@@ -205,9 +199,9 @@ export function StudentForm() {
         </div>
 
         {/* Date of Birth & Email */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-slate-300">
               Date of Birth
             </label>
             <input
@@ -216,12 +210,12 @@ export function StudentForm() {
               required
               value={formData.dateOfBirth}
               onChange={handleChange}
-              className="w-full h-11 bg-white/[0.04] border border-white/10 rounded-xl px-3 text-base sm:text-sm text-white focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all cursor-pointer"
+              className="w-full h-11 input-tech rounded-xl px-3 text-base sm:text-sm text-white cursor-pointer"
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium text-slate-300">
               Delivery Email Address
             </label>
             <input
@@ -233,14 +227,14 @@ export function StudentForm() {
               value={formData.email}
               onChange={handleChange}
               placeholder="name@gmail.com"
-              className="w-full h-11 bg-white/[0.04] border border-white/10 rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+              className="w-full h-11 input-tech rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500"
             />
           </div>
         </div>
 
         {/* WhatsApp (Optional) */}
-        <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1 flex items-center justify-between">
+        <div className="space-y-1.5">
+          <label className="block text-xs font-medium text-slate-300 flex items-center justify-between">
             <span>WhatsApp Number</span>
             <span className="text-[10px] text-slate-500 font-normal">Optional</span>
           </label>
@@ -251,7 +245,7 @@ export function StudentForm() {
             value={formData.whatsappNumber}
             onChange={handleChange}
             placeholder="054 123 4567"
-            className="w-full h-11 bg-white/[0.04] border border-white/10 rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+            className="w-full h-11 input-tech rounded-xl px-3.5 text-base sm:text-sm text-white placeholder-slate-500 font-mono"
           />
         </div>
 
@@ -260,7 +254,7 @@ export function StudentForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-12 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm shadow-lg shadow-red-900/30 transition-all active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full h-12 btn-primary-tech text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -279,7 +273,7 @@ export function StudentForm() {
         {/* Trust Note */}
         <div className="flex items-center justify-center gap-1.5 pt-1 text-[11px] text-slate-400">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Includes Official WAEC Voucher &amp; High-Res PDF</span>
+          <span>Includes Official WAEC Voucher PIN &amp; High-Res PDF</span>
         </div>
 
         {/* Supported Networks */}
