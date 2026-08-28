@@ -2,21 +2,20 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Loader2, ArrowRight, ShieldCheck, AlertTriangle, Edit3, X } from "lucide-react";
-import { PaymentChannelsBar } from "./PaymentLogos";
+import { AlertCircle, Loader2, X, AlertTriangle } from "lucide-react";
 
 const EXAM_OPTIONS = [
-  { value: "WASSCE", label: "WASSCE (School)" },
-  { value: "NOVDEC", label: "NOVDEC (Private)" },
-  { value: "BECE", label: "BECE (School)" },
-  { value: "BECE_PVT", label: "BECE (Private)" },
+  { value: "WASSCE", label: "WASSCE" },
+  { value: "NOVDEC", label: "NOVDEC" },
+  { value: "BECE", label: "BECE" },
+  { value: "BECE_PVT", label: "BECE (Pvt)" },
   { value: "GBCE", label: "GBCE" },
   { value: "ABCE", label: "ABCE" },
 ];
 
 const EXAM_YEARS = [
-  { value: "2026", label: "2026 (Current Year)" },
-  { value: "2025", label: "2025 (Most Recent Released)" },
+  { value: "2026", label: "2026" },
+  { value: "2025", label: "2025" },
   { value: "2024", label: "2024" },
   { value: "2023", label: "2023" },
   { value: "2022", label: "2022" },
@@ -27,7 +26,7 @@ const EXAM_YEARS = [
   { value: "2017", label: "2017" },
   { value: "2016", label: "2016" },
   { value: "2015", label: "2015" },
-  { value: "2010", label: "2010 & Older" },
+  { value: "2010", label: "2010 & older" },
 ];
 
 export function StudentForm() {
@@ -67,23 +66,23 @@ export function StudentForm() {
     setErrorMessage("");
 
     if (!formData.fullName.trim() || formData.fullName.length < 3) {
-      setErrorMessage("Please enter candidate full name as registered for the exam.");
+      setErrorMessage("Enter your full name as registered for the exam.");
       return;
     }
     if (!formData.indexNumber.trim() || formData.indexNumber.length < 6) {
-      setErrorMessage("Please enter a valid 10-digit WAEC Index Number.");
+      setErrorMessage("Enter a valid WAEC index number.");
       return;
     }
     if (!formData.dateOfBirth) {
-      setErrorMessage("Please enter Date of Birth (required to verify candidate on WAEC).");
+      setErrorMessage("Date of birth is required to verify your identity on WAEC.");
       return;
     }
     if (!formData.email.trim() || !formData.email.includes("@")) {
-      setErrorMessage("Please enter a valid email address to receive your PDF result.");
+      setErrorMessage("Enter a valid email address.");
       return;
     }
     if (!formData.whatsappNumber.trim() || formData.whatsappNumber.length < 9) {
-      setErrorMessage("Please enter a valid WhatsApp number so our support team can reach you if needed.");
+      setErrorMessage("Enter a valid WhatsApp number.");
       return;
     }
 
@@ -121,30 +120,26 @@ export function StudentForm() {
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="space-y-6">
       
-      {/* Error Alert */}
+      {/* Error */}
       {errorMessage && (
-        <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
+        <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-[13px] flex items-start gap-2.5">
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-500" />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      {/* Form Surface */}
-      <form onSubmit={handlePreSubmit} className="space-y-6">
+      <form onSubmit={handlePreSubmit} className="space-y-8">
         
-        {/* GROUP 1: EXAMINATION DETAILS */}
+        {/* ── Examination ── */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-              1. Choose Examination
-            </h2>
-            <span className="text-[10px] text-slate-400 font-medium">WAEC Ghana</span>
-          </div>
+          <label className="block text-[13px] font-medium text-gray-500">
+            Examination
+          </label>
 
-          {/* Exam Type Segmented Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-xl">
+          {/* Segmented control */}
+          <div className="grid grid-cols-3 gap-1 p-1 bg-gray-100 rounded-lg">
             {EXAM_OPTIONS.map((t) => {
               const isSelected =
                 formData.examType === t.value ||
@@ -154,10 +149,10 @@ export function StudentForm() {
                   type="button"
                   key={t.value}
                   onClick={() => handleExamTypeSelect(t.value)}
-                  className={`py-2.5 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
+                  className={`py-2 rounded-md text-[13px] font-medium transition-all cursor-pointer text-center select-none ${
                     isSelected
-                      ? "bg-white text-slate-900 shadow-xs font-bold ring-1 ring-slate-950/5"
-                      : "text-slate-600 hover:text-slate-900"
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
                   }`}
                 >
                   {t.label}
@@ -166,17 +161,17 @@ export function StudentForm() {
             })}
           </div>
 
-          {/* Exam Year & Index Number */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">
-                Examination Year
+          {/* Year + Index */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="block text-[13px] font-medium text-gray-700">
+                Year
               </label>
               <select
                 name="examYear"
                 value={formData.examYear}
                 onChange={handleChange}
-                className="w-full h-11 input-clean px-3.5 text-slate-900 font-mono cursor-pointer"
+                className="w-full h-11 input-clean px-3 cursor-pointer"
               >
                 {EXAM_YEARS.map((y) => (
                   <option key={y.value} value={y.value}>
@@ -186,9 +181,9 @@ export function StudentForm() {
               </select>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">
-                WAEC Index Number
+            <div className="space-y-1.5">
+              <label className="block text-[13px] font-medium text-gray-700">
+                Index number
               </label>
               <input
                 type="text"
@@ -197,26 +192,23 @@ export function StudentForm() {
                 required
                 value={formData.indexNumber}
                 onChange={handleChange}
-                placeholder="10-digit number"
-                className="w-full h-11 input-clean px-3.5 font-mono tracking-wider"
+                placeholder="0123456789"
+                className="w-full h-11 input-clean px-3 font-mono tracking-wide"
               />
             </div>
           </div>
         </div>
 
-        {/* GROUP 2: CANDIDATE INFORMATION */}
+        {/* ── Your details ── */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-              2. Candidate Information
-            </h2>
-            <span className="text-[10px] text-slate-400 font-medium">Record Verification</span>
-          </div>
+          <label className="block text-[13px] font-medium text-gray-500">
+            Your details
+          </label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">
-                Candidate Full Name
+            <div className="space-y-1.5">
+              <label className="block text-[13px] font-medium text-gray-700">
+                Full name
               </label>
               <input
                 type="text"
@@ -224,15 +216,15 @@ export function StudentForm() {
                 required
                 value={formData.fullName}
                 onChange={handleChange}
-                placeholder="e.g. Kwabena Mensah"
-                className="w-full h-11 input-clean px-3.5"
+                placeholder="Kwabena Mensah"
+                className="w-full h-11 input-clean px-3"
               />
-              <p className="text-[10px] text-slate-400">As registered on your exam slip</p>
+              <p className="text-[13px] text-gray-400">As registered on your exam slip</p>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">
-                Date of Birth
+            <div className="space-y-1.5">
+              <label className="block text-[13px] font-medium text-gray-700">
+                Date of birth
               </label>
               <input
                 type="date"
@@ -241,26 +233,22 @@ export function StudentForm() {
                 max="2016-12-31"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
-                className="w-full h-11 input-clean px-3.5 text-slate-900 cursor-pointer"
+                className="w-full h-11 input-clean px-3 cursor-pointer"
               />
-              <p className="text-[10px] text-slate-400">Required by WAEC to verify candidate</p>
             </div>
           </div>
         </div>
 
-        {/* GROUP 3: DELIVERY & CONTACT */}
+        {/* ── Delivery ── */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-              3. Delivery &amp; Contact
-            </h2>
-            <span className="text-[10px] text-slate-400 font-medium">Instant Dispatch</span>
-          </div>
+          <label className="block text-[13px] font-medium text-gray-500">
+            Delivery
+          </label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">
-                Delivery Email Address
+            <div className="space-y-1.5">
+              <label className="block text-[13px] font-medium text-gray-700">
+                Email address
               </label>
               <input
                 type="email"
@@ -270,15 +258,15 @@ export function StudentForm() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="kwabena@gmail.com"
-                className="w-full h-11 input-clean px-3.5"
+                placeholder="you@gmail.com"
+                className="w-full h-11 input-clean px-3"
               />
-              <p className="text-[10px] text-slate-400">Your PDF slip will be emailed here</p>
+              <p className="text-[13px] text-gray-400">PDF will be sent here</p>
             </div>
 
-            <div className="space-y-1">
-              <label className="block text-xs font-semibold text-slate-700">
-                WhatsApp Phone Number
+            <div className="space-y-1.5">
+              <label className="block text-[13px] font-medium text-gray-700">
+                WhatsApp number
               </label>
               <input
                 type="tel"
@@ -288,118 +276,112 @@ export function StudentForm() {
                 value={formData.whatsappNumber}
                 onChange={handleChange}
                 placeholder="054 123 4567"
-                className="w-full h-11 input-clean px-3.5 font-mono"
+                className="w-full h-11 input-clean px-3 font-mono"
               />
-              <p className="text-[10px] text-slate-400">For instant order updates &amp; support</p>
+              <p className="text-[13px] text-gray-400">For order updates</p>
             </div>
           </div>
         </div>
 
-        {/* COMPACT PRICE BREAKDOWN */}
-        <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1 text-xs">
-          <div className="flex justify-between text-slate-600">
-            <span>Genuine WAEC Checker Voucher PIN:</span>
-            <span className="font-mono font-semibold">GH₵25.00</span>
+        {/* ── Price ── */}
+        <div className="space-y-2 text-[14px]">
+          <div className="flex justify-between text-gray-500">
+            <span>WAEC voucher PIN</span>
+            <span className="tabular-nums">GH₵25.00</span>
           </div>
-          <div className="flex justify-between text-slate-600">
-            <span>PDF Formatting &amp; Email Delivery:</span>
-            <span className="font-mono font-semibold">GH₵5.00</span>
+          <div className="flex justify-between text-gray-500">
+            <span>PDF formatting &amp; delivery</span>
+            <span className="tabular-nums">GH₵5.00</span>
           </div>
-          <div className="pt-1.5 border-t border-slate-200 flex justify-between font-bold text-slate-900">
-            <span>Total Payable:</span>
-            <span className="font-mono text-red-600 text-sm font-extrabold">GH₵30.00</span>
+          <div className="h-px bg-gray-200 my-1" />
+          <div className="flex justify-between font-semibold text-gray-900">
+            <span>Total</span>
+            <span className="tabular-nums">GH₵30.00</span>
           </div>
         </div>
 
-        {/* OUTCOME-DRIVEN ACTION BUTTON */}
-        <div>
-          <button
-            type="submit"
-            className="w-full h-12 btn-brand flex items-center justify-center gap-2 text-sm cursor-pointer shadow-sm"
-          >
-            <span>Continue to Secure Payment — GH₵30.00</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+        {/* ── Pay button ── */}
+        <button
+          type="submit"
+          className="w-full h-12 btn-brand cursor-pointer"
+        >
+          Pay GH₵30.00
+        </button>
 
-        {/* Official Ghanaian Telco & Card Badges */}
-        <PaymentChannelsBar />
+        {/* Payment methods — quiet text */}
+        <p className="text-center text-[13px] text-gray-400">
+          Mobile Money · Visa · Mastercard — via Paystack
+        </p>
 
       </form>
 
-      {/* PRE-PAYMENT DETAILS CONFIRMATION MODAL */}
+      {/* ── Confirmation Modal ── */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-5 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-5">
+          <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-6 space-y-5">
             
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <h3 className="text-sm font-bold text-slate-900">Review Candidate Details</h3>
-              </div>
+            <div className="flex items-center justify-between">
+              <h3 className="text-[16px] font-semibold text-gray-900">Confirm your details</h3>
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition-colors cursor-pointer"
+                className="p-1 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Warning Callout */}
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 text-xs flex items-start gap-2.5">
+            {/* Warning */}
+            <div className="px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-[13px] flex items-start gap-2.5">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <p className="leading-relaxed">
-                Please double-check your <strong>Index Number</strong> and <strong>Date of Birth</strong>. WAEC vouchers cannot be refunded once assigned.
-              </p>
+              <span>
+                Double-check your <strong>index number</strong> and <strong>date of birth</strong>. WAEC vouchers can't be refunded once assigned.
+              </span>
             </div>
 
-            {/* Summary Details Table */}
-            <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 space-y-2 text-xs">
-              <div className="flex justify-between pb-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Candidate:</span>
-                <span className="font-bold text-slate-900">{formData.fullName}</span>
-              </div>
-              <div className="flex justify-between pb-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Index Number:</span>
-                <span className="font-mono font-bold text-slate-900">{formData.indexNumber}</span>
-              </div>
-              <div className="flex justify-between pb-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Exam &amp; Year:</span>
-                <span className="font-semibold text-slate-900">{formData.examType} ({formData.examYear})</span>
-              </div>
-              <div className="flex justify-between pb-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Date of Birth:</span>
-                <span className="font-mono font-bold text-slate-900">{formData.dateOfBirth}</span>
-              </div>
-              <div className="flex justify-between pb-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Delivery Email:</span>
-                <span className="font-semibold text-slate-900 truncate max-w-[200px]">{formData.email}</span>
+            {/* Details */}
+            <div className="space-y-2.5 text-[14px]">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Name</span>
+                <span className="font-medium text-gray-900">{formData.fullName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">WhatsApp:</span>
-                <span className="font-mono font-bold text-slate-900">{formData.whatsappNumber}</span>
+                <span className="text-gray-500">Index number</span>
+                <span className="font-mono font-medium text-gray-900">{formData.indexNumber}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Exam</span>
+                <span className="font-medium text-gray-900">{formData.examType} ({formData.examYear})</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Date of birth</span>
+                <span className="font-mono font-medium text-gray-900">{formData.dateOfBirth}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Email</span>
+                <span className="font-medium text-gray-900 truncate max-w-[200px]">{formData.email}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">WhatsApp</span>
+                <span className="font-mono font-medium text-gray-900">{formData.whatsappNumber}</span>
               </div>
             </div>
 
-            {/* Modal Actions */}
+            {/* Actions */}
             <div className="space-y-2 pt-1">
               <button
                 type="button"
                 disabled={loading}
                 onClick={handleConfirmAndPay}
-                className="w-full h-11 btn-brand flex items-center justify-center gap-2 text-xs transition-all cursor-pointer shadow-sm disabled:opacity-70"
+                className="w-full h-12 btn-brand flex items-center justify-center gap-2 cursor-pointer"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Connecting to Paystack...</span>
+                    <span>Connecting to Paystack…</span>
                   </>
                 ) : (
-                  <>
-                    <span>Pay GH₵30.00 &amp; Receive PDF by Email</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
+                  <span>Pay GH₵30.00</span>
                 )}
               </button>
 
@@ -407,10 +389,9 @@ export function StudentForm() {
                 type="button"
                 disabled={loading}
                 onClick={() => setShowConfirmModal(false)}
-                className="w-full h-9 bg-white hover:bg-slate-100 text-slate-700 font-semibold rounded-xl border border-slate-200 text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                className="w-full h-10 text-[13px] font-medium text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"
               >
-                <Edit3 className="w-3.5 h-3.5 text-slate-400" />
-                <span>Edit / Correct Details</span>
+                Edit details
               </button>
             </div>
 

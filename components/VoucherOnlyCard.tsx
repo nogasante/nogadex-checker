@@ -1,6 +1,5 @@
 import React from "react";
-import { ArrowRight, CheckCircle2, ShieldCheck, Zap, KeyRound, ExternalLink } from "lucide-react";
-import { PaymentChannelsBar } from "./PaymentLogos";
+import { ExternalLink } from "lucide-react";
 
 export function VoucherOnlyCard({
   onSwitchToPdf,
@@ -12,68 +11,51 @@ export function VoucherOnlyCard({
     "https://dataplug-gh.com/pay/nogadex-consults-e8c92a30";
 
   return (
-    <div className="w-full bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
-      {/* Header */}
-      <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <span className="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-900 text-[11px] font-bold">
-            INSTANT PIN DELIVERY
-          </span>
-          <div className="text-right">
-            <span className="text-xs text-slate-400 line-through mr-1.5">GH₵28.00</span>
-            <span className="text-xl font-extrabold text-slate-900">GH₵25.00</span>
-          </div>
-        </div>
-        <h3 className="text-base font-bold text-slate-900 pt-1">
-          Official WAEC Scratch Card (Serial &amp; PIN)
-        </h3>
-        <p className="text-xs text-slate-600 leading-relaxed">
-          Buy an unused, genuine WAEC Result Checker PIN to check your results yourself on the official WAEC Direct Ghana portal.
+    <div className="space-y-6">
+
+      {/* What you get */}
+      <div className="text-[14px] text-gray-600 leading-relaxed space-y-2">
+        <p>
+          You'll receive a genuine WAEC scratch card serial &amp; PIN via SMS and WhatsApp
+          immediately after payment. Each card allows up to 3 result checks.
         </p>
       </div>
 
-      {/* Feature Checklist */}
-      <div className="space-y-2.5 p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-700">
-        <div className="flex items-start gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-          <span><strong>Instant SMS &amp; Email Delivery:</strong> Serial &amp; PIN sent immediately after payment.</span>
-        </div>
-        <div className="flex items-start gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-          <span><strong>3 Result Checks Per Card:</strong> Valid for checking WASSCE, BECE, NOVDEC, GBCE, or ABCE up to 3 times.</span>
-        </div>
-        <div className="flex items-start gap-2">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-          <span><strong>100% Genuine WAEC Voucher:</strong> Verified authentic scratch card serials.</span>
-        </div>
+      {/* Price */}
+      <div className="flex justify-between items-center text-[15px]">
+        <span className="text-gray-500">WAEC Checker PIN</span>
+        <span className="font-semibold text-gray-900 tabular-nums">GH₵25.00</span>
       </div>
 
-      {/* Buy Button linking to DataPlug */}
-      <div className="space-y-2.5">
-        <a
-          href={dataplugBuyUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full h-12 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm transition-all cursor-pointer shadow-sm"
-        >
-          <span>Buy Checker PIN Now (GH₵25.00)</span>
-          <ExternalLink className="w-4 h-4" />
-        </a>
+      {/* Buy button */}
+      <a
+        href={dataplugBuyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full h-12 btn-brand flex items-center justify-center gap-2 cursor-pointer"
+      >
+        <span>Buy PIN — GH₵25.00</span>
+        <ExternalLink className="w-4 h-4" />
+      </a>
 
-        {/* Option to switch to PDF */}
-        {onSwitchToPdf && (
+      {/* Payment note */}
+      <p className="text-center text-[13px] text-gray-400">
+        Mobile Money · Visa · Mastercard — via Paystack
+      </p>
+
+      {/* Switch to PDF */}
+      {onSwitchToPdf && (
+        <div className="pt-2 border-t border-gray-100">
           <button
             type="button"
             onClick={onSwitchToPdf}
-            className="w-full text-center text-xs text-slate-500 hover:text-slate-900 font-medium py-1 transition-colors cursor-pointer"
+            className="text-[13px] text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"
           >
-            Want us to check and send you the official PDF instead? <span className="text-red-600 font-semibold underline">Select PDF Service (GH₵30)</span>
+            Want us to check and send you a PDF instead? →
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Payment Channels */}
-      <PaymentChannelsBar />
     </div>
   );
 }
