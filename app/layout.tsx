@@ -21,6 +21,11 @@ export const metadata: Metadata = {
     "Nogadex Consults",
     "WAEC PDF Delivery",
   ],
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -34,6 +39,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="icon" href="/logo.png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+      </head>
       <body
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-[#f8fafc] text-slate-900 selection:bg-red-600 selection:text-white"
