@@ -17,6 +17,7 @@ import {
   MessageCircle,
   Bell,
   BellRing,
+  Share2,
 } from "lucide-react";
 
 interface RequestData {
@@ -394,9 +395,9 @@ function StatusContent({ requestId }: { requestId: string }) {
           </div>
         )}
 
-        {/* COMPLETED STATE ACTION: Direct PDF Download */}
+        {/* COMPLETED STATE ACTION: Direct PDF Download & Viral WhatsApp Share */}
         {request && isCompleted && (
-          <div className="pt-2">
+          <div className="pt-2 space-y-2.5">
             <a
               href={`/api/requests/${requestId}/download`}
               target="_blank"
@@ -405,6 +406,18 @@ function StatusContent({ requestId }: { requestId: string }) {
             >
               <Download className="w-4 h-4" />
               <span>Download Result Slip PDF</span>
+            </a>
+
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(
+                `🎓 I just checked my WAEC result and received my official printable PDF slip on Nogadex Consults! You can check yours too with instant MoMo payment here: https://nogadexconsults.app`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-11 rounded-xl font-medium text-xs flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition-colors"
+            >
+              <Share2 className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Share Nogadex with Classmates on WhatsApp</span>
             </a>
           </div>
         )}

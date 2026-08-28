@@ -81,6 +81,53 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/logo.png" />
         <link rel="apple-touch-icon" href="/logo.png" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "WebApplication",
+                  "name": "Nogadex Consults WAEC Result Checker",
+                  "url": "https://nogadexconsults.app",
+                  "applicationCategory": "EducationalApplication",
+                  "operatingSystem": "All",
+                  "offers": {
+                    "@type": "Offer",
+                    "price": "30.00",
+                    "priceCurrency": "GHS",
+                  },
+                  "description":
+                    "Fast, secure WAEC result checking and printable PDF result slip delivery service in Ghana.",
+                },
+                {
+                  "@type": "FAQPage",
+                  "mainEntity": [
+                    {
+                      "@type": "Question",
+                      "name": "How do I check my WASSCE / NOVDEC / BECE result online in Ghana?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text":
+                          "Visit nogadexconsults.app, enter your 10-digit Index Number, select Exam Type and Exam Year, pay GH₵30.00 securely via Mobile Money (MTN, Telecel, AT), and your official printable PDF result slip will be delivered to your email and phone immediately.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "Can I pay for WAEC Result Checker with Mobile Money (MoMo)?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text":
+                          "Yes, Nogadex Consults supports instant Mobile Money payments across all Ghanaian networks including MTN MoMo, Telecel Cash, AT Money, and Visa/Mastercard.",
+                      },
+                    },
+                  ],
+                },
+              ],
+            }),
+          }}
+        />
       </head>
       <body
         suppressHydrationWarning
