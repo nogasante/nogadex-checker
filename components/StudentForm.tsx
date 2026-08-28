@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Loader2, ArrowRight, ShieldCheck, AlertTriangle, Edit3, X } from "lucide-react";
+import { AlertCircle, Loader2, ArrowRight, ShieldCheck, Check, AlertTriangle, Edit3, X } from "lucide-react";
 import { PaymentChannelsBar } from "./PaymentLogos";
 
 const EXAM_OPTIONS = [
@@ -51,6 +51,7 @@ export function StudentForm() {
     if (errorMessage) setErrorMessage("");
   };
 
+  // Step 1: Pre-validation before opening confirmation modal
   const handlePreSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
@@ -76,9 +77,11 @@ export function StudentForm() {
       return;
     }
 
+    // Open verification modal
     setShowConfirmModal(true);
   };
 
+  // Step 2: Final Confirmation & Paystack Launch
   const handleConfirmAndPay = async () => {
     setLoading(true);
     setErrorMessage("");
@@ -110,51 +113,55 @@ export function StudentForm() {
   };
 
   return (
-    <div className="w-full space-y-5">
+    <div className="w-full bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
       
+      {/* Examination Selector */}
+      <div className="space-y-1.5">
+        <label className="block text-xs font-bold text-slate-900">
+          1. Select Examination
+        </label>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-xl">
+          {EXAM_OPTIONS.map((t) => {
+            const isSelected =
+              formData.examType === t.value ||
+              (t.value === "BECE_PVT" && formData.examType === "BECE_PVT");
+            return (
+              <button
+                type="button"
+                key={t.value}
+                onClick={() => handleExamTypeSelect(t.value)}
+                className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
+                  isSelected
+                    ? "bg-white text-slate-900 shadow-xs font-bold ring-1 ring-slate-950/5"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Error Alert */}
       {errorMessage && (
-        <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+        <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      {/* Form Surface */}
-      <form onSubmit={handlePreSubmit} className="space-y-4">
+      {/* Form */}
+      <form onSubmit={handlePreSubmit} className="space-y-3.5">
         
-        {/* Examination Type Segmented Selector */}
-        <div className="space-y-1.5">
-          <label className="block text-xs font-bold text-slate-900">
-            Select Examination
-          </label>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-xl">
-            {EXAM_OPTIONS.map((t) => {
-              const isSelected =
-                formData.examType === t.value ||
-                (t.value === "BECE_PVT" && formData.examType === "BECE_PVT");
-              return (
-                <button
-                  type="button"
-                  key={t.value}
-                  onClick={() => handleExamTypeSelect(t.value)}
-                  className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
-                    isSelected
-                      ? "bg-white text-slate-900 shadow-xs font-bold ring-1 ring-slate-950/5"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
+        <div className="text-xs font-bold text-slate-900 pt-1">
+          2. Candidate &amp; Delivery Details
         </div>
 
-        {/* Candidate Full Name */}
+        {/* Full Name */}
         <div className="space-y-1">
-          <label className="block text-xs font-semibold text-slate-700">
+          <label className="block text-xs font-medium text-slate-700">
             Candidate Full Name
           </label>
           <input
@@ -164,14 +171,14 @@ export function StudentForm() {
             value={formData.fullName}
             onChange={handleChange}
             placeholder="e.g. Kwabena Mensah"
-            className="w-full h-11 input-clean px-3.5"
+            className="w-full h-10.5 input-tech-light rounded-lg px-3 text-sm placeholder-slate-400 font-medium"
           />
         </div>
 
         {/* Index Number & Exam Year */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-medium text-slate-700">
               WAEC Index Number
             </label>
             <input
@@ -182,19 +189,19 @@ export function StudentForm() {
               value={formData.indexNumber}
               onChange={handleChange}
               placeholder="10-digit number"
-              className="w-full h-11 input-clean px-3.5 font-mono tracking-wider"
+              className="w-full h-10.5 input-tech-light rounded-lg px-3 text-sm placeholder-slate-400 font-mono tracking-wider"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-medium text-slate-700">
               Exam Year
             </label>
             <select
               name="examYear"
               value={formData.examYear}
               onChange={handleChange}
-              className="w-full h-11 input-clean px-3.5 text-slate-900 font-mono cursor-pointer"
+              className="w-full h-10.5 input-tech-light rounded-lg px-3 text-sm text-slate-900 font-mono cursor-pointer"
             >
               {years.map((y) => (
                 <option key={y} value={y}>
@@ -208,7 +215,7 @@ export function StudentForm() {
         {/* Date of Birth & Email */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-medium text-slate-700">
               Date of Birth
             </label>
             <input
@@ -217,12 +224,12 @@ export function StudentForm() {
               required
               value={formData.dateOfBirth}
               onChange={handleChange}
-              className="w-full h-11 input-clean px-3.5 text-slate-900 cursor-pointer"
+              className="w-full h-10.5 input-tech-light rounded-lg px-3 text-sm text-slate-900 cursor-pointer"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="block text-xs font-semibold text-slate-700">
+            <label className="block text-xs font-medium text-slate-700">
               Delivery Email Address
             </label>
             <input
@@ -234,17 +241,17 @@ export function StudentForm() {
               value={formData.email}
               onChange={handleChange}
               placeholder="name@gmail.com"
-              className="w-full h-11 input-clean px-3.5"
+              className="w-full h-10.5 input-tech-light rounded-lg px-3 text-sm placeholder-slate-400"
             />
           </div>
         </div>
 
         {/* WhatsApp Number (Compulsory for support & clarification) */}
         <div className="space-y-1">
-          <label className="block text-xs font-semibold text-slate-700 flex items-center justify-between">
-            <span>WhatsApp Phone Number</span>
-            <span className="text-[10px] text-slate-400 font-normal">
-              For order support
+          <label className="block text-xs font-medium text-slate-700 flex items-center justify-between">
+            <span>WhatsApp Number</span>
+            <span className="text-[10px] text-amber-700 font-semibold bg-amber-50 px-1.5 py-0.5 rounded">
+              Required for Support
             </span>
           </label>
           <input
@@ -255,12 +262,12 @@ export function StudentForm() {
             value={formData.whatsappNumber}
             onChange={handleChange}
             placeholder="054 123 4567"
-            className="w-full h-11 input-clean px-3.5 font-mono"
+            className="w-full h-10.5 input-tech-light rounded-lg px-3 text-sm placeholder-slate-400 font-mono"
           />
         </div>
 
         {/* Transparent Fee Summary Box */}
-        <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1 text-xs">
+        <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1 text-xs">
           <div className="flex justify-between text-slate-600">
             <span>Official WAEC Voucher PIN:</span>
             <span className="font-mono font-semibold">GH₵25.00</span>
@@ -271,7 +278,7 @@ export function StudentForm() {
           </div>
           <div className="pt-1.5 border-t border-slate-200 flex justify-between font-bold text-slate-900">
             <span>Total Payable:</span>
-            <span className="font-mono text-red-600 text-sm font-extrabold">GH₵30.00</span>
+            <span className="font-mono text-red-600 text-sm">GH₵30.00</span>
           </div>
         </div>
 
@@ -279,7 +286,7 @@ export function StudentForm() {
         <div className="pt-1">
           <button
             type="submit"
-            className="w-full h-12 btn-brand flex items-center justify-center gap-2 text-sm cursor-pointer shadow-sm"
+            className="w-full h-12 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm transition-all cursor-pointer shadow-sm"
           >
             <span>Review &amp; Pay (GH₵30.00)</span>
             <ArrowRight className="w-4 h-4" />
@@ -352,7 +359,7 @@ export function StudentForm() {
                 type="button"
                 disabled={loading}
                 onClick={handleConfirmAndPay}
-                className="w-full h-11 btn-brand flex items-center justify-center gap-2 text-xs transition-all cursor-pointer shadow-sm disabled:opacity-70"
+                className="w-full h-11 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-xs transition-all cursor-pointer shadow-sm disabled:opacity-70"
               >
                 {loading ? (
                   <>
