@@ -1,6 +1,7 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 import "./globals.css";
 
 const inter = Inter({
@@ -65,6 +66,9 @@ export default function RootLayout({
         <ClerkProvider>
           {children}
         </ClerkProvider>
+
+        {/* 1-Tap PWA Install & Notification Banner */}
+        <PwaInstallPrompt />
 
         {/* Service Worker Auto-Registration for PWA & Push Notifications */}
         <script
