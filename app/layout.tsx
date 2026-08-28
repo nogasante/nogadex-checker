@@ -28,13 +28,23 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Nogadex WAEC",
   },
+  alternates: {
+    canonical: "https://nogadexconsults.app",
+  },
+  category: "education",
   keywords: [
     "WAEC Result Checker Ghana",
     "WASSCE Result 2025",
-    "NOVDEC Result Checker",
-    "BECE Result Checker",
-    "Nogadex Consults",
-    "WAEC PDF Delivery",
+    "Buy WASSCE Result Checker with MoMo",
+    "Download WAEC Result Slip PDF",
+    "NOVDEC Result Checker Ghana",
+    "BECE Results Checker 2025",
+    "Check WAEC Result on Phone Ghana",
+    "Nogadex Consults WAEC",
+    "WAEC PDF Delivery Service",
+    "ghana waecdirect org checker",
+    "MTN MoMo WAEC checker voucher",
+    "Telecel Cash WAEC result checker",
   ],
   openGraph: {
     title: "WAEC Result Checker & Printable PDF Delivery | Nogadex Consults",
@@ -81,6 +91,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/logo.png" />
         <link rel="apple-touch-icon" href="/logo.png" />
+        {/* AEO & SEO Structured Data Graph (Schema.org) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -88,18 +99,72 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@graph": [
                 {
+                  "@type": "Organization",
+                  "@id": "https://nogadexconsults.app/#organization",
+                  "name": "Nogadex Consults",
+                  "url": "https://nogadexconsults.app",
+                  "logo": "https://nogadexconsults.app/logo.png",
+                  "description":
+                    "Ghana's premier educational verification service providing official WAEC result checking and printable PDF result slip delivery.",
+                  "areaServed": "Ghana",
+                  "contactPoint": {
+                    "@type": "ContactPoint",
+                    "telephone": "+233593000000",
+                    "contactType": "customer service",
+                    "availableLanguage": ["English", "Twi"],
+                  },
+                },
+                {
                   "@type": "WebApplication",
+                  "@id": "https://nogadexconsults.app/#webapp",
                   "name": "Nogadex Consults WAEC Result Checker",
                   "url": "https://nogadexconsults.app",
                   "applicationCategory": "EducationalApplication",
                   "operatingSystem": "All",
                   "offers": {
-                    "@type": "Offer",
-                    "price": "30.00",
+                    "@type": "AggregateOffer",
+                    "lowPrice": "18.00",
+                    "highPrice": "30.00",
                     "priceCurrency": "GHS",
                   },
                   "description":
                     "Fast, secure WAEC result checking and printable PDF result slip delivery service in Ghana.",
+                },
+                {
+                  "@type": "Service",
+                  "@id": "https://nogadexconsults.app/#service",
+                  "name": "WAEC Result Checking & Printable PDF Delivery",
+                  "provider": { "@id": "https://nogadexconsults.app/#organization" },
+                  "areaServed": "Ghana",
+                  "serviceType": "Educational Document Delivery",
+                  "description":
+                    "Complete verification of WASSCE, NOVDEC, BECE results on ghana.waecdirect.org with automated PDF slip delivery to email and mobile phone.",
+                },
+                {
+                  "@type": "HowTo",
+                  "name": "How to Check Your WAEC Result and Get a Printable PDF Slip in Ghana",
+                  "description":
+                    "Step-by-step guide to checking WASSCE, NOVDEC, or BECE results online and receiving an official printable PDF result slip on your phone.",
+                  "step": [
+                    {
+                      "@type": "HowToStep",
+                      "name": "Enter Candidate Information",
+                      "text":
+                        "Visit nogadexconsults.app and enter your 10-digit WAEC Index Number, select your Exam Type (WASSCE, NOVDEC, BECE), Exam Year, and Date of Birth.",
+                    },
+                    {
+                      "@type": "HowToStep",
+                      "name": "Pay Securely via Mobile Money",
+                      "text":
+                        "Select Mobile Money (MTN MoMo, Telecel Cash, AT Money) or Card, enter your phone number, and approve the payment prompt.",
+                    },
+                    {
+                      "@type": "HowToStep",
+                      "name": "Receive and Download Your Result Slip PDF",
+                      "text":
+                        "Your official printable WAEC result slip PDF is generated, verified, and sent directly to your email and tracking screen ready for printing.",
+                    },
+                  ],
                 },
                 {
                   "@type": "FAQPage",
@@ -120,6 +185,24 @@ export default function RootLayout({
                         "@type": "Answer",
                         "text":
                           "Yes, Nogadex Consults supports instant Mobile Money payments across all Ghanaian networks including MTN MoMo, Telecel Cash, AT Money, and Visa/Mastercard.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "How do I download my WAEC result slip as a PDF without going to a cyber cafe?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text":
+                          "Nogadex Consults automatically converts and formats your official WAEC grade breakdown into a high-resolution, printable PDF slip delivered straight to your email inbox and available for 1-tap download on your smartphone.",
+                      },
+                    },
+                    {
+                      "@type": "Question",
+                      "name": "What if the WAEC portal is down or slow on release day?",
+                      "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text":
+                          "Nogadex Consults queues your request securely. Our automated system monitors the WAEC portal and retrieves your result the instant servers respond, delivering your PDF without you having to repeatedly refresh a crashing website.",
                       },
                     },
                   ],
