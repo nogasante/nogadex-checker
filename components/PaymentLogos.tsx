@@ -20,7 +20,7 @@ export function MtnMomoLogo({ className = "h-6 w-auto" }: { className?: string }
       <text
         x="32"
         y="25.5"
-        fontFamily="system-ui, -apple-system, sans-serif"
+        fontFamily="Arial, Helvetica, sans-serif"
         fontWeight="900"
         fontStyle="italic"
         fontSize="12.5"
@@ -32,10 +32,10 @@ export function MtnMomoLogo({ className = "h-6 w-auto" }: { className?: string }
       </text>
       {/* MoMo text */}
       <text
-        x="63"
+        x="64"
         y="27"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        fontWeight="800"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fontWeight="900"
         fontSize="15"
         fill="#000000"
         letterSpacing="-0.3"
@@ -65,8 +65,8 @@ export function TelecelLogo({ className = "h-6 w-auto" }: { className?: string }
       <text
         x="76"
         y="26.5"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        fontWeight="700"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fontWeight="800"
         fontSize="14.5"
         fill="#FFFFFF"
         textAnchor="middle"
@@ -102,8 +102,8 @@ export function AtMoneyLogo({ className = "h-6 w-auto" }: { className?: string }
       <text
         x="77"
         y="26.5"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        fontWeight="700"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fontWeight="800"
         fontSize="14"
         fill="#FFFFFF"
         letterSpacing="-0.3"
@@ -126,16 +126,24 @@ export function CardLogos({ className = "h-6 w-auto" }: { className?: string }) 
     >
       <rect width="130" height="42" rx="7" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1" />
       {/* Visa Wordmark */}
-      <path
-        d="M23.5 28L26.5 14H30.5L27.5 28H23.5ZM41 14.3C40.2 14 39 13.7 37.5 13.7C33.7 13.7 31 15.7 31 18.5C31 20.6 32.9 21.8 34.3 22.5C35.8 23.2 36.3 23.7 36.3 24.4C36.3 25.4 35.1 25.9 33.9 25.9C32.4 25.9 31.5 25.6 30.2 25L29.7 24.8L29.1 27.5C30 27.9 31.7 28.3 33.5 28.3C37.6 28.3 40.3 26.3 40.3 23.3C40.3 21.7 39.3 20.4 37.1 19.3C35.8 18.7 35 18.2 35 17.5C35 16.9 35.7 16.2 37.2 16.2C38.4 16.2 39.4 16.5 40.2 16.8L40.6 17L41 14.3Z"
+      <text
+        x="28"
+        y="26.5"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fontWeight="900"
+        fontStyle="italic"
+        fontSize="16"
         fill="#1434CB"
-      />
-      <line x1="52" y1="11" x2="52" y2="31" stroke="#E2E8F0" strokeWidth="1" />
+        textAnchor="middle"
+      >
+        VISA
+      </text>
+      <line x1="56" y1="10" x2="56" y2="32" stroke="#E2E8F0" strokeWidth="1" />
       {/* Mastercard Interlocking Circles */}
-      <circle cx="75" cy="21" r="10" fill="#EB001B" />
-      <circle cx="89" cy="21" r="10" fill="#F79E1B" fillOpacity="0.9" />
+      <circle cx="78" cy="21" r="9.5" fill="#EB001B" />
+      <circle cx="92" cy="21" r="9.5" fill="#F79E1B" fillOpacity="0.9" />
       <path
-        d="M82 14.7C80.3 16.3 79.2 18.5 79.2 21C79.2 23.5 80.3 25.7 82 27.3C83.7 25.7 84.8 23.5 84.8 21C84.8 18.5 83.7 16.3 82 14.7Z"
+        d="M85 15C83.4 16.5 82.4 18.6 82.4 21C82.4 23.4 83.4 25.5 85 27C86.6 25.5 87.6 23.4 87.6 21C87.6 18.6 86.6 16.5 85 15Z"
         fill="#FF5F00"
       />
     </svg>
