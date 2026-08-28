@@ -19,11 +19,13 @@ import {
   X,
   Loader2,
   MessageCircle,
+  ShoppingCart,
 } from "lucide-react";
 import {
   formatCandidateSummary,
   generateWaecAutofillScript,
   WAEC_GHANA_PORTAL_URL,
+  DATAPLUG_CHECKER_STORE_URL,
 } from "@/lib/waec-assistant";
 
 interface RequestDetail {
@@ -297,7 +299,7 @@ export default function RequestDetailPage({
         </div>
       )}
 
-      {/* Operations Control Bar (The 4 Workflow Steps) */}
+      {/* Operations Control Bar */}
       <div className="p-3.5 sm:p-5 rounded-2xl surface-card space-y-3">
         <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
           Processing Actions Workflow
@@ -667,22 +669,35 @@ export default function RequestDetailPage({
               </button>
             </div>
 
-            {/* Step 1 */}
-            <div className="space-y-1.5">
+            {/* Step 1: Open WAEC & DataPlug */}
+            <div className="space-y-2">
               <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-                Step 1: Open Official WAEC Portal
+                Step 1: Check Result &amp; Stock Vouchers
               </h4>
-              <a
-                href={WAEC_GHANA_PORTAL_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white transition-colors"
-              >
-                <ExternalLink className="w-4 h-4" /> Open ghana.waecdirect.org
-              </a>
+              <div className="flex flex-wrap gap-2">
+                <a
+                  href={WAEC_GHANA_PORTAL_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Open ghana.waecdirect.org</span>
+                </a>
+
+                <a
+                  href={DATAPLUG_CHECKER_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 transition-colors"
+                >
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  <span>Buy Vouchers (DataPlug Ghana)</span>
+                </a>
+              </div>
             </div>
 
-            {/* Step 2 */}
+            {/* Step 2: Quick Copy Fields */}
             <div className="space-y-1.5">
               <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
                 Step 2: Candidate Quick-Copy Fields
@@ -730,7 +745,7 @@ export default function RequestDetailPage({
               </div>
             </div>
 
-            {/* Step 3 */}
+            {/* Step 3: Browser Console Autofill Snippet */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1">

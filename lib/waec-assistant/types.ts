@@ -24,3 +24,4 @@ export interface WaecPortalFieldMapping {
 }
 
 export const WAEC_GHANA_PORTAL_URL = "https://ghana.waecdirect.org/";
+export const DATAPLUG_CHECKER_STORE_URL = "https://dataplug-gh.com/pay/nogadex-consults-e8c92a30";
