@@ -12,13 +12,47 @@ import { WaecCandidateDetails, WAEC_GHANA_PORTAL_URL } from "./types";
  */
 export function mapExamTypeToWaecValue(examType: string): string {
   const norm = (examType || "").toUpperCase();
-  if (norm.includes("NOVDEC") || norm.includes("PRIVATE") || norm.includes("PVT")) return "08";
   if (norm.includes("BECE") && (norm.includes("PVT") || norm.includes("PRIVATE"))) return "09";
   if (norm.includes("BECE")) return "07";
+  if (norm.includes("NOVDEC") || norm.includes("PRIVATE") || norm.includes("PVT")) return "08";
   if (norm.includes("GBCE")) return "03";
   if (norm.includes("ABCE")) return "05";
   if (norm.includes("SSSCE")) return "00";
   return "01"; // Default WASSCE (School)
+}
+
+/**
+ * Smart Parser to extract PIN and Serial from any SMS, receipt, or WhatsApp text
+ */
+export function parseVoucherText(raw: string): { pin?: string; serial?: string } {
+  if (!raw) return {};
+  const clean = raw.replace(/\r/g, "\n");
+  let pin: string | undefined;
+  let serial: string | undefined;
+
+  // 1. Explicit PIN match
+  const explicitPin = clean.match(/pin(?:\s*code|\s*no\.?)?[:\s\-=]+([0-9]{10,14})/i);
+  if (explicitPin) {
+    pin = explicitPin[1];
+  } else {
+    const pinMatches = clean.match(/\b\d{10,14}\b/g);
+    if (pinMatches && pinMatches.length > 0) {
+      pin = pinMatches[0];
+    }
+  }
+
+  // 2. Explicit Serial match
+  const explicitSerial = clean.match(/serial(?:\s*number|\s*no\.?)?[:\s\-=]+([A-Za-z0-9\-_]{6,20})/i);
+  if (explicitSerial) {
+    serial = explicitSerial[1];
+  } else {
+    const autoSerial = clean.match(/\b([A-Za-z]{2,5}\d{5,14})\b/i);
+    if (autoSerial) {
+      serial = autoSerial[1];
+    }
+  }
+
+  return { pin, serial };
 }
 
 /**
