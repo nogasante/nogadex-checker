@@ -15,7 +15,8 @@ import {
   ArrowLeft,
   Download,
   MessageCircle,
-  CreditCard,
+  Bell,
+  BellRing,
 } from "lucide-react";
 
 interface RequestData {
@@ -45,9 +46,16 @@ function StatusContent({ requestId }: { requestId: string }) {
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
   const [paymentNotice, setPaymentNotice] = useState("");
+  const [notifPermission, setNotifPermission] = useState<string>("default");
 
   const supportNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233534908166";
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setNotifPermission(Notification.permission);
+    }
+  }, []);
 
   const fetchStatus = async () => {
     try {
@@ -62,7 +70,7 @@ function StatusContent({ requestId }: { requestId: string }) {
 
       setRequest(data.request);
 
-      // Only attempt verification if payment is currently pending
+      // Only attempt verification if payment is currently pending and a ref is in query
       if (data.request.paymentStatus === "PENDING" && refFromQuery) {
         verifyPayment(refFromQuery);
       }
@@ -94,7 +102,6 @@ function StatusContent({ requestId }: { requestId: string }) {
           setRequest(refreshedData.request);
         }
       } else {
-        // Payment was abandoned or cancelled
         setPaymentNotice(data.message || "Payment not received yet. If you cancelled the transaction, please complete payment below.");
       }
     } catch (err) {
@@ -116,6 +123,33 @@ function StatusContent({ requestId }: { requestId: string }) {
 
     return () => clearInterval(interval);
   }, [requestId]);
+
+  // Trigger native browser notification when order reaches COMPLETED
+  useEffect(() => {
+    if (request?.processingStatus === "COMPLETED" && notifPermission === "granted") {
+      try {
+        new Notification("🎓 WAEC Result Slip Ready!", {
+          body: `Official WAEC slip ready for ${request.fullName}. Tap to download your PDF.`,
+          icon: "/logo.png",
+        });
+      } catch (e) {
+        console.log("Notification note:", e);
+      }
+    }
+  }, [request?.processingStatus, notifPermission]);
+
+  const requestNotification = async () => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      const perm = await Notification.requestPermission();
+      setNotifPermission(perm);
+      if (perm === "granted") {
+        new Notification("🔔 Notifications Enabled", {
+          body: "We will alert you the moment your WAEC result slip is generated!",
+          icon: "/logo.png",
+        });
+      }
+    }
+  };
 
   const whatsappMessage = request
     ? `Hello Nogadex Consults, I am following up on my WAEC result request.\nName: ${request.fullName}\nIndex: ${request.indexNumber}\nExam: ${request.examType} (${request.examYear})\nRequest ID: #${request.requestId}`
@@ -197,6 +231,31 @@ function StatusContent({ requestId }: { requestId: string }) {
           </div>
         )}
 
+        {/* Notification Opt-in Prompt */}
+        {!isCompleted && notifPermission === "default" && (
+          <button
+            type="button"
+            onClick={requestNotification}
+            className="w-full p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 flex items-center justify-between transition-colors cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <Bell className="w-3.5 h-3.5 text-red-600 shrink-0" />
+              <span>Get instant phone alert when slip is ready</span>
+            </div>
+            <span className="text-[10px] text-red-600 font-bold uppercase tracking-wider bg-red-50 px-2 py-0.5 rounded-md border border-red-200/60">
+              Enable
+            </span>
+          </button>
+        )}
+
+        {/* Notification Enabled Badge */}
+        {!isCompleted && notifPermission === "granted" && (
+          <div className="px-3 py-2 rounded-xl bg-emerald-50/70 border border-emerald-200/60 text-emerald-800 text-[11px] font-medium flex items-center gap-2">
+            <BellRing className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span>Browser alerts active: We will notify you the moment your PDF is ready.</span>
+          </div>
+        )}
+
         {/* Live Status Summary Card */}
         {request && (
           <div
@@ -238,7 +297,7 @@ function StatusContent({ requestId }: { requestId: string }) {
                 ? "Payment was not completed. Your result cannot be processed until payment of GH₵30.00 is received."
                 : isPaid
                 ? "We received your payment and are currently retrieving your official grades from WAEC."
-                : "Payment has not been confirmed yet. If you were debited, click 'Verify Payment'. If you cancelled or closed the window, click 'Pay with MoMo / Card'."}
+                : "Payment has not been confirmed yet. If you were debited, click 'Verify Payment'. If you cancelled or closed the window, click 'Verify Payment' after paying."}
             </p>
           </div>
         )}
@@ -350,7 +409,7 @@ function StatusContent({ requestId }: { requestId: string }) {
           </div>
         )}
 
-        {/* PENDING STATE ACTIONS: Verify & Complete Payment */}
+        {/* PENDING STATE ACTIONS: Verify Payment */}
         {request && !isPaid && (
           <div className="pt-2 space-y-2.5">
             <button

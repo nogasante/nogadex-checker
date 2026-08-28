@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -9,10 +9,24 @@ const inter = Inter({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  themeColor: "#dc2626",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   title: "WAEC Result Checker & PDF Delivery | Nogadex Consults",
   description:
     "Check your WASSCE, NOVDEC, BECE, GBCE result and get a printable PDF slip emailed to you. GH₵30.",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Nogadex WAEC",
+  },
   keywords: [
     "WAEC Result Checker Ghana",
     "WASSCE Result 2025",
@@ -51,6 +65,21 @@ export default function RootLayout({
         <ClerkProvider>
           {children}
         </ClerkProvider>
+
+        {/* Service Worker Auto-Registration for PWA & Push Notifications */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').catch(function(err) {
+                    console.log('SW registration note:', err.message);
+                  });
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );
