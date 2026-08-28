@@ -9,9 +9,30 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { email, password } = AdminLoginSchema.parse(body);
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { email },
     });
+
+    const defaultInitialPassword = process.env.ADMIN_INITIAL_PASSWORD || "AdminPassword2026!";
+    const allowedAdmins = [
+      "admin@nogadex.com",
+      "nanasante2000@gmail.com",
+      "nogasante@st.knust.edu.gh",
+    ];
+
+    // If database is empty or user not yet seeded, auto-provision on first valid login
+    if (!user && allowedAdmins.includes(email.toLowerCase()) && password === defaultInitialPassword) {
+      const { hashPassword } = await import("@/lib/auth");
+      const passwordHash = await hashPassword(defaultInitialPassword);
+      user = await prisma.user.create({
+        data: {
+          email: email.toLowerCase(),
+          name: email.split("@")[0].toUpperCase(),
+          passwordHash,
+          role: "ADMIN",
+        },
+      });
+    }
 
     if (!user) {
       return NextResponse.json(

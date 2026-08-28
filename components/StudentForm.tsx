@@ -3,12 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Loader2, ArrowRight } from "lucide-react";
-import {
-  MtnMomoLogo,
-  TelecelLogo,
-  AtMoneyLogo,
-  CardLogos,
-} from "./PaymentLogos";
+import { PaymentChannelsBar } from "./PaymentLogos";
 
 const EXAM_OPTIONS = [
   { value: "WASSCE", label: "WASSCE (School)" },
@@ -270,13 +265,8 @@ export function StudentForm() {
           </button>
         </div>
 
-        {/* Official Payment Channels */}
-        <div className="flex items-center justify-center gap-2 pt-2">
-          <MtnMomoLogo className="h-6 w-auto shadow-2xs" />
-          <TelecelLogo className="h-6 w-auto shadow-2xs" />
-          <AtMoneyLogo className="h-6 w-auto shadow-2xs" />
-          <CardLogos className="h-6 w-auto shadow-2xs" />
-        </div>
+        {/* Official Ghanaian Telco & Card Payment Channels */}
+        <PaymentChannelsBar />
 
       </form>
     </div>
