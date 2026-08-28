@@ -1,23 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { StudentForm } from "./StudentForm";
-import { VoucherOnlyCard } from "./VoucherOnlyCard";
-import { TrackSlipModal } from "./TrackSlipModal";
+import { StudentForm } from "@/components/StudentForm";
+import { VoucherOnlyCard } from "@/components/VoucherOnlyCard";
+import { TrackSlipModal } from "@/components/TrackSlipModal";
 import {
-  FileText,
   KeyRound,
   Search,
-  GraduationCap,
   MessageCircle,
+  ShieldCheck,
+  CheckCircle2,
+  FileCheck,
+  Clock,
   ArrowRight,
-  ArrowUpRight,
   ExternalLink,
 } from "lucide-react";
 
 export function StudentPortalHub() {
-  const [activeModal, setActiveModal] = useState<"none" | "pdf_check" | "voucher_buy" | "track">("none");
-  const [trackIdInput, setTrackIdInput] = useState("");
+  const [showVoucherModal, setShowVoucherModal] = useState(false);
+  const [isTrackOpen, setIsTrackOpen] = useState(false);
+  const [trackQuery, setTrackQuery] = useState("");
 
   const whatsappNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233534908166";
@@ -26,206 +28,212 @@ export function StudentPortalHub() {
     "https://dataplug-gh.com/pay/nogadex-consults-e8c92a30";
 
   return (
-    <div className="space-y-8 sm:space-y-12">
+    <div className="space-y-8 max-w-5xl mx-auto">
       
-      {/* 1. CLEAN, HUMAN, AGENCY-GRADE HERO HEADER (Zero AI Pills / Zero Pulsing Dots) */}
-      <section className="space-y-2 pt-2 sm:pt-4 text-left">
-        <span className="text-xs font-bold uppercase tracking-wider text-red-600 block">
-          Nogadex Consults • Student Services
-        </span>
-        <h1 className="text-2xl sm:text-4xl font-heading font-extrabold text-slate-900 tracking-tight">
-          Select a Service
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-600 max-w-xl font-normal leading-relaxed">
-          Official WAEC result checking, voucher scratch card vending, order tracking, and university admission support for Ghanaian students.
-        </p>
-      </section>
-
-      {/* 2. PROFESSIONAL SERVICE LIST / CARDS (Dribbble Clean Agency Grid) */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Main 2-Column High-Trust Layout (Desktop) / Fluid Stack (Mobile) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Service 01: Result Checking & PDF Service (Primary) */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-5">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-slate-400">01</span>
-              <span className="text-sm font-extrabold text-slate-900 font-mono">GH₵30.00</span>
-            </div>
-            
-            <div className="space-y-1.5">
-              <h2 className="text-base sm:text-lg font-bold text-slate-900">
-                WAEC Result Check &amp; PDF Delivery
-              </h2>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                We check your WASSCE, BECE, or NOVDEC grades with an official scratch card voucher and email you a verified, high-resolution printable PDF certificate.
-              </p>
-            </div>
-
-            <div className="text-[11px] text-slate-500 font-medium pt-1">
-              Supports: WASSCE • NOVDEC • BECE • GBCE • ABCE
-            </div>
+        {/* Left Column: Direct Checkout Form (7 Cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          <div className="space-y-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-red-600">
+              Official WAEC Result Verification
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-slate-900 tracking-tight">
+              Check WAEC Result &amp; Get PDF
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Enter your candidate details below. We verify your grades with an official WAEC scratch card PIN and dispatch a high-resolution printable PDF certificate straight to your email.
+            </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setActiveModal("pdf_check")}
-            className="w-full h-11 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
-          >
-            <span>Check Result &amp; Get PDF</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          {/* Primary Form */}
+          <StudentForm />
         </div>
 
-        {/* Service 02: Buy Checker PIN Only */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-5">
-          <div className="space-y-3">
+        {/* Right Column: Other Services & Institutional Trust Dossier (5 Cols) */}
+        <div className="lg:col-span-5 space-y-4">
+          
+          {/* Quick Service A: Buy Voucher PIN Only */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-slate-400">02</span>
-              <span className="text-sm font-extrabold text-slate-900 font-mono">GH₵25.00</span>
-            </div>
-            
-            <div className="space-y-1.5">
-              <h2 className="text-base sm:text-lg font-bold text-slate-900">
-                Buy Voucher PIN Only (Checker)
-              </h2>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Buy an official WAEC Scratch Card Serial &amp; PIN with instant SMS and WhatsApp delivery to check your results yourself on the WAEC Ghana portal.
-              </p>
-            </div>
-
-            <div className="text-[11px] text-slate-500 font-medium pt-1">
-              Instant delivery • Valid for 3 checks across all exams
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setActiveModal("voucher_buy")}
-            className="w-full h-11 bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
-          >
-            <span>Buy Checker PIN</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Service 03: Track Result Slip */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-slate-400">03</span>
-              <span className="text-[11px] font-bold text-slate-500">TRACKING</span>
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="text-base font-bold text-slate-900">
-                Track Existing Result Slip
-              </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Already submitted a request? Enter your Request ID (e.g. <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-800">NGX-100234</code>) to check live status or re-download your PDF.
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setActiveModal("track")}
-            className="w-full h-11 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold rounded-xl border border-slate-300 flex items-center justify-center gap-2 transition-all cursor-pointer"
-          >
-            <Search className="w-4 h-4 text-slate-500" />
-            <span>Look Up Order Status</span>
-          </button>
-        </div>
-
-        {/* Service 04: Admission Guidance */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs hover:border-slate-300 transition-all flex flex-col justify-between space-y-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-slate-400">04</span>
-              <span className="text-[11px] font-bold text-emerald-700">ADVISORY</span>
-            </div>
-
-            <div className="space-y-1">
-              <h3 className="text-base font-bold text-slate-900">
-                University &amp; Polytechnic Admissions
-              </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Need guidance calculating your aggregate, picking cut-off courses, or filling out University (UG, KNUST, UCC) &amp; Polytechnic application forms?
-              </p>
-            </div>
-          </div>
-
-          <a
-            href={`https://wa.me/${whatsappNumber}?text=Hello%20Nogadex,%20I%20need%20assistance%20with%20my%20university%20admission%20form`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>Chat on WhatsApp</span>
-          </a>
-        </div>
-
-      </section>
-
-      {/* 3. PRACTICAL NEED-TO-KNOW NOTE */}
-      <section className="p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-2xs text-xs space-y-1.5">
-        <div className="font-bold text-slate-900">Important Information</div>
-        <p className="text-slate-600 leading-relaxed">
-          The delivered PDF results slip contains your full candidate details, subjects, grades, and serial numbers. It is formatted for direct upload to university and polytechnic application portals across Ghana.
-        </p>
-        <p className="text-slate-500 pt-0.5">
-          Need support? Reach our team on WhatsApp at <strong>+{whatsappNumber}</strong> or email <strong>results@results.nogadexconsults.app</strong>.
-        </p>
-      </section>
-
-      {/* 4. MODALS */}
-
-      {/* Modal A: Check Result & Get PDF */}
-      {activeModal === "pdf_check" && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-xl my-8 bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xl p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-red-600" />
-                <h3 className="text-sm font-bold text-slate-900">Check WAEC Result &amp; Get PDF</h3>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+                  <KeyRound className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-slate-900">Buy Checker PIN Only</h3>
+                  <p className="text-[11px] text-slate-500">Self-check on WAEC Ghana portal</p>
+                </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setActiveModal("none")}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition-colors cursor-pointer text-xs font-bold"
-              >
-                Close ✕
-              </button>
+              <span className="text-xs font-extrabold text-slate-900 font-mono">GH₵25.00</span>
             </div>
-            <StudentForm />
+
+            <p className="text-[11px] text-slate-600 leading-relaxed">
+              Need to check results yourself? Buy an authentic WAEC Scratch Card Serial &amp; PIN with instant SMS and WhatsApp delivery.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setShowVoucherModal(true)}
+              className="w-full h-9 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <span>Buy Checker PIN (GH₵25)</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Quick Service B: Track Existing Order Slip */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center">
+                <Search className="w-4 h-4" />
+              </div>
+              <div>
+                <h3 className="text-xs font-bold text-slate-900">Track Existing Order</h3>
+                <p className="text-[11px] text-slate-500">Check live status or re-download PDF</p>
+              </div>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setIsTrackOpen(true);
+              }}
+              className="flex gap-2"
+            >
+              <input
+                type="text"
+                value={trackQuery}
+                onChange={(e) => setTrackQuery(e.target.value)}
+                placeholder="e.g. NGX-100234"
+                className="flex-1 h-9 px-3 text-xs font-mono uppercase bg-slate-50 border border-slate-300 rounded-xl focus:border-red-600 focus:bg-white focus:outline-none transition-colors"
+              />
+              <button
+                type="submit"
+                className="h-9 px-3.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0"
+              >
+                Track
+              </button>
+            </form>
+          </div>
+
+          {/* Quick Service C: University Admission Desk */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                <h3 className="text-xs font-bold text-slate-900">Admission Guidance</h3>
+              </div>
+              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                FREE SUPPORT
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-600 leading-relaxed">
+              Need assistance calculating aggregate scores, checking course cut-off points, or filling out University &amp; Polytechnic admission forms?
+            </p>
+
+            <a
+              href={`https://wa.me/${whatsappNumber}?text=Hello%20Nogadex,%20I%20need%20assistance%20with%20my%20university%20admission%20form`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-800 transition-colors pt-1"
+            >
+              <span>Chat with counselor on WhatsApp</span>
+              <span>→</span>
+            </a>
+          </div>
+
+          {/* Institutional Trust Notes */}
+          <div className="p-4 bg-slate-100/70 border border-slate-200 rounded-2xl space-y-2 text-xs text-slate-700">
+            <div className="font-bold text-slate-900 flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-slate-800" />
+              <span>Service Guarantees</span>
+            </div>
+            <ul className="space-y-1.5 text-[11px] text-slate-600">
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span>100% Genuine, unused WAEC Scratch Card PINs.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span>Printable PDF results certificates suitable for all university portals.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                <span>Average delivery time: 2 to 5 minutes after payment.</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* 3-Step Lifecycle Process */}
+      <div className="border-t border-slate-200 pt-8 space-y-4">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 text-center">
+          How Result Checking Works
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+            <div className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
+              1
+            </div>
+            <div className="text-xs font-bold text-slate-900">Enter Details &amp; Pay</div>
+            <div className="text-[11px] text-slate-600 leading-relaxed">
+              Provide your WAEC Index Number, exam year, and delivery email. Pay GH₵30.00 securely via MTN MoMo, Telecel, AT, or Card.
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+            <div className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
+              2
+            </div>
+            <div className="text-xs font-bold text-slate-900">Official WAEC Check</div>
+            <div className="text-[11px] text-slate-600 leading-relaxed">
+              A genuine, unused WAEC scratch card PIN is assigned to your request and your grades are retrieved directly.
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-1.5">
+            <div className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-xs flex items-center justify-center">
+              3
+            </div>
+            <div className="text-xs font-bold text-slate-900">Instant PDF Delivery</div>
+            <div className="text-[11px] text-slate-600 leading-relaxed">
+              A high-resolution PDF results certificate is generated and sent to your email, ready for university application portals.
+            </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Modal B: Buy Voucher PIN Only */}
-      {activeModal === "voucher_buy" && (
+      {/* Modals */}
+      <TrackSlipModal isOpen={isTrackOpen} onClose={() => setIsTrackOpen(false)} />
+
+      {/* Buy Voucher PIN Only Modal */}
+      {showVoucherModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xl p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl p-5 space-y-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <KeyRound className="w-5 h-5 text-slate-900" />
+                <KeyRound className="w-4 h-4 text-slate-900" />
                 <h3 className="text-sm font-bold text-slate-900">Buy WAEC Scratch Card PIN</h3>
               </div>
               <button
                 type="button"
-                onClick={() => setActiveModal("none")}
+                onClick={() => setShowVoucherModal(false)}
                 className="p-1 text-slate-400 hover:text-slate-600 rounded-lg transition-colors cursor-pointer text-xs font-bold"
               >
                 Close ✕
               </button>
             </div>
-            <VoucherOnlyCard onSwitchToPdf={() => setActiveModal("pdf_check")} />
+            <VoucherOnlyCard onSwitchToPdf={() => setShowVoucherModal(false)} />
           </div>
         </div>
       )}
-
-      {/* Modal C: Track Slip */}
-      <TrackSlipModal isOpen={activeModal === "track"} onClose={() => setActiveModal("none")} />
 
     </div>
   );
