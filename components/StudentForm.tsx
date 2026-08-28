@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Loader2, ArrowRight } from "lucide-react";
+import { AlertCircle, Loader2, ArrowRight, ShieldCheck, CheckCircle } from "lucide-react";
 import { PaymentChannelsBar } from "./PaymentLogos";
 
 const EXAM_OPTIONS = [
@@ -103,9 +103,13 @@ export function StudentForm() {
       
       {/* Examination Selector */}
       <div className="space-y-1.5">
-        <label className="block text-xs font-semibold text-slate-700">
-          Examination
-        </label>
+        <div className="flex items-center justify-between">
+          <label className="block text-xs font-bold text-slate-900">
+            1. Select Examination
+          </label>
+          <span className="text-[10px] text-slate-400 font-medium">All Ghana Exams</span>
+        </div>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-xl">
           {EXAM_OPTIONS.map((t) => {
             const isSelected =
@@ -116,9 +120,9 @@ export function StudentForm() {
                 type="button"
                 key={t.value}
                 onClick={() => handleExamTypeSelect(t.value)}
-                className={`py-2 px-2.5 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
+                className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all cursor-pointer text-center select-none ${
                   isSelected
-                    ? "bg-white text-slate-900 shadow-xs font-bold"
+                    ? "bg-white text-slate-900 shadow-xs font-bold ring-1 ring-slate-950/5"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
@@ -140,6 +144,10 @@ export function StudentForm() {
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-3.5">
         
+        <div className="text-xs font-bold text-slate-900 pt-1">
+          2. Candidate &amp; Delivery Details
+        </div>
+
         {/* Full Name */}
         <div className="space-y-1">
           <label className="block text-xs font-medium text-slate-700">
@@ -170,7 +178,7 @@ export function StudentForm() {
               value={formData.indexNumber}
               onChange={handleChange}
               placeholder="10-digit number"
-              className="w-full h-10.5 input-tech-light rounded-lg px-3 text-sm placeholder-slate-400 font-mono"
+              className="w-full h-10.5 input-tech-light rounded-lg px-3 text-sm placeholder-slate-400 font-mono tracking-wider"
             />
           </div>
 
@@ -244,12 +252,28 @@ export function StudentForm() {
           />
         </div>
 
+        {/* Transparent Fee Summary Box */}
+        <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1 text-xs">
+          <div className="flex justify-between text-slate-600">
+            <span>Official WAEC Voucher PIN:</span>
+            <span className="font-mono font-semibold">GH₵25.00</span>
+          </div>
+          <div className="flex justify-between text-slate-600">
+            <span>High-Res PDF &amp; Email Delivery:</span>
+            <span className="font-mono font-semibold">GH₵5.00</span>
+          </div>
+          <div className="pt-1.5 border-t border-slate-200 flex justify-between font-bold text-slate-900">
+            <span>Total Payable:</span>
+            <span className="font-mono text-red-600 text-sm">GH₵30.00</span>
+          </div>
+        </div>
+
         {/* Submit Button */}
-        <div className="pt-2">
+        <div className="pt-1">
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-11.5 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed shadow-sm"
+            className="w-full h-12 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm transition-all cursor-pointer disabled:opacity-60 shadow-sm"
           >
             {loading ? (
               <>
@@ -258,14 +282,14 @@ export function StudentForm() {
               </>
             ) : (
               <>
-                <span>Check Result — GH₵30.00</span>
+                <span>Proceed to Payment (GH₵30.00)</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
         </div>
 
-        {/* Official Ghanaian Telco & Card Payment Channels */}
+        {/* Official Ghanaian Telco & Card Badges */}
         <PaymentChannelsBar />
 
       </form>

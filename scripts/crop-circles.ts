@@ -35,7 +35,6 @@ async function cropCircles() {
       canvas.width = size;
       canvas.height = size;
       const ctx = canvas.getContext("2d");
-      // Create circular clipping path
       ctx.beginPath();
       ctx.arc(r, r, r, 0, Math.PI * 2);
       ctx.closePath();
@@ -43,23 +42,20 @@ async function cropCircles() {
       ctx.drawImage(img, cx - r, cy - r, size, size, 0, 0, size, size);
     }
 
-    // MTN: top-left circle
     crop("cMtn", w * 0.278, h * 0.208, h * 0.175);
-    // Telecel: center circle
     crop("cTelecel", w * 0.500, h * 0.510, h * 0.175);
-    // AT: bottom-right circle
     crop("cAt", w * 0.722, h * 0.812, h * 0.175);
   `);
 
-  const mtnData = await page.evaluate(
+  const mtnData = (await page.evaluate(
     `document.getElementById("cMtn").toDataURL("image/png")`
-  );
-  const telecelData = await page.evaluate(
+  )) as string;
+  const telecelData = (await page.evaluate(
     `document.getElementById("cTelecel").toDataURL("image/png")`
-  );
-  const atData = await page.evaluate(
+  )) as string;
+  const atData = (await page.evaluate(
     `document.getElementById("cAt").toDataURL("image/png")`
-  );
+  )) as string;
 
   const outDir = path.resolve("public/payments");
   if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
