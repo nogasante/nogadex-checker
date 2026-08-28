@@ -9,6 +9,7 @@ import {
   Filter,
   SlidersHorizontal,
   ChevronDown,
+  Trash2,
 } from "lucide-react";
 
 interface RequestItem {
@@ -130,6 +131,28 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handlePurgeAllOrders = async () => {
+    if (!window.confirm("Are you sure you want to clear all test orders and reset the database to a fresh state?")) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const res = await fetch("/api/admin/requests", { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message);
+        fetchStats();
+        fetchRequests();
+      } else {
+        alert(data.error || "Failed to clear data.");
+      }
+    } catch (e) {
+      alert("Error clearing data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
@@ -143,17 +166,29 @@ export default function AdminDashboardPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            fetchStats();
-            fetchRequests();
-          }}
-          disabled={loading}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white/[0.05] hover:bg-white/10 border border-white/[0.08] text-slate-200 transition-colors cursor-pointer"
-        >
-          <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
-          <span className="hidden sm:inline">Refresh</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handlePurgeAllOrders}
+            disabled={loading}
+            title="Purge test records and reset queue"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-red-600/10 hover:bg-red-600/20 border border-red-500/20 text-red-400 hover:text-red-300 transition-colors cursor-pointer"
+          >
+            <Trash2 className="w-3 h-3" />
+            <span className="hidden sm:inline">Reset Queue</span>
+          </button>
+
+          <button
+            onClick={() => {
+              fetchStats();
+              fetchRequests();
+            }}
+            disabled={loading}
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white/[0.05] hover:bg-white/10 border border-white/[0.08] text-slate-200 transition-colors cursor-pointer"
+          >
+            <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
+          </button>
+        </div>
       </div>
 
       {/* Sleek, Compact KPI Metrics */}

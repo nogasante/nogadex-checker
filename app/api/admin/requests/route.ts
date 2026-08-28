@@ -67,3 +67,24 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  const session = await getAdminSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const deletedLogs = await prisma.auditLog.deleteMany({});
+    const deletedRequests = await prisma.resultRequest.deleteMany({});
+
+    return NextResponse.json({
+      success: true,
+      message: `Cleared ${deletedRequests.count} orders and ${deletedLogs.count} audit logs. Fresh slate ready.`,
+    });
+  } catch (error: unknown) {
+    console.error("Purge requests error:", error);
+    const msg = error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+}
