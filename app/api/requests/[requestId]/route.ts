@@ -8,6 +8,13 @@ export async function GET(
   try {
     const { requestId } = await params;
 
+    if (!requestId || requestId.length < 3) {
+      return NextResponse.json(
+        { success: false, error: "Invalid Request ID provided." },
+        { status: 400 }
+      );
+    }
+
     const request = await prisma.resultRequest.findUnique({
       where: { requestId },
       select: {
@@ -31,7 +38,7 @@ export async function GET(
 
     if (!request) {
       return NextResponse.json(
-        { error: "Request not found" },
+        { success: false, error: `No order found matching Request ID "${requestId}". Please verify the ID and try again.` },
         { status: 404 }
       );
     }
@@ -39,7 +46,9 @@ export async function GET(
     return NextResponse.json({ success: true, request });
   } catch (error: unknown) {
     console.error("Fetch request status error:", error);
-    const msg = error instanceof Error ? error.message : "Internal server error";
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: "Unable to retrieve order details at this moment. Please try again shortly." },
+      { status: 500 }
+    );
   }
 }

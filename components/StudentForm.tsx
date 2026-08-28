@@ -3,42 +3,40 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Loader2, X, AlertTriangle } from "lucide-react";
+import { PaymentChannelsBar } from "./PaymentLogos";
+import { CloudflareTurnstile } from "./CloudflareTurnstile";
+import { LegalModal } from "./LegalModal";
+import { CustomDropdown } from "./CustomDropdown";
+import { DateOfBirthSelector } from "./DateOfBirthSelector";
 
 const EXAM_OPTIONS = [
-  { value: "WASSCE", label: "WASSCE" },
-  { value: "NOVDEC", label: "NOVDEC" },
-  { value: "BECE", label: "BECE" },
-  { value: "BECE_PVT", label: "BECE (Pvt)" },
-  { value: "GBCE", label: "GBCE" },
-  { value: "ABCE", label: "ABCE" },
+  { value: "WASSCE", label: "WASSCE (May/June)" },
+  { value: "NOVDEC", label: "NOVDEC (Nov/Dec Pvt)" },
+  { value: "BECE", label: "BECE (School)" },
+  { value: "BECE_PVT", label: "BECE (Private)" },
+  { value: "GBCE", label: "GBCE (General Business)" },
+  { value: "ABCE", label: "ABCE (Advanced Business)" },
 ];
 
-const EXAM_YEARS = [
-  { value: "2026", label: "2026" },
-  { value: "2025", label: "2025" },
-  { value: "2024", label: "2024" },
-  { value: "2023", label: "2023" },
-  { value: "2022", label: "2022" },
-  { value: "2021", label: "2021" },
-  { value: "2020", label: "2020" },
-  { value: "2019", label: "2019" },
-  { value: "2018", label: "2018" },
-  { value: "2017", label: "2017" },
-  { value: "2016", label: "2016" },
-  { value: "2015", label: "2015" },
-  { value: "2010", label: "2010 & older" },
-];
+// Generate every individual year from 2026 down to 1990
+const EXAM_YEARS = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => {
+  const y = (2026 - i).toString();
+  return { value: y, label: y };
+});
 
 export function StudentForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [legalModalType, setLegalModalType] = useState<"terms" | "privacy" | "refund" | null>(null);
 
   const [formData, setFormData] = useState({
     fullName: "",
     indexNumber: "",
-    dateOfBirth: "",
+    dateOfBirth: "2006-05-15",
     examType: "WASSCE",
     examYear: "2025",
     email: "",
@@ -48,16 +46,19 @@ export function StudentForm() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
+    let value = e.target.value;
+
+    // Strict numeric enforcement: block alphabets and symbols
+    if (e.target.name === "indexNumber") {
+      value = value.replace(/\D/g, "").slice(0, 10);
+    } else if (e.target.name === "whatsappNumber") {
+      value = value.replace(/[^\d+]/g, "").slice(0, 15);
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [e.target.name]: value,
     }));
-    if (errorMessage) setErrorMessage("");
-  };
-
-  const handleExamTypeSelect = (typeValue: string) => {
-    const backendType = typeValue === "BECE_PVT" ? "BECE" : typeValue;
-    setFormData((prev) => ({ ...prev, examType: backendType }));
     if (errorMessage) setErrorMessage("");
   };
 
@@ -69,8 +70,8 @@ export function StudentForm() {
       setErrorMessage("Enter your full name as registered for the exam.");
       return;
     }
-    if (!formData.indexNumber.trim() || formData.indexNumber.length < 6) {
-      setErrorMessage("Enter a valid WAEC index number.");
+    if (!formData.indexNumber.trim() || formData.indexNumber.length < 10) {
+      setErrorMessage("Please enter your complete 10-digit WAEC index number.");
       return;
     }
     if (!formData.dateOfBirth) {
@@ -85,6 +86,14 @@ export function StudentForm() {
       setErrorMessage("Enter a valid WhatsApp number.");
       return;
     }
+    if (!turnstileToken) {
+      setErrorMessage("Please complete the Cloudflare security verification.");
+      return;
+    }
+    if (!agreedToTerms) {
+      setErrorMessage("You must accept the Terms of Service and Privacy Policy.");
+      return;
+    }
 
     setShowConfirmModal(true);
   };
@@ -97,7 +106,10 @@ export function StudentForm() {
       const res = await fetch("/api/payments/initialize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          turnstileToken,
+        }),
       });
 
       const data = await res.json();
@@ -130,85 +142,71 @@ export function StudentForm() {
         </div>
       )}
 
-      <form onSubmit={handlePreSubmit} className="space-y-8">
+      <form onSubmit={handlePreSubmit} className="space-y-6">
         
-        {/* ── Examination ── */}
+        {/* ── Examination Details ── */}
         <div className="space-y-3">
-          <label className="block text-[13px] font-medium text-gray-500">
-            Examination
+          <label className="block text-[13px] font-medium text-slate-700">
+            Examination Details
           </label>
 
-          {/* Segmented control */}
-          <div className="grid grid-cols-3 gap-1 p-1 bg-gray-100 rounded-lg">
-            {EXAM_OPTIONS.map((t) => {
-              const isSelected =
-                formData.examType === t.value ||
-                (t.value === "BECE_PVT" && formData.examType === "BECE_PVT");
-              return (
-                <button
-                  type="button"
-                  key={t.value}
-                  onClick={() => handleExamTypeSelect(t.value)}
-                  className={`py-2 rounded-md text-[13px] font-medium transition-all cursor-pointer text-center select-none ${
-                    isSelected
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            
+            {/* Exam Type Custom Dropdown */}
+            <CustomDropdown
+              label="Exam Type"
+              options={EXAM_OPTIONS}
+              value={formData.examType}
+              onChange={(val) => {
+                const backendType = val === "BECE_PVT" ? "BECE" : val;
+                setFormData((prev) => ({ ...prev, examType: backendType }));
+                if (errorMessage) setErrorMessage("");
+              }}
+            />
 
-          {/* Year + Index */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-700">
-                Year
-              </label>
-              <select
-                name="examYear"
-                value={formData.examYear}
-                onChange={handleChange}
-                className="w-full h-11 input-clean px-3 cursor-pointer"
-              >
-                {EXAM_YEARS.map((y) => (
-                  <option key={y.value} value={y.value}>
-                    {y.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Exam Year Custom Dropdown */}
+            <CustomDropdown
+              label="Exam Year"
+              options={EXAM_YEARS}
+              value={formData.examYear}
+              onChange={(val) => {
+                setFormData((prev) => ({ ...prev, examYear: val }));
+                if (errorMessage) setErrorMessage("");
+              }}
+            />
 
-            <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-700">
-                Index number
+            {/* Index Number (Numbers Only) */}
+            <div className="space-y-1.5 col-span-2 sm:col-span-1">
+              <label className="block text-xs font-semibold text-slate-700">
+                Index Number (10 digits)
               </label>
               <input
                 type="text"
                 name="indexNumber"
                 inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={10}
                 required
                 value={formData.indexNumber}
                 onChange={handleChange}
-                placeholder="0123456789"
-                className="w-full h-11 input-clean px-3 font-mono tracking-wide"
+                placeholder="10 digit index number"
+                className="w-full h-11 input-clean px-3 font-mono tracking-wide text-xs"
               />
             </div>
+
           </div>
         </div>
 
-        {/* ── Your details ── */}
+        {/* ── Candidate Details ── */}
         <div className="space-y-3">
-          <label className="block text-[13px] font-medium text-gray-500">
-            Your details
+          <label className="block text-[13px] font-medium text-slate-700">
+            Candidate Identity
           </label>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-3">
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-700">
-                Full name
+              <label className="block text-xs font-semibold text-slate-700">
+                Full Name
               </label>
               <input
                 type="text"
@@ -217,38 +215,32 @@ export function StudentForm() {
                 value={formData.fullName}
                 onChange={handleChange}
                 placeholder="Kwabena Mensah"
-                className="w-full h-11 input-clean px-3"
+                className="w-full h-11 input-clean px-3 text-xs"
               />
-              <p className="text-[13px] text-gray-400">As registered on your exam slip</p>
+              <p className="text-[11px] text-slate-400">As registered on your exam slip</p>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-700">
-                Date of birth
-              </label>
-              <input
-                type="date"
-                name="dateOfBirth"
-                required
-                max="2016-12-31"
-                value={formData.dateOfBirth}
-                onChange={handleChange}
-                className="w-full h-11 input-clean px-3 cursor-pointer"
-              />
-            </div>
+            {/* Modern Custom Date of Birth Selector */}
+            <DateOfBirthSelector
+              value={formData.dateOfBirth}
+              onChange={(val) => {
+                setFormData((prev) => ({ ...prev, dateOfBirth: val }));
+                if (errorMessage) setErrorMessage("");
+              }}
+            />
           </div>
         </div>
 
-        {/* ── Delivery ── */}
+        {/* ── Delivery Channels ── */}
         <div className="space-y-3">
-          <label className="block text-[13px] font-medium text-gray-500">
-            Delivery
+          <label className="block text-[13px] font-medium text-slate-700">
+            PDF &amp; Confirmation Delivery
           </label>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-700">
-                Email address
+              <label className="block text-xs font-semibold text-slate-700">
+                Email Address
               </label>
               <input
                 type="email"
@@ -259,121 +251,171 @@ export function StudentForm() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@gmail.com"
-                className="w-full h-11 input-clean px-3"
+                className="w-full h-11 input-clean px-3 text-xs"
               />
-              <p className="text-[13px] text-gray-400">PDF will be sent here</p>
+              <p className="text-[11px] text-slate-400">PDF slip emailed here</p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-700">
-                WhatsApp number
+              <label className="block text-xs font-semibold text-slate-700">
+                WhatsApp Number
               </label>
               <input
                 type="tel"
                 name="whatsappNumber"
                 inputMode="tel"
+                maxLength={15}
                 required
                 value={formData.whatsappNumber}
                 onChange={handleChange}
                 placeholder="054 123 4567"
-                className="w-full h-11 input-clean px-3 font-mono"
+                className="w-full h-11 input-clean px-3 font-mono text-xs"
               />
-              <p className="text-[13px] text-gray-400">For order updates</p>
+              <p className="text-[11px] text-slate-400">For SMS/WhatsApp alerts</p>
             </div>
           </div>
         </div>
 
-        {/* ── Price ── */}
-        <div className="space-y-2 text-[14px]">
-          <div className="flex justify-between text-gray-500">
-            <span>WAEC voucher PIN</span>
-            <span className="tabular-nums">GH₵25.00</span>
+        {/* ── Official Cloudflare Turnstile Verification ── */}
+        <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-50 border border-slate-200/80">
+          <CloudflareTurnstile
+            onSuccess={(token) => {
+              setTurnstileToken(token);
+              if (errorMessage.includes("Cloudflare")) setErrorMessage("");
+            }}
+            onError={() => {
+              setTurnstileToken(null);
+            }}
+            onExpire={() => {
+              setTurnstileToken(null);
+            }}
+          />
+        </div>
+
+        {/* ── Price Breakdown ── */}
+        <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5 text-[13px]">
+          <div className="flex justify-between text-slate-600">
+            <span>Genuine WAEC Checker PIN</span>
+            <span className="font-mono tabular-nums font-semibold">GH₵24.00</span>
           </div>
-          <div className="flex justify-between text-gray-500">
-            <span>PDF formatting &amp; delivery</span>
-            <span className="tabular-nums">GH₵5.00</span>
+          <div className="flex justify-between text-slate-600">
+            <span>PDF Formatting &amp; Delivery</span>
+            <span className="font-mono tabular-nums font-semibold">GH₵6.00</span>
           </div>
-          <div className="h-px bg-gray-200 my-1" />
-          <div className="flex justify-between font-semibold text-gray-900">
-            <span>Total</span>
-            <span className="tabular-nums">GH₵30.00</span>
+          <div className="h-px bg-slate-200 my-1" />
+          <div className="flex justify-between font-bold text-slate-900 text-sm">
+            <span>Total Payable</span>
+            <span className="font-mono tabular-nums text-red-600 text-base font-extrabold">GH₵30.00</span>
           </div>
+        </div>
+
+        {/* ── Terms & Privacy Checkbox ── */}
+        <div className="flex items-start gap-2.5 pt-1">
+          <input
+            type="checkbox"
+            id="terms-check"
+            checked={agreedToTerms}
+            onChange={(e) => setAgreedToTerms(e.target.checked)}
+            className="mt-0.5 w-4 h-4 rounded text-red-600 focus:ring-red-500 border-slate-300 cursor-pointer"
+          />
+          <label htmlFor="terms-check" className="text-[11px] text-slate-500 leading-normal select-none cursor-pointer">
+            I agree to the{" "}
+            <button
+              type="button"
+              onClick={() => setLegalModalType("terms")}
+              className="text-slate-900 underline font-semibold hover:text-red-600 transition-colors"
+            >
+              Terms of Service
+            </button>{" "}
+            and acknowledge the{" "}
+            <button
+              type="button"
+              onClick={() => setLegalModalType("privacy")}
+              className="text-slate-900 underline font-semibold hover:text-red-600 transition-colors"
+            >
+              Privacy &amp; Data Policy
+            </button>
+            .
+          </label>
         </div>
 
         {/* ── Pay button ── */}
         <button
           type="submit"
-          className="w-full h-12 btn-brand cursor-pointer"
+          disabled={!turnstileToken || !agreedToTerms}
+          className={`w-full h-12 rounded-xl font-semibold text-sm flex items-center justify-center transition-all ${
+            turnstileToken && agreedToTerms
+              ? "bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white shadow-md shadow-red-600/20 cursor-pointer"
+              : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
+          }`}
         >
-          Pay GH₵30.00
+          Proceed to Payment
         </button>
 
-        {/* Payment methods — quiet text */}
-        <p className="text-center text-[13px] text-gray-400">
-          Mobile Money · Visa · Mastercard — via Paystack
-        </p>
+        {/* Authentic Ghanaian Payment Badges */}
+        <PaymentChannelsBar />
 
       </form>
 
       {/* ── Confirmation Modal ── */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-5">
-          <div className="w-full max-w-md bg-white rounded-xl shadow-2xl p-6 space-y-5">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 space-y-5 border border-slate-200">
             
             <div className="flex items-center justify-between">
-              <h3 className="text-[16px] font-semibold text-gray-900">Confirm your details</h3>
+              <h3 className="text-base font-bold text-slate-900">Confirm Candidate Details</h3>
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                className="p-1 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Warning */}
-            <div className="px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-[13px] flex items-start gap-2.5">
+            <div className="px-3.5 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
               <span>
-                Double-check your <strong>index number</strong> and <strong>date of birth</strong>. WAEC vouchers can't be refunded once assigned.
+                Double-check your <strong>Index Number</strong> and <strong>Date of Birth</strong>. WAEC vouchers cannot be refunded once assigned.
               </span>
             </div>
 
             {/* Details */}
-            <div className="space-y-2.5 text-[14px]">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Name</span>
-                <span className="font-medium text-gray-900">{formData.fullName}</span>
+            <div className="space-y-2 text-xs divide-y divide-slate-100">
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Candidate Name</span>
+                <span className="font-semibold text-slate-900">{formData.fullName}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Index number</span>
-                <span className="font-mono font-medium text-gray-900">{formData.indexNumber}</span>
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Index Number</span>
+                <span className="font-mono font-bold text-slate-900">{formData.indexNumber}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Exam</span>
-                <span className="font-medium text-gray-900">{formData.examType} ({formData.examYear})</span>
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Examination</span>
+                <span className="font-semibold text-slate-900">{formData.examType} ({formData.examYear})</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Date of birth</span>
-                <span className="font-mono font-medium text-gray-900">{formData.dateOfBirth}</span>
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Date of Birth</span>
+                <span className="font-mono font-semibold text-slate-900">{formData.dateOfBirth}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Email</span>
-                <span className="font-medium text-gray-900 truncate max-w-[200px]">{formData.email}</span>
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">Email (PDF Destination)</span>
+                <span className="font-semibold text-slate-900 truncate max-w-[190px]">{formData.email}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">WhatsApp</span>
-                <span className="font-mono font-medium text-gray-900">{formData.whatsappNumber}</span>
+              <div className="flex justify-between py-1">
+                <span className="text-slate-500">WhatsApp Alert</span>
+                <span className="font-mono font-semibold text-slate-900">{formData.whatsappNumber}</span>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="space-y-2 pt-1">
+            <div className="space-y-2 pt-2">
               <button
                 type="button"
                 disabled={loading}
                 onClick={handleConfirmAndPay}
-                className="w-full h-12 btn-brand flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full h-12 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white rounded-xl font-semibold flex items-center justify-center gap-2 cursor-pointer text-sm shadow-md shadow-red-600/20 transition-all"
               >
                 {loading ? (
                   <>
@@ -381,7 +423,7 @@ export function StudentForm() {
                     <span>Connecting to Paystack…</span>
                   </>
                 ) : (
-                  <span>Pay GH₵30.00</span>
+                  <span>Pay Now</span>
                 )}
               </button>
 
@@ -389,14 +431,23 @@ export function StudentForm() {
                 type="button"
                 disabled={loading}
                 onClick={() => setShowConfirmModal(false)}
-                className="w-full h-10 text-[13px] font-medium text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"
+                className="w-full h-9 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
               >
-                Edit details
+                Edit Details
               </button>
             </div>
 
           </div>
         </div>
+      )}
+
+      {/* ── Legal Policy Modal ── */}
+      {legalModalType && (
+        <LegalModal
+          isOpen={true}
+          onClose={() => setLegalModalType(null)}
+          type={legalModalType}
+        />
       )}
 
     </div>

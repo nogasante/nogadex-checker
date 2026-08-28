@@ -3,18 +3,18 @@
 import { useEffect, useState, use, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import {
   CheckCircle2,
   Clock,
   AlertCircle,
-  FileText,
-  Mail,
-  MessageCircle,
   RefreshCw,
   Loader2,
-  Check,
+  ArrowLeft,
+  Download,
+  MessageCircle,
 } from "lucide-react";
 
 interface RequestData {
@@ -50,11 +50,12 @@ function StatusContent({ requestId }: { requestId: string }) {
   const fetchStatus = async () => {
     try {
       setLoading(true);
+      setError("");
       const res = await fetch(`/api/requests/${requestId}`);
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        throw new Error(data.error || "Request not found.");
+        throw new Error(data.error || "Order not found. Please verify your Request ID.");
       }
 
       setRequest(data.request);
@@ -63,7 +64,7 @@ function StatusContent({ requestId }: { requestId: string }) {
         verifyPayment(refFromQuery);
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Could not load request.";
+      const msg = err instanceof Error ? err.message : "Could not load order details.";
       setError(msg);
     } finally {
       setLoading(false);
@@ -107,35 +108,48 @@ function StatusContent({ requestId }: { requestId: string }) {
   }, [requestId, refFromQuery]);
 
   const whatsappMessage = request
-    ? `Hello Nogadex Consults, I am checking on my WAEC result request.\nName: ${request.fullName}\nIndex: ${request.indexNumber}\nExam: ${request.examType} (${request.examYear})\nEmail: ${request.email}\nRequest ID: #${request.requestId}`
-    : `Hello Nogadex Consults, I am inquiring about request #${requestId}`;
+    ? `Hello Nogadex Consults, I am following up on my WAEC result request.\nName: ${request.fullName}\nIndex: ${request.indexNumber}\nExam: ${request.examType} (${request.examYear})\nRequest ID: #${request.requestId}`
+    : `Hello Nogadex Consults, I need assistance with request #${requestId}`;
 
   const isPaid = request?.paymentStatus === "PAID";
   const isCompleted = request?.processingStatus === "COMPLETED";
+  const isFailed = request?.processingStatus === "FAILED";
 
   return (
-    <div className="max-w-2xl mx-auto space-y-5">
-      {/* Official Tracking Receipt Card */}
-      <div className="p-5 sm:p-7 rounded-2xl sm:rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
+    <div className="max-w-lg mx-auto space-y-6">
+      
+      {/* Back Link */}
+      <div>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1.5 rounded-lg hover:bg-slate-200/50 transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Home</span>
+        </Link>
+      </div>
+
+      {/* Main Status Container */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7 space-y-6">
         
-        {/* Top Tracking Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm shrink-0">
+            <div className="w-8 h-8 rounded-lg overflow-hidden shadow-2xs shrink-0">
               <Image
                 src="/logo.png"
-                alt="Nogadex Logo"
-                width={40}
-                height={40}
+                alt="Nogadex"
+                width={32}
+                height={32}
                 className="w-full h-full object-contain"
                 priority
               />
             </div>
             <div>
-              <span className="text-[10px] font-bold text-red-600 uppercase tracking-wider block">
-                Official Result Slip
+              <span className="text-[11px] font-semibold text-slate-500 block">
+                Order Tracking
               </span>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-900 font-mono tracking-tight">
+              <h1 className="text-lg font-bold text-slate-900 font-mono tracking-tight">
                 #{requestId}
               </h1>
             </div>
@@ -144,225 +158,214 @@ function StatusContent({ requestId }: { requestId: string }) {
           <button
             onClick={fetchStatus}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 transition-colors self-start cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
             <span>Refresh</span>
           </button>
         </div>
 
+        {/* Error Notice if fetch failed */}
         {error && (
-          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
-            <span>{error}</span>
+          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-900 text-xs space-y-2">
+            <div className="flex items-center gap-2 font-bold text-red-950">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+              <span>Unable to find order</span>
+            </div>
+            <p className="leading-relaxed text-red-800">{error}</p>
+            <p className="text-[11px] text-red-700 pt-1">
+              Please ensure your Request ID matches the one sent to your SMS or email (e.g. <span className="font-mono font-bold">NGX-100234</span>).
+            </p>
           </div>
         )}
 
-        {/* Live Status Announcement Card */}
+        {/* Live Status Summary */}
         {request && (
           <div
-            className={`p-4 rounded-xl border ${
+            className={`p-4 rounded-xl border space-y-2 transition-all ${
               isCompleted
-                ? "bg-emerald-50 border-emerald-200 text-emerald-900"
+                ? "bg-emerald-50/70 border-emerald-200"
+                : isFailed
+                ? "bg-amber-50/70 border-amber-200"
                 : isPaid
-                ? "bg-red-50 border-red-200 text-red-900"
-                : "bg-amber-50 border-amber-200 text-amber-900"
+                ? "bg-slate-50 border-slate-200"
+                : "bg-amber-50/50 border-amber-200/80"
             }`}
           >
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-2">
               {isCompleted ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              ) : isFailed ? (
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
               ) : isPaid ? (
-                <Clock className="w-5 h-5 text-red-600 shrink-0 mt-0.5 animate-pulse" />
+                <Clock className="w-4 h-4 text-slate-700 shrink-0 animate-pulse" />
               ) : (
-                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
               )}
-              <div className="space-y-1">
-                <h3 className="text-sm font-bold text-slate-900">
-                  {isCompleted
-                    ? "Result Checked & Emailed!"
-                    : isPaid
-                    ? "Payment Confirmed — Checking Official WAEC Grades"
-                    : "Awaiting Payment Confirmation"}
-                </h3>
-                <p className="text-xs text-slate-700 leading-relaxed">
-                  {isCompleted
-                    ? `Your official WAEC result PDF certificate has been dispatched to ${request.email}. Please check your inbox.`
-                    : isPaid
-                    ? "Your GH₵30.00 fee was received. We are verifying your result on the WAEC portal and will email your PDF shortly."
-                    : "Waiting for Paystack confirmation. If you authorized the prompt on your phone, click Verify below."}
-                </p>
-              </div>
+              <h2 className="text-sm font-bold text-slate-900">
+                {isCompleted
+                  ? "Result Checked & Slip Delivered"
+                  : isFailed
+                  ? "Verification Issue"
+                  : isPaid
+                  ? "Payment Confirmed — Generating PDF"
+                  : "Awaiting Payment"}
+              </h2>
             </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              {isCompleted
+                ? `Your official WAEC printable result slip was generated and sent to ${request.email}. You can also download it directly below.`
+                : isFailed
+                ? "There was an issue verifying this candidate record on the WAEC portal (e.g. index number mismatch or unreleased results). Our team is reviewing this, or you can chat with us on WhatsApp."
+                : isPaid
+                ? "We received your payment and are currently retrieving your official grades from WAEC."
+                : "Payment is still pending. If you were already debited on your phone, click 'Verify Payment' below."}
+            </p>
           </div>
         )}
 
-        {/* Pending / Cancelled Payment Recovery Actions */}
-        {request && !isPaid && (
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
-            <div className="text-xs space-y-0.5">
-              <div className="font-bold text-slate-900">Payment Pending or Cancelled?</div>
-              <div className="text-slate-600 leading-relaxed">
-                If you were deducted by Mobile Money or Bank Card, click <strong>Verify Payment</strong>. If you cancelled or want to try another payment method, click <strong>Pay Now</strong>.
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-2 pt-1">
-              <button
-                type="button"
-                onClick={async () => {
-                  try {
-                    setVerifying(true);
-                    const res = await fetch("/api/payments/initialize", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        fullName: request.fullName,
-                        indexNumber: request.indexNumber,
-                        examType: request.examType,
-                        examYear: request.examYear,
-                        dateOfBirth: "2000-01-01", // fallback for retry
-                        email: request.email,
-                        whatsappNumber: request.whatsappNumber || "0540000000",
-                      }),
-                    });
-                    const data = await res.json();
-                    if (data.authorizationUrl) {
-                      window.location.href = data.authorizationUrl;
-                    }
-                  } catch (e) {
-                    console.error(e);
-                  } finally {
-                    setVerifying(false);
-                  }
-                }}
-                disabled={verifying}
-                className="flex-1 h-10 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-              >
-                <span>Pay Now with MoMo / Card (GH₵30)</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => verifyPayment(refFromQuery || requestId, true)}
-                disabled={verifying}
-                className="h-10 px-4 bg-white hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-300 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${verifying ? "animate-spin" : ""}`} />
-                <span>{verifying ? "Checking..." : "Verify Payment"}</span>
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* 3-Step Progress */}
-        <div className="border border-slate-200 bg-slate-50/50 rounded-xl p-4 space-y-3">
-          <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-            Order Lifecycle
+        {/* 3-Step Lifecycle Visual */}
+        <div className="space-y-3 pt-1">
+          <h3 className="text-xs font-semibold text-slate-500">
+            Order Progress
           </h3>
 
-          <div className="space-y-3 text-xs">
-            <div className="flex items-center gap-3">
+          <div className="space-y-2 text-xs">
+            {/* Step 1 */}
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
                   isPaid ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-600"
                 }`}
               >
-                1
+                {isPaid ? "✓" : "1"}
               </div>
-              <div>
-                <span className="font-semibold text-slate-900 block">Payment Confirmed</span>
-                <span className="text-[11px] text-slate-500">
-                  {isPaid ? "GH₵30.00 verified via Paystack" : "Awaiting payment"}
+              <div className="flex-1 flex justify-between items-center">
+                <span className="font-medium text-slate-900">Payment</span>
+                <span className="text-[11px] font-semibold text-slate-500">
+                  {isPaid ? "Received (GH₵30.00)" : "Pending"}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Step 2 */}
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
-                  request?.processingStatus === "PROCESSING" ||
-                  request?.processingStatus === "RESULT_CHECKED" ||
-                  request?.processingStatus === "PDF_UPLOADED" ||
                   isCompleted
                     ? "bg-emerald-600 text-white"
+                    : isPaid
+                    ? "bg-slate-900 text-white"
                     : "bg-slate-200 text-slate-600"
                 }`}
               >
-                2
+                {isCompleted ? "✓" : "2"}
               </div>
-              <div>
-                <span className="font-semibold text-slate-900 block">Official WAEC Lookup</span>
-                <span className="text-[11px] text-slate-500">Checked with genuine voucher PIN</span>
+              <div className="flex-1 flex justify-between items-center">
+                <span className="font-medium text-slate-900">WAEC Portal Verification</span>
+                <span className="text-[11px] font-semibold text-slate-500">
+                  {isCompleted ? "Grades Retrieved" : isPaid ? "Processing…" : "In queue"}
+                </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Step 3 */}
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
               <div
                 className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
                   isCompleted ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-600"
                 }`}
               >
-                3
+                {isCompleted ? "✓" : "3"}
               </div>
-              <div>
-                <span className="font-semibold text-slate-900 block">PDF Email Dispatch</span>
-                <span className="text-[11px] text-slate-500">
-                  {isCompleted ? `Dispatched to ${request?.email}` : "Emailed upon generation"}
+              <div className="flex-1 flex justify-between items-center">
+                <span className="font-medium text-slate-900">Printable PDF Delivery</span>
+                <span className="text-[11px] font-semibold text-slate-500">
+                  {isCompleted ? "Sent to Email" : "Pending"}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Candidate Summary */}
+        {/* Candidate Information Card */}
         {request && (
-          <div className="border border-slate-200 rounded-xl p-4 bg-slate-50/50 space-y-2">
-            <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-              Candidate Details
+          <div className="border-t border-slate-100 pt-4 space-y-2 text-xs">
+            <h3 className="font-semibold text-slate-500">
+              Candidate Information
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100">
               <div>
-                <span className="text-slate-500 block text-[11px]">Candidate:</span>
+                <span className="text-slate-400 block text-[11px]">Candidate</span>
                 <span className="font-semibold text-slate-900">{request.fullName}</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[11px]">Index Number:</span>
-                <span className="font-mono font-semibold text-slate-900">{request.indexNumber}</span>
+                <span className="text-slate-400 block text-[11px]">Index Number</span>
+                <span className="font-mono font-bold text-slate-900">{request.indexNumber}</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[11px]">Exam:</span>
-                <span className="font-semibold text-slate-900">{request.examType} ({request.examYear})</span>
+                <span className="text-slate-400 block text-[11px]">Examination</span>
+                <span className="font-medium text-slate-900">{request.examType} ({request.examYear})</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[11px]">Delivery Email:</span>
-                <span className="font-semibold text-red-600">{request.email}</span>
+                <span className="text-slate-400 block text-[11px]">Destination Email</span>
+                <span className="font-medium text-slate-900 truncate block">{request.email}</span>
               </div>
             </div>
           </div>
         )}
 
-        {/* WhatsApp Helpline Link */}
-        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="text-xs text-slate-500 text-center sm:text-left">
-            Need urgent assistance with your request?
+        {/* COMPLETED STATE ACTION: Direct PDF Download */}
+        {request && isCompleted && (
+          <div className="pt-2">
+            <a
+              href={`/api/requests/${requestId}/download`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-12 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download Result Slip PDF</span>
+            </a>
           </div>
+        )}
 
-          <a
-            href={`https://wa.me/${supportNumber}?text=${encodeURIComponent(
-              whatsappMessage
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span>Chat on WhatsApp</span>
-          </a>
-        </div>
+        {/* PENDING STATE ACTION: Verify Payment Button */}
+        {request && !isPaid && (
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => verifyPayment(refFromQuery || requestId, true)}
+              disabled={verifying}
+              className="w-full h-12 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white shadow-md shadow-red-600/20 transition-all cursor-pointer"
+            >
+              <RefreshCw className={`w-4 h-4 ${verifying ? "animate-spin" : ""}`} />
+              <span>{verifying ? "Verifying Payment…" : "Verify Payment"}</span>
+            </button>
+          </div>
+        )}
 
       </div>
+
+      {/* Support Direct Action */}
+      <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-2xs flex items-center justify-between gap-3 text-xs">
+        <div className="space-y-0.5">
+          <p className="font-bold text-slate-900">Need help with this order?</p>
+          <p className="text-slate-500">Our support desk is available on WhatsApp 24/7.</p>
+        </div>
+        <a
+          href={`https://wa.me/${supportNumber}?text=${encodeURIComponent(whatsappMessage)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold transition-colors shrink-0 cursor-pointer"
+        >
+          <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Chat on WhatsApp</span>
+        </a>
+      </div>
+
     </div>
   );
 }
@@ -376,15 +379,15 @@ export default function StatusPage({
   const requestId = resolvedParams.requestId;
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-900 selection:bg-red-600 selection:text-white">
+    <div className="flex flex-col min-h-screen bg-[#f8fafc] text-slate-900 selection:bg-red-600 selection:text-white">
       <Navbar />
 
-      <main className="flex-1 py-8 sm:py-12 px-4 sm:px-6">
+      <main className="flex-1 py-10 sm:py-14 px-4 sm:px-6">
         <Suspense
           fallback={
             <div className="py-24 text-center text-slate-500 flex flex-col items-center justify-center gap-3">
-              <Loader2 className="w-6 h-6 animate-spin text-red-600" />
-              <span className="text-xs font-medium">Loading tracking slip...</span>
+              <Loader2 className="w-6 h-6 animate-spin text-slate-700" />
+              <span className="text-xs font-medium">Loading tracking details...</span>
             </div>
           }
         >

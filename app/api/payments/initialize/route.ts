@@ -3,10 +3,24 @@ import { prisma } from "@/lib/prisma";
 import { generateUniqueRequestId } from "@/lib/id-generator";
 import { StudentSubmissionSchema } from "@/lib/validation";
 import { initializePaystackTransaction } from "@/lib/paystack";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // 1. Verify Cloudflare Turnstile token
+    const clientIp = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || undefined;
+    if (body.turnstileToken) {
+      const turnstileRes = await verifyTurnstileToken(body.turnstileToken, clientIp);
+      if (!turnstileRes.success) {
+        return NextResponse.json(
+          { error: "Security check failed. Please verify the Cloudflare challenge." },
+          { status: 403 }
+        );
+      }
+    }
+
     const validatedData = StudentSubmissionSchema.parse(body);
 
     const requestId = await generateUniqueRequestId();

@@ -2,9 +2,15 @@
 
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import { StudentForm } from "./StudentForm";
 import { VoucherOnlyCard } from "./VoucherOnlyCard";
-import { ArrowLeft, Search } from "lucide-react";
+import { PaymentChannelsBar } from "./PaymentLogos";
+import { WhatsAppOutlineIcon } from "./WhatsAppIcon";
+import {
+  Search,
+  ArrowLeft,
+} from "lucide-react";
 
 export function StudentPortalHub() {
   const searchParams = useSearchParams();
@@ -36,91 +42,153 @@ export function StudentPortalHub() {
     router.push(`/status/${cleanId}`);
   };
 
-  // ─── SCREEN 1: SERVICE SELECTION ───
+  // ─── SCREEN 1: SERVICE SELECTION (2x2 GRID WITH TRANSPARENT 3D ICONS) ───
   if (selectedService === "none") {
     return (
-      <div className="space-y-10">
+      <div className="space-y-6">
         
-        {/* Heading */}
-        <div className="space-y-2">
-          <h1 className="text-[28px] sm:text-[32px] font-semibold text-gray-900 leading-tight tracking-tight">
-            Check your WAEC result
+        {/* Header */}
+        <div className="space-y-1.5 text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            What would you like to do?
           </h1>
-          <p className="text-[15px] text-gray-500 leading-relaxed">
-            Select a service to get started.
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-lg">
+            Select a service below to check your WAEC results, purchase genuine scratch cards, or track an existing order.
           </p>
         </div>
 
-        {/* Service list */}
-        <div className="space-y-3">
+        {/* 2x2 Grid with Floating 3D Transparent Icons */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4.5">
           
-          {/* Check Result & Get PDF */}
+          {/* Card 1: Check Result & Get PDF (Top Left) */}
           <button
             type="button"
             onClick={() => handleSelectService("check")}
-            className="w-full text-left px-5 py-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-colors text-left flex flex-col justify-between cursor-pointer min-h-[170px] sm:min-h-[185px] group"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-[15px] font-medium text-gray-900">
-                Check result &amp; get PDF
-              </span>
-              <span className="text-[15px] text-gray-400 tabular-nums">
-                GH₵30
+            <div className="flex items-start justify-between w-full">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0">
+                <Image
+                  src="/images/3d/certificate.png"
+                  alt="Result Certificate"
+                  fill
+                  className="object-contain drop-shadow-sm"
+                  priority
+                />
+              </div>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-900 text-[10px] sm:text-[11px] font-mono font-bold">
+                GH₵30.00
               </span>
             </div>
-            <p className="text-[13px] text-gray-500 mt-1">
-              We check your WASSCE, BECE, or NOVDEC grades and email a printable PDF slip.
-            </p>
+
+            <div className="space-y-1 pt-2">
+              <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                Check Result &amp; PDF
+              </h3>
+              <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
+                We check grades &amp; email a printable PDF slip.
+              </p>
+            </div>
           </button>
 
-          {/* Buy Checker PIN */}
+          {/* Card 2: Buy Checker PIN (Top Right) */}
           <button
             type="button"
             onClick={() => handleSelectService("voucher")}
-            className="w-full text-left px-5 py-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-colors text-left flex flex-col justify-between cursor-pointer min-h-[170px] sm:min-h-[185px] group"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-[15px] font-medium text-gray-900">
-                Buy checker PIN only
-              </span>
-              <span className="text-[15px] text-gray-400 tabular-nums">
-                GH₵25
+            <div className="flex items-start justify-between w-full">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0">
+                <Image
+                  src="/images/3d/key.png"
+                  alt="Checker PIN Key"
+                  fill
+                  className="object-contain drop-shadow-sm"
+                  priority
+                />
+              </div>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-900 text-[10px] sm:text-[11px] font-mono font-bold">
+                GH₵24.00
               </span>
             </div>
-            <p className="text-[13px] text-gray-500 mt-1">
-              Get a WAEC scratch card serial &amp; PIN sent to your phone instantly.
-            </p>
+
+            <div className="space-y-1 pt-2">
+              <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                Buy Checker PIN
+              </h3>
+              <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
+                Instant SMS &amp; WhatsApp scratch card delivery.
+              </p>
+            </div>
           </button>
 
-          {/* Track Existing Order */}
+          {/* Card 3: Track Existing Order (Bottom Left) */}
           <button
             type="button"
             onClick={() => handleSelectService("track")}
-            className="w-full text-left px-5 py-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-colors text-left flex flex-col justify-between cursor-pointer min-h-[170px] sm:min-h-[185px] group"
           >
-            <div className="flex items-center justify-between">
-              <span className="text-[15px] font-medium text-gray-900">
-                Track existing order
+            <div className="flex items-start justify-between w-full">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0">
+                <Image
+                  src="/images/3d/search.png"
+                  alt="Track Order Search"
+                  fill
+                  className="object-contain drop-shadow-sm"
+                  priority
+                />
+              </div>
+              <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] sm:text-[11px] font-medium">
+                Live Status
               </span>
             </div>
-            <p className="text-[13px] text-gray-500 mt-1">
-              Check processing status or re-download your PDF.
-            </p>
+
+            <div className="space-y-1 pt-2">
+              <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                Track Existing Order
+              </h3>
+              <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
+                Check status or re-download your PDF slip.
+              </p>
+            </div>
           </button>
 
-        </div>
-
-        {/* Admissions link — quiet, not a card */}
-        <div className="pt-2 border-t border-gray-100">
+          {/* Card 4: University Admissions (Bottom Right) */}
           <a
-            href={`https://wa.me/${whatsappNumber}?text=Hello%20Nogadex,%20I%20need%20help%20with%20university%20admissions`}
+            href={`https://wa.me/${whatsappNumber}?text=Hello%20Nogadex,%20I%20need%20assistance%20with%20my%20university%20admission%20form`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[13px] text-gray-500 hover:text-gray-900 transition-colors"
+            className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-colors text-left flex flex-col justify-between cursor-pointer min-h-[170px] sm:min-h-[185px] group"
           >
-            Need help with university admissions? Chat with us →
+            <div className="flex items-start justify-between w-full">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0">
+                <Image
+                  src="/images/3d/grad.png"
+                  alt="Admissions Graduation"
+                  fill
+                  className="object-contain drop-shadow-sm"
+                  priority
+                />
+              </div>
+              <span className="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] sm:text-[11px] font-bold">
+                Free
+              </span>
+            </div>
+
+            <div className="space-y-1 pt-2">
+              <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+                Admissions Guidance
+              </h3>
+              <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
+                UG, KNUST &amp; UCC cut-off forms assistance.
+              </p>
+            </div>
           </a>
+
         </div>
+
+        {/* Ghanaian Payment Channels Bar */}
+        <PaymentChannelsBar />
 
       </div>
     );
@@ -128,98 +196,105 @@ export function StudentPortalHub() {
 
   // ─── SCREEN 2: FOCUSED SERVICE VIEW ───
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       
-      {/* Back link */}
-      <button
-        type="button"
-        onClick={handleBackToServices}
-        className="inline-flex items-center gap-1 text-[13px] text-gray-500 hover:text-gray-900 transition-colors cursor-pointer"
-      >
-        <ArrowLeft className="w-3.5 h-3.5" />
-        <span>Back</span>
-      </button>
+      {/* Back Button */}
+      <div>
+        <button
+          type="button"
+          onClick={handleBackToServices}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 px-2.5 py-1.5 rounded-lg hover:bg-slate-200/50 transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Change Service</span>
+        </button>
+      </div>
 
-      {/* VIEW A: CHECK RESULT & GET PDF */}
-      {selectedService === "check" && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-[24px] sm:text-[28px] font-semibold text-gray-900 leading-tight tracking-tight">
-              Check result &amp; get PDF
-            </h2>
-            <p className="text-[15px] text-gray-500 mt-1">
-              Fill in your details. We'll check your grades and email a PDF slip in 2–5 minutes.
-            </p>
-          </div>
-
-          <StudentForm />
-        </div>
-      )}
-
-      {/* VIEW B: BUY PIN ONLY */}
-      {selectedService === "voucher" && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-[24px] sm:text-[28px] font-semibold text-gray-900 leading-tight tracking-tight">
-              Buy checker PIN
-            </h2>
-            <p className="text-[15px] text-gray-500 mt-1">
-              Get a WAEC scratch card serial &amp; PIN to check results yourself.
-            </p>
-          </div>
-
-          <VoucherOnlyCard onSwitchToPdf={() => setSelectedService("check")} />
-        </div>
-      )}
-
-      {/* VIEW C: TRACK ORDER */}
-      {selectedService === "track" && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-[24px] sm:text-[28px] font-semibold text-gray-900 leading-tight tracking-tight">
-              Track your order
-            </h2>
-            <p className="text-[15px] text-gray-500 mt-1">
-              Enter the Request ID from your confirmation (e.g. NGX-100234).
-            </p>
-          </div>
-
-          <form onSubmit={handleTrackSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="block text-[13px] font-medium text-gray-700">
-                Request ID
-              </label>
-              <input
-                type="text"
-                required
-                value={trackQuery}
-                onChange={(e) => setTrackQuery(e.target.value)}
-                placeholder="NGX-XXXXXX"
-                className="w-full h-11 input-clean px-3.5 font-mono uppercase"
-              />
+      {/* Main Form Container */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-7 space-y-6">
+        
+        {/* VIEW A: CHECK RESULT & GET PDF */}
+        {selectedService === "check" && (
+          <div className="space-y-5">
+            <div className="border-b border-slate-100 pb-3">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Check WAEC Result &amp; Get PDF
+              </h2>
+              <p className="text-xs text-slate-500 leading-relaxed pt-1">
+                Enter your exam details below. We retrieve your grades and email a printable PDF result slip in 2–5 minutes.
+              </p>
             </div>
 
-            <button
-              type="submit"
-              className="w-full h-12 btn-brand flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Search className="w-4 h-4" />
-              <span>Look up order</span>
-            </button>
-          </form>
-        </div>
-      )}
+            <StudentForm />
+          </div>
+        )}
 
-      {/* Quiet help link */}
-      <div className="pt-4 border-t border-gray-100 text-[13px] text-gray-400">
+        {/* VIEW B: BUY PIN ONLY */}
+        {selectedService === "voucher" && (
+          <div className="space-y-5">
+            <div className="border-b border-slate-100 pb-3">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Buy WAEC Checker PIN (GH₵24.00)
+              </h2>
+              <p className="text-xs text-slate-500 leading-relaxed pt-1">
+                Authentic WAEC Scratch Card Serial &amp; PIN with instant SMS and WhatsApp delivery.
+              </p>
+            </div>
+
+            <VoucherOnlyCard onSwitchToPdf={() => setSelectedService("check")} />
+          </div>
+        )}
+
+        {/* VIEW C: TRACK EXISTING ORDER */}
+        {selectedService === "track" && (
+          <div className="space-y-5">
+            <div className="border-b border-slate-100 pb-3">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Track Existing Result Slip
+              </h2>
+              <p className="text-xs text-slate-500 leading-relaxed pt-1">
+                Enter the Request ID from your confirmation screen or SMS (e.g. <span className="font-mono font-bold text-slate-800">NGX-100234</span>).
+              </p>
+            </div>
+
+            <form onSubmit={handleTrackSubmit} className="space-y-4">
+              <div className="space-y-1">
+                <label className="block text-xs font-semibold text-slate-700">
+                  Request ID
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={trackQuery}
+                  onChange={(e) => setTrackQuery(e.target.value)}
+                  placeholder="NGX-XXXXXX"
+                  className="w-full h-11 input-clean px-3.5 font-mono uppercase text-sm"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full h-12 rounded-xl font-semibold text-sm flex items-center justify-center bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white shadow-md shadow-red-600/20 transition-all cursor-pointer"
+              >
+                Track Order
+              </button>
+            </form>
+          </div>
+        )}
+
+      </div>
+
+      {/* Support Link */}
+      <div className="text-center text-xs text-slate-500">
         Need help?{" "}
         <a
           href={`https://wa.me/${whatsappNumber}?text=Hello%20Nogadex,%20I%20need%20assistance`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-gray-600 hover:text-gray-900 transition-colors"
+          className="inline-flex items-center gap-1.5 font-semibold text-slate-800 hover:text-slate-950 underline transition-colors"
         >
-          WhatsApp us
+          <WhatsAppOutlineIcon className="w-3.5 h-3.5 text-emerald-600 inline" />
+          <span>Contact WhatsApp Support (+233 534 908 166)</span>
         </a>
       </div>
 

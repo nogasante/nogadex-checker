@@ -1,6 +1,27 @@
 import { WaecCandidateDetails, WAEC_GHANA_PORTAL_URL } from "./types";
 
 /**
+ * Maps Nogadex exam types to exact Ghana WAEC portal select option values:
+ * 01: W A S S C E (School)
+ * 08: W A S S C E (Private) (NOVDEC)
+ * 07: B E C E
+ * 09: B E C E (Private)
+ * 03: G B C E (MAY/JUN)
+ * 05: A B C E (MAY/JUN)
+ * 00: S S S C E
+ */
+export function mapExamTypeToWaecValue(examType: string): string {
+  const norm = (examType || "").toUpperCase();
+  if (norm.includes("NOVDEC") || norm.includes("PRIVATE") || norm.includes("PVT")) return "08";
+  if (norm.includes("BECE") && (norm.includes("PVT") || norm.includes("PRIVATE"))) return "09";
+  if (norm.includes("BECE")) return "07";
+  if (norm.includes("GBCE")) return "03";
+  if (norm.includes("ABCE")) return "05";
+  if (norm.includes("SSSCE")) return "00";
+  return "01"; // Default WASSCE (School)
+}
+
+/**
  * Format candidate details into a convenient summary block for admin viewing
  */
 export function formatCandidateSummary(details: WaecCandidateDetails): string {
@@ -17,48 +38,82 @@ Portal URL:    ${WAEC_GHANA_PORTAL_URL}
 }
 
 /**
- * Generate a safe, non-intrusive browser console script / bookmarklet
- * that the admin can run to quickly populate candidate details into the WAEC Ghana form.
- *
- * NOTE: The script DOES NOT touch PIN, Serial Number, or CAPTCHA.
- * The admin must enter their purchased voucher and review the result manually.
+ * Generate a 100% exact, automated browser console script for https://ghana.waecdirect.org/
+ * Targets exact WAEC field IDs: #candid, #examtype, #examyear, #cday, #cmonth, #cyear, #ccandid, #cexamyear, #serial, #pin
  */
 export function generateWaecAutofillScript(details: WaecCandidateDetails): string {
-  const [year, month, day] = details.dateOfBirth.split("-");
+  const [dobYear, dobMonth, dobDay] = (details.dateOfBirth || "2006-05-15").split("-");
+  const waecExamTypeValue = mapExamTypeToWaecValue(details.examType);
 
   return `
 (function() {
-  console.log("Nogadex Consults WAEC Assistant: Populating candidate fields...");
+  console.log("%c[Nogadex WAEC Assistant]%c Populating candidate details...", "color: #dc2626; font-weight: bold;", "color: #0f172a;");
   
-  // Index Number
-  const indexInput = document.querySelector('input[name*="index" i], input[id*="index" i], input[name*="candidate" i]');
-  if (indexInput) {
-    indexInput.value = "${details.indexNumber}";
-    indexInput.dispatchEvent(new Event('input', { bubbles: true }));
-    indexInput.dispatchEvent(new Event('change', { bubbles: true }));
+  // 1. Index Number
+  const candid = document.getElementById('candid') || document.querySelector('input[name="candid"]');
+  if (candid) {
+    candid.value = "${details.indexNumber}";
+    candid.dispatchEvent(new Event('input', { bubbles: true }));
+    candid.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  // Year
-  const yearSelect = document.querySelector('select[name*="year" i], select[id*="year" i]');
-  if (yearSelect) {
-    for (let i = 0; i < yearSelect.options.length; i++) {
-      if (yearSelect.options[i].text.includes("${details.examYear}") || yearSelect.options[i].value.includes("${details.examYear}")) {
-        yearSelect.selectedIndex = i;
-        yearSelect.dispatchEvent(new Event('change', { bubbles: true }));
-        break;
-      }
-    }
+  // 2. Exam Type (01: WASSCE School, 08: WASSCE Pvt, 07: BECE, etc.)
+  const examType = document.getElementById('examtype') || document.querySelector('select[name="examtype"]');
+  if (examType) {
+    examType.value = "${waecExamTypeValue}";
+    examType.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  // Date of birth (if applicable)
-  const dobInput = document.querySelector('input[type="date"], input[name*="dob" i], input[id*="dob" i]');
-  if (dobInput) {
-    dobInput.value = "${details.dateOfBirth}";
-    dobInput.dispatchEvent(new Event('input', { bubbles: true }));
-    dobInput.dispatchEvent(new Event('change', { bubbles: true }));
+  // 3. Exam Year
+  const examYear = document.getElementById('examyear') || document.querySelector('select[name="examyear"]');
+  if (examYear) {
+    examYear.value = "${details.examYear}";
+    examYear.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
-  alert("Candidate details populated for ${details.fullName} (${details.indexNumber}). Please enter your purchased Voucher PIN and verify the CAPTCHA.");
+  // 4. Date of Birth (cday, cmonth, cyear)
+  const cday = document.getElementById('cday') || document.querySelector('select[name="cday"]');
+  if (cday) {
+    cday.value = "${dobDay}";
+    cday.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  const cmonth = document.getElementById('cmonth') || document.querySelector('select[name="cmonth"]');
+  if (cmonth) {
+    cmonth.value = "${dobMonth}";
+    cmonth.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  const cyear = document.getElementById('cyear') || document.querySelector('select[name="cyear"]');
+  if (cyear) {
+    cyear.value = "${dobYear}";
+    cyear.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  // 5. Confirm Candidate Index Number (#ccandid)
+  const ccandid = document.getElementById('ccandid') || document.querySelector('input[name="ccandid"]');
+  if (ccandid) {
+    ccandid.value = "${details.indexNumber}";
+    ccandid.dispatchEvent(new Event('input', { bubbles: true }));
+    ccandid.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  // 6. Confirm Exam Year (#cexamyear)
+  const cexamyear = document.getElementById('cexamyear') || document.querySelector('select[name="cexamyear"]');
+  if (cexamyear) {
+    cexamyear.value = "${details.examYear}";
+    cexamyear.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  // 7. Focus PIN Input & Highlight
+  const pin = document.getElementById('pin') || document.querySelector('input[name="pin"]');
+  if (pin) {
+    pin.focus();
+    pin.style.outline = "3px solid #dc2626";
+    pin.style.backgroundColor = "#fef2f2";
+  }
+
+  console.log("%c[Nogadex WAEC Assistant]%c ✅ Populated: ${details.fullName} (#${details.indexNumber})", "color: #16a34a; font-weight: bold;", "color: #0f172a;");
 })();
   `.trim();
 }

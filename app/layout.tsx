@@ -36,7 +36,7 @@ export default function RootLayout({
     >
       <body
         suppressHydrationWarning
-        className="min-h-full flex flex-col bg-[#080d1a] text-slate-100 selection:bg-red-600 selection:text-white"
+        className="min-h-full flex flex-col bg-[#f8fafc] text-slate-900 selection:bg-red-600 selection:text-white"
         style={{ fontFamily: "var(--font-sans), system-ui, -apple-system, sans-serif" }}
       >
         <ClerkProvider>

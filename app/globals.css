@@ -3,6 +3,7 @@
 @layer base {
   :root {
     --brand-red: #dc2626;
+    --brand-red-hover: #ef4444;
   }
 
   body {
@@ -10,49 +11,85 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-/* ── Public Portal: Clean Input ── */
-.input-clean {
-  background-color: #fff;
-  border: 1px solid #d1d5db;
+/* ── Custom Visible Sleek Scrollbar ── */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f8fafc;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f8fafc;
   border-radius: 8px;
-  font-size: 15px;
-  color: #111827;
-  transition: border-color 120ms ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ── Public Portal: Clean Input with Micro Focus ── */
+.input-clean {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #0f172a;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  transition: all 120ms ease;
 }
 
 .input-clean::placeholder {
-  color: #9ca3af;
+  color: #94a3b8;
 }
 
 .input-clean:hover {
-  border-color: #9ca3af;
+  border-color: #cbd5e1;
 }
 
 .input-clean:focus {
   outline: none;
-  border-color: #111827;
-  box-shadow: 0 0 0 1px #111827;
+  border-color: #0f172a;
+  box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08);
 }
 
-/* ── Public Portal: Primary Button ── */
+/* ── Public Portal: Tactile Primary Button ── */
 .btn-brand {
-  background-color: #111827;
-  color: #fff;
+  background-color: #0f172a;
+  color: #ffffff;
   border: none;
-  border-radius: 8px;
-  font-size: 15px;
+  border-radius: 10px;
+  font-size: 14px;
   font-weight: 600;
-  transition: background-color 120ms ease;
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+  transition: all 140ms ease;
 }
 
 .btn-brand:hover {
-  background-color: #1f2937;
+  background-color: #1e293b;
+  box-shadow: 
+    0 4px 12px -2px rgba(15, 23, 42, 0.15),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
 }
 
 .btn-brand:active {
-  background-color: #030712;
+  transform: scale(0.99);
+  background-color: #020617;
 }
 
 .btn-brand:disabled {
