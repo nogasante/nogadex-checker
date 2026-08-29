@@ -342,14 +342,21 @@ export function StudentForm() {
         {/* ── Pay button ── */}
         <button
           type="submit"
-          disabled={!turnstileToken || !agreedToTerms}
+          disabled={!agreedToTerms || loading}
           className={`w-full h-12 rounded-xl font-semibold text-sm flex items-center justify-center transition-all ${
-            turnstileToken && agreedToTerms
+            agreedToTerms && !loading
               ? "bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white shadow-md shadow-red-600/20 cursor-pointer"
               : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
           }`}
         >
-          Proceed to Payment
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-white" />
+              <span>Processing...</span>
+            </div>
+          ) : (
+            "Proceed to Payment"
+          )}
         </button>
 
         {/* Authentic Ghanaian Payment Badges */}
