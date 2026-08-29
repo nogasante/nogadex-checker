@@ -38,11 +38,10 @@ export function PageBackground() {
       <div className="absolute -top-4 -right-4 sm:top-8 sm:right-16 w-28 h-28 sm:w-36 sm:h-36 opacity-[0.06] -rotate-12">
         <Image
           src="/images/waec-logo.png"
-          alt=""
+          alt="WAEC Watermark Logo"
           width={144}
           height={144}
           className="object-contain"
-          aria-hidden="true"
         />
       </div>
     </div>
