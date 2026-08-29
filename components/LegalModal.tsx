@@ -47,21 +47,21 @@ export function LegalModal({ isOpen, onClose, type }: LegalModalProps) {
               <div className="space-y-2">
                 <h4 className="font-bold text-slate-900 text-sm">1. Services Provided</h4>
                 <p>
-                  Nogadex Consults assists candidates in checking their WASSCE, BECE, and NOVDEC grades by provisioning genuine WAEC Scratch Card vouchers and generating a formatted, printable PDF result summary delivered via email.
+                  Nogadex Consults offers two distinct services: (a) <strong>Check Result &amp; PDF Slip:</strong> We verify examination grades (WASSCE, BECE, NOVDEC) from the official WAEC server and generate a high-resolution printable PDF result slip delivered directly to your <strong>Email address</strong>; and (b) <strong>Buy Checker PIN:</strong> We provision genuine WAEC Scratch Card vouchers delivered instantly via <strong>SMS</strong> and displayed on-screen for self-checking.
                 </p>
               </div>
 
               <div className="space-y-2">
                 <h4 className="font-bold text-slate-900 text-sm">2. Candidate Information Accuracy</h4>
                 <p>
-                  You are solely responsible for entering the correct 10-digit Index Number, Exam Year, and Exam Type. If incorrect candidate details are submitted, the WAEC system will attempt verification with the provided credentials, which may consume a card usage.
+                  You are solely responsible for entering the correct 10-digit Index Number, Exam Year, Date of Birth, and Exam Type. If incorrect candidate details are submitted, the WAEC system will attempt verification with the provided credentials, which may consume a card usage.
                 </p>
               </div>
 
               <div className="space-y-2">
                 <h4 className="font-bold text-slate-900 text-sm">3. Voucher PIN Validity</h4>
                 <p>
-                  Each WAEC Scratch Card Serial &amp; PIN allows up to three (3) result checks on the official WAEC portal as per official WAEC policy. Once purchased and delivered, the digital PIN is active immediately.
+                  Each WAEC Scratch Card Serial &amp; PIN allows up to three (3) result checks on the official WAEC portal as per official WAEC policy. Once purchased and delivered via SMS or on-screen, the digital PIN is active immediately.
                 </p>
               </div>
 
@@ -83,7 +83,7 @@ export function LegalModal({ isOpen, onClose, type }: LegalModalProps) {
               <div className="space-y-2">
                 <h4 className="font-bold text-slate-900 text-sm">1. Data We Collect</h4>
                 <p>
-                  We collect your Index Number, Exam Type, Exam Year, Email Address, and Phone Number solely for the purpose of checking your results, delivering your PDF slip, and sending confirmation via SMS or WhatsApp.
+                  We collect your Index Number, Exam Type, Exam Year, Date of Birth, Email Address (for delivering your printable PDF result slip), and Phone Number (for SMS PIN voucher delivery and WhatsApp customer support).
                 </p>
               </div>
 
@@ -108,7 +108,7 @@ export function LegalModal({ isOpen, onClose, type }: LegalModalProps) {
               <div className="space-y-2">
                 <h4 className="font-bold text-slate-900 text-sm">1. Voucher &amp; PIN Purchases</h4>
                 <p>
-                  Due to the nature of digital cryptographic serial numbers and PINs, vouchers that have been successfully generated and delivered to your screen, SMS, or WhatsApp cannot be refunded.
+                  Due to the nature of digital cryptographic serial numbers and PINs, vouchers that have been successfully generated and delivered to your screen or via SMS cannot be refunded.
                 </p>
               </div>
 

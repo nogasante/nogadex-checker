@@ -45,12 +45,12 @@ export default function PrivacyPage() {
             <div className="space-y-4 text-xs text-slate-600 leading-relaxed">
               <h2 className="text-base font-bold text-slate-900">1. Information We Collect</h2>
               <p>
-                We only collect data strictly necessary to fulfill your result checking request:
+                We only collect data strictly necessary to fulfill your requested service:
               </p>
               <ul className="list-disc pl-5 space-y-1 text-slate-600">
-                <li>Candidate Index Number, Exam Type, and Year (for WAEC verification)</li>
-                <li>Email address (for PDF result slip dispatch)</li>
-                <li>Phone number (for SMS PIN delivery and WhatsApp support)</li>
+                <li>Candidate Index Number, Exam Type, Exam Year, and Date of Birth (for official WAEC verification)</li>
+                <li>Email address (for delivering your printable PDF result slip)</li>
+                <li>Phone number (for instant SMS PIN voucher delivery and WhatsApp customer support)</li>
               </ul>
 
               <h2 className="text-base font-bold text-slate-900">2. How Your Data Is Handled</h2>

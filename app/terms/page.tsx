@@ -50,12 +50,16 @@ export default function TermsPage() {
 
               <h2 className="text-base font-bold text-slate-900">2. Scope of Services</h2>
               <p>
-                Our automated platform purchases genuine WAEC Scratch Card vouchers on your behalf, queries your examination grades (WASSCE, BECE, NOVDEC) using the candidate information provided, and delivers a formatted, printable PDF result slip to your email address and WhatsApp number.
+                Nogadex Consults offers two distinct services:
               </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-slate-600">
+                <li><strong>Check Result &amp; PDF Slip (GH₵30):</strong> We retrieve and verify your examination grades from the official WAEC database and deliver a high-resolution, printable PDF result slip directly to your <strong>Email address</strong>. You can also view or re-download your slip anytime via our Track Order portal.</li>
+                <li><strong>Buy Checker PIN (GH₵24):</strong> We provision authentic WAEC Scratch Card vouchers delivered instantly via <strong>SMS</strong> and displayed on-screen for self-checking on waecdirect.org.</li>
+              </ul>
 
               <h2 className="text-base font-bold text-slate-900">3. Accurate Candidate Information</h2>
               <p>
-                You are responsible for ensuring that the Index Number, Exam Type, and Exam Year provided are correct. If incorrect information is provided, the card voucher may be utilized by the WAEC server and cannot be reversed.
+                You are responsible for ensuring that the Index Number, Exam Type, Exam Year, and Date of Birth provided are correct. If incorrect candidate information is submitted, the card voucher may be utilized by the WAEC verification server and cannot be reversed.
               </p>
 
               <h2 className="text-base font-bold text-slate-900">4. Examination Council Decisions &amp; Grades</h2>
@@ -65,7 +69,7 @@ export default function TermsPage() {
 
               <h2 className="text-base font-bold text-slate-900">5. Payment Security &amp; Refunds</h2>
               <p>
-                All payments are handled securely through Paystack (PCI-DSS compliant). Due to the irreversible delivery of cryptographic scratch card serials and PINs, digital vouchers once delivered are non-refundable.
+                All payments are handled securely through Paystack (PCI-DSS compliant). Due to the irreversible delivery of cryptographic scratch card serials and PINs, digital vouchers once delivered to your screen or via SMS are non-refundable.
               </p>
 
               <h2 className="text-base font-bold text-slate-900">6. Customer Support</h2>
