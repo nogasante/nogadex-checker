@@ -30,11 +30,16 @@ export default function NovdecResultCheckerPage() {
 
         <main className="flex-1 py-8 sm:py-14 px-4 sm:px-6">
           <div className="max-w-lg mx-auto">
+            {/* Primary Semantic H1 for Bingbot & Search Engine Indexing */}
+            <h1 className="sr-only">
+              NOVDEC Result Checker Online Ghana — WASSCE Private Candidate Result Portal
+            </h1>
+
             <Suspense
               fallback={
                 <div className="py-20 text-center text-slate-500">
                   <div className="w-8 h-8 rounded-full border-2 border-red-600 border-t-transparent animate-spin mx-auto mb-3" />
-                  <p className="text-xs font-medium">Loading...</p>
+                  <p className="text-xs font-medium">Loading NOVDEC Portal...</p>
                 </div>
               }
             >
