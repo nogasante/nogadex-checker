@@ -85,7 +85,7 @@ export async function sendAdminPushNotification(title: string, body: string, url
     }
   }
 
-  const options: NotificationOptions = {
+  const options: any = {
     body,
     icon: "/logo.png",
     badge: "/logo.png",
