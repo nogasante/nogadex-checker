@@ -71,22 +71,45 @@ export async function requestAdminNotificationPermission(): Promise<Notification
 }
 
 /**
- * Trigger a System Push Notification
+ * Trigger a System Push Notification via Service Worker (Works on Mobile Chrome, Desktop, iOS PWA)
  */
-export function sendAdminPushNotification(title: string, body: string, urlPath: string) {
+export async function sendAdminPushNotification(title: string, body: string, urlPath: string) {
   if (typeof window === "undefined" || !("Notification" in window)) return;
 
-  if (Notification.permission !== "granted") return;
+  if (Notification.permission !== "granted") {
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") return;
+    } catch {
+      return;
+    }
+  }
 
+  const options: NotificationOptions = {
+    body,
+    icon: "/logo.png",
+    badge: "/logo.png",
+    tag: `nogadex-order-${Date.now()}`,
+    requireInteraction: true,
+    data: { url: urlPath || "/admin" },
+  };
+
+  // 1. Primary: Use Service Worker (required on Android Chrome and Mobile PWAs)
+  if ("serviceWorker" in navigator) {
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      if (reg && "showNotification" in reg) {
+        await reg.showNotification(title, options);
+        return;
+      }
+    } catch (swErr) {
+      console.log("SW notification fallback note:", swErr);
+    }
+  }
+
+  // 2. Fallback: Window Notification for standard desktop browsers
   try {
-    const notif = new Notification(title, {
-      body,
-      icon: "/logo.png",
-      badge: "/logo.png",
-      tag: `nogadex-order-${Date.now()}`,
-      requireInteraction: true,
-    });
-
+    const notif = new Notification(title, options);
     notif.onclick = function () {
       window.focus();
       if (urlPath) {
@@ -95,6 +118,6 @@ export function sendAdminPushNotification(title: string, body: string, urlPath: 
       notif.close();
     };
   } catch (err) {
-    console.error("Failed to fire system notification:", err);
+    console.error("Failed to fire window notification:", err);
   }
 }

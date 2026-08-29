@@ -57,6 +57,13 @@ export default function AdminLayout({
     }
 
     checkAuth();
+
+    // Register Service Worker for PWA & Admin Push Notifications
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch((err) => {
+        console.log("Admin SW registration note:", err);
+      });
+    }
   }, [pathname, isLoginPage, router]);
 
   // Close mobile menu on route change
