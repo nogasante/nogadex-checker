@@ -1,11 +1,12 @@
 import { MetadataRoute } from "next";
 
-export default function manifest(): MetadataRoute.Manifest {
   return {
+    id: "nogadex-student-portal-app",
     name: "Nogadex Consults - WAEC Results Checker",
     short_name: "Nogadex WAEC",
     description: "Check your WASSCE, NOVDEC, BECE, GBCE result and receive your official PDF result slip instantly.",
     start_url: "/",
+    scope: "/",
     display: "standalone",
     background_color: "#f8fafc",
     theme_color: "#dc2626",

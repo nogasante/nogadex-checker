@@ -1,4 +1,5 @@
 {
+  "id": "nogadex-admin-console-app",
   "name": "Nogadex Ops - Admin Console",
   "short_name": "Nogadex Admin",
   "description": "Real-time order processing, WAEC result checking dispatch, and voucher inventory management.",
