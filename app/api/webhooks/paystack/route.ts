@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
           amount: amountInGHS,
           customerEmail: updated.email,
           customerPhone: updated.whatsappNumber || undefined,
-          hasVoucherPin: !!(voucherPin || updated.voucherPin),
+          hasVoucherPin: !!(voucherPin || (updated as any).voucherPin),
         });
       } catch (alertErr) {
         console.error("Admin order notification error in webhook:", alertErr);

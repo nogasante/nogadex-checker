@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 
+export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "nogadex-student-portal-app",
     name: "Nogadex Consults - WAEC Results Checker",
