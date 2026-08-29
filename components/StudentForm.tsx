@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Loader2, X, AlertTriangle } from "lucide-react";
+import { AlertCircle, Loader2, AlertTriangle, X } from "lucide-react";
 import { PaymentChannelsBar } from "./PaymentLogos";
-import { CloudflareTurnstile } from "./CloudflareTurnstile";
 import { LegalModal } from "./LegalModal";
 import { CustomDropdown } from "./CustomDropdown";
 import { DateOfBirthSelector } from "./DateOfBirthSelector";
@@ -29,7 +28,6 @@ export function StudentForm() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [legalModalType, setLegalModalType] = useState<"terms" | "privacy" | "refund" | null>(null);
 
@@ -86,10 +84,6 @@ export function StudentForm() {
       setErrorMessage("Enter a valid WhatsApp number.");
       return;
     }
-    if (!turnstileToken) {
-      setErrorMessage("Please complete the Cloudflare security verification.");
-      return;
-    }
     if (!agreedToTerms) {
       setErrorMessage("You must accept the Terms of Service and Privacy Policy.");
       return;
@@ -106,10 +100,7 @@ export function StudentForm() {
       const res = await fetch("/api/payments/initialize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          turnstileToken,
-        }),
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
@@ -220,7 +211,7 @@ export function StudentForm() {
               <p className="text-[11px] text-slate-400">As registered on your exam slip</p>
             </div>
 
-            {/* Modern Custom Date of Birth Selector */}
+            {/* Date of Birth Selector */}
             <DateOfBirthSelector
               value={formData.dateOfBirth}
               onChange={(val) => {
@@ -274,22 +265,6 @@ export function StudentForm() {
               <p className="text-[11px] text-slate-400">For SMS/WhatsApp alerts</p>
             </div>
           </div>
-        </div>
-
-        {/* ── Official Cloudflare Turnstile Verification ── */}
-        <div className="flex flex-col items-center justify-center p-2 rounded-xl bg-slate-50 border border-slate-200/80">
-          <CloudflareTurnstile
-            onSuccess={(token) => {
-              setTurnstileToken(token);
-              if (errorMessage.includes("Cloudflare")) setErrorMessage("");
-            }}
-            onError={() => {
-              setTurnstileToken(null);
-            }}
-            onExpire={() => {
-              setTurnstileToken(null);
-            }}
-          />
         </div>
 
         {/* ── Price Breakdown ── */}
