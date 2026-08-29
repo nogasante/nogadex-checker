@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 interface TurnstileProps {
   onSuccess: (token: string) => void;
@@ -16,30 +16,29 @@ export function CloudflareTurnstile({
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
 
+  const onSuccessRef = useRef(onSuccess);
+  const onErrorRef = useRef(onError);
+  const onExpireRef = useRef(onExpire);
+
+  useEffect(() => {
+    onSuccessRef.current = onSuccess;
+    onErrorRef.current = onError;
+    onExpireRef.current = onExpire;
+  });
+
   const siteKey =
     process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY ||
     "0x4AAAAAAEfx6fM0UthbhpMU";
 
   useEffect(() => {
-    // Expose global callbacks
-    (window as any).onTurnstileSuccess = (token: string) => {
-      onSuccess(token);
-    };
-    (window as any).onTurnstileError = () => {
-      onError?.();
-    };
-    (window as any).onTurnstileExpired = () => {
-      onExpire?.();
-    };
-
     const renderWidget = () => {
       if ((window as any).turnstile && containerRef.current && !widgetIdRef.current) {
         try {
           const id = (window as any).turnstile.render(containerRef.current, {
             sitekey: siteKey,
-            callback: (token: string) => onSuccess(token),
-            "error-callback": () => onError?.(),
-            "expired-callback": () => onExpire?.(),
+            callback: (token: string) => onSuccessRef.current(token),
+            "error-callback": () => onErrorRef.current?.(),
+            "expired-callback": () => onExpireRef.current?.(),
             theme: "light",
             size: "flexible",
           });
@@ -77,7 +76,7 @@ export function CloudflareTurnstile({
         }
       }
     };
-  }, [siteKey, onSuccess, onError, onExpire]);
+  }, [siteKey]);
 
   return (
     <div className="w-full flex justify-center py-1">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CustomDropdown } from "./CustomDropdown";
 
 const MONTHS = [
@@ -44,11 +44,20 @@ export function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProp
   const [month, setMonth] = useState(initialMonth);
   const [year, setYear] = useState(initialYear);
 
-  useEffect(() => {
-    if (day && month && year) {
-      onChange(`${year}-${month}-${day}`);
-    }
-  }, [day, month, year, onChange]);
+  const handleDayChange = (newDay: string) => {
+    setDay(newDay);
+    onChange(`${year}-${month}-${newDay}`);
+  };
+
+  const handleMonthChange = (newMonth: string) => {
+    setMonth(newMonth);
+    onChange(`${year}-${newMonth}-${day}`);
+  };
+
+  const handleYearChange = (newYear: string) => {
+    setYear(newYear);
+    onChange(`${newYear}-${month}-${day}`);
+  };
 
   return (
     <div className="space-y-1.5">
@@ -62,7 +71,7 @@ export function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProp
           label="Day"
           options={DAYS}
           value={day}
-          onChange={(val) => setDay(val)}
+          onChange={handleDayChange}
           placeholder="Day"
         />
 
@@ -71,7 +80,7 @@ export function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProp
           label="Month"
           options={MONTHS}
           value={month}
-          onChange={(val) => setMonth(val)}
+          onChange={handleMonthChange}
           placeholder="Month"
         />
 
@@ -80,7 +89,7 @@ export function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProp
           label="Year"
           options={YEARS}
           value={year}
-          onChange={(val) => setYear(val)}
+          onChange={handleYearChange}
           placeholder="Year"
         />
       </div>

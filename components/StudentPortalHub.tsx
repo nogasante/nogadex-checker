@@ -72,6 +72,7 @@ export function StudentPortalHub() {
                   src="/images/3d/certificate.png"
                   alt="Result Certificate"
                   fill
+                  sizes="(max-width: 640px) 48px, 56px"
                   className="object-contain drop-shadow-sm"
                   priority
                 />
@@ -82,9 +83,9 @@ export function StudentPortalHub() {
             </div>
 
             <div className="space-y-1 pt-2">
-              <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+              <h2 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                 Check Result &amp; PDF
-              </h3>
+              </h2>
               <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
                 We check grades &amp; email a printable PDF slip.
               </p>
@@ -103,6 +104,7 @@ export function StudentPortalHub() {
                   src="/images/3d/key.png"
                   alt="Checker PIN Key"
                   fill
+                  sizes="(max-width: 640px) 48px, 56px"
                   className="object-contain drop-shadow-sm"
                   priority
                 />
@@ -113,9 +115,9 @@ export function StudentPortalHub() {
             </div>
 
             <div className="space-y-1 pt-2">
-              <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+              <h2 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                 Buy Checker PIN
-              </h3>
+              </h2>
               <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
                 Instant SMS &amp; WhatsApp scratch card delivery.
               </p>
@@ -134,6 +136,7 @@ export function StudentPortalHub() {
                   src="/images/3d/search.png"
                   alt="Track Order Search"
                   fill
+                  sizes="(max-width: 640px) 48px, 56px"
                   className="object-contain drop-shadow-sm"
                   priority
                 />
@@ -144,9 +147,9 @@ export function StudentPortalHub() {
             </div>
 
             <div className="space-y-1 pt-2">
-              <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+              <h2 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                 Track Existing Order
-              </h3>
+              </h2>
               <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
                 Check status or re-download your PDF slip.
               </p>
@@ -166,19 +169,20 @@ export function StudentPortalHub() {
                   src="/images/3d/grad.png"
                   alt="Admissions Graduation"
                   fill
+                  sizes="(max-width: 640px) 48px, 56px"
                   className="object-contain drop-shadow-sm"
                   priority
                 />
               </div>
-              <span className="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] sm:text-[11px] font-bold">
+              <span className="px-2 py-0.5 rounded-md bg-emerald-700 text-white text-[10px] sm:text-[11px] font-bold">
                 Free
               </span>
             </div>
 
             <div className="space-y-1 pt-2">
-              <h3 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
+              <h2 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
                 Admissions Guidance
-              </h3>
+              </h2>
               <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
                 UG, KNUST &amp; UCC cut-off forms assistance.
               </p>

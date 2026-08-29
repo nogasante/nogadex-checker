@@ -45,7 +45,7 @@ export function Footer() {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-[11px] text-slate-500 leading-relaxed text-center sm:text-left">
+        <p className="text-[11px] text-slate-400 leading-relaxed text-center sm:text-left">
           Nogadex Consults is an independent educational consultancy. WAEC is a registered trademark of the West African Examinations Council. We are not affiliated with or endorsed by WAEC.
         </p>
 
