@@ -81,11 +81,6 @@ export const metadata: Metadata = {
       "Check WASSCE, NOVDEC & BECE results with instant PDF delivery. GH₵30.00.",
     images: ["/logo.png"],
   },
-  icons: {
-    icon: "/logo.png",
-    shortcut: "/logo.png",
-    apple: "/logo.png",
-  },
 };
 
 export default function RootLayout({
