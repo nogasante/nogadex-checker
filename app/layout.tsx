@@ -91,6 +91,29 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/logo.png" />
         <link rel="apple-touch-icon" href="/logo.png" />
+
+        {/* Search Engine Verification Tags */}
+        {process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && (
+          <meta
+            name="google-site-verification"
+            content={process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION}
+          />
+        )}
+        {process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION && (
+          <meta
+            name="msvalidate.01"
+            content={process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION}
+          />
+        )}
+
+        {/* Geo Targeting — Tells search engines this site targets Ghana */}
+        <meta name="geo.region" content="GH" />
+        <meta name="geo.placename" content="Ghana" />
+        <meta name="ICBM" content="7.9465, -1.0232" />
+        <meta name="language" content="English" />
+        <meta name="revisit-after" content="3 days" />
+        <meta name="author" content="Nogadex Consults" />
+
         {/* AEO & SEO Structured Data Graph (Schema.org) */}
         <script
           type="application/ld+json"
