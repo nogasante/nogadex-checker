@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { purchaseInconsultPin } from "@/lib/inconsult";
 import { logAudit } from "@/lib/audit";
+import { sendAdminNewOrderAlertEmail } from "@/lib/email/sender";
 
 export async function POST(req: NextRequest) {
   try {
@@ -77,6 +78,23 @@ export async function POST(req: NextRequest) {
           voucherPin: voucherPin || undefined,
         } as any,
       });
+
+      // Send instant notification alert to Admin
+      try {
+        await sendAdminNewOrderAlertEmail({
+          requestId: updated.id,
+          fullName: updated.fullName,
+          indexNumber: updated.indexNumber,
+          examType: updated.examType,
+          examYear: updated.examYear,
+          amount: amountInGHS,
+          customerEmail: updated.email,
+          customerPhone: updated.whatsappNumber || undefined,
+          hasVoucherPin: !!(voucherPin || updated.voucherPin),
+        });
+      } catch (alertErr) {
+        console.error("Admin order notification error in webhook:", alertErr);
+      }
 
       await logAudit({
         requestId: updated.id,

@@ -1,0 +1,25 @@
+{
+  "name": "Nogadex Ops - Admin Console",
+  "short_name": "Nogadex Admin",
+  "description": "Real-time order processing, WAEC result checking dispatch, and voucher inventory management.",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#070b14",
+  "theme_color": "#070b14",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
