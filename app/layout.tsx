@@ -142,9 +142,12 @@ export default function RootLayout({
                   "description":
                     "Ghana's premier educational verification service providing official WAEC result checking and printable PDF result slip delivery.",
                   "areaServed": "Ghana",
+                  "sameAs": [
+                    "https://www.trustpilot.com/review/nogadexconsults.app"
+                  ],
                   "contactPoint": {
                     "@type": "ContactPoint",
-                    "telephone": "+233593000000",
+                    "telephone": "+233534908166",
                     "contactType": "customer service",
                     "availableLanguage": ["English", "Twi"],
                   },

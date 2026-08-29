@@ -409,6 +409,16 @@ function StatusContent({ requestId }: { requestId: string }) {
             </a>
 
             <a
+              href="https://www.trustpilot.com/evaluate/nogadexconsults.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-10 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-colors cursor-pointer"
+            >
+              <span className="text-emerald-400 tracking-wider">★★★★★</span>
+              <span>Review your experience on Trustpilot</span>
+            </a>
+
+            <a
               href={`https://wa.me/?text=${encodeURIComponent(
                 `🎓 I just checked my WAEC result and received my official printable PDF slip on Nogadex Consults! You can check yours too with instant MoMo payment here: https://nogadexconsults.app`
               )}`}
