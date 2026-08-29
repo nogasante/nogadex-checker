@@ -13,7 +13,6 @@ import {
   Menu,
   X,
 } from "lucide-react";
-import { UserButton, Show } from "@clerk/nextjs";
 
 interface AdminUser {
   id: string;
@@ -156,10 +155,6 @@ export default function AdminLayout({
                 <span className="text-slate-300 font-medium">{admin.name.split(" ")[0]}</span>
               </div>
             )}
-
-            <Show when="signed-in">
-              <UserButton />
-            </Show>
 
             <button
               onClick={handleLogout}
