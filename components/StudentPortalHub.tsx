@@ -53,9 +53,9 @@ export function StudentPortalHub() {
         
         {/* Header */}
         <div className="space-y-1.5 text-center sm:text-left">
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
             What would you like to do?
-          </h1>
+          </h2>
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-lg">
             Select a service below to check your WAEC results, purchase genuine scratch cards, or track an existing order.
           </p>
