@@ -412,10 +412,9 @@ function StatusContent({ requestId }: { requestId: string }) {
               href="https://www.trustpilot.com/evaluate/nogadexconsults.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full h-10 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-colors cursor-pointer"
+              className="w-full h-11 rounded-xl font-medium text-xs flex items-center justify-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors"
             >
-              <span className="text-emerald-400 tracking-wider">★★★★★</span>
-              <span>Review your experience on Trustpilot</span>
+              <span>Leave a review on Trustpilot</span>
             </a>
 
             <a

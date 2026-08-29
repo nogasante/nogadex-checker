@@ -47,9 +47,9 @@ export function Footer() {
             href="https://www.trustpilot.com/review/nogadexconsults.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-emerald-400 hover:text-emerald-300 font-medium transition-colors underline underline-offset-2"
+            className="text-slate-400 hover:text-slate-200 transition-colors underline underline-offset-2"
           >
-            <span>★ Review on Trustpilot</span>
+            Trustpilot Reviews
           </a>
         </div>
 
