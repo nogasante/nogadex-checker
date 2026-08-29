@@ -1,5 +1,5 @@
 // Nogadex Consults Service Worker — Network First Strategy
-const CACHE_NAME = "nogadex-waec-v2";
+const CACHE_NAME = "nogadex-waec-v3";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -10,7 +10,6 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          // Delete all old cached versions to prevent stale JS from freezing the browser
           return caches.delete(key);
         })
       );
@@ -18,7 +17,7 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Network-First: Always fetch fresh code from the server, never serve stale crashing cache
+// Network-First: Always fetch fresh code from the server
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
@@ -36,24 +35,30 @@ self.addEventListener("fetch", (event) => {
 // Listen for Push Notifications
 self.addEventListener("push", (event) => {
   const data = event.data ? event.data.json() : {};
-  const title = data.title || "🎓 Nogadex WAEC Result Checker";
+  const title = data.title || "🚨 Nogadex Admin Alert";
   const options = {
-    body: data.body || "Your WAEC result slip has been processed!",
+    body: data.body || "New student order received!",
     icon: "/logo.png",
     badge: "/logo.png",
+    requireInteraction: true,
+    renotify: true,
+    silent: false,
+    vibrate: [300, 150, 400, 150, 300],
     data: {
-      url: data.url || "/",
+      url: data.url || "/admin",
     },
-    vibrate: [200, 100, 200],
+    actions: [
+      { action: "open", title: "⚡ Open Order" },
+    ],
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
-// Handle Notification Click
+// Handle Notification & Action Clicks
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const targetUrl = event.notification.data?.url || "/";
+  const targetUrl = event.notification.data?.url || "/admin";
 
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {

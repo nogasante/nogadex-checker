@@ -91,7 +91,16 @@ export async function sendAdminPushNotification(title: string, body: string, url
     badge: "/logo.png",
     tag: `nogadex-order-${Date.now()}`,
     requireInteraction: true,
+    renotify: true,
+    silent: false,
+    vibrate: [300, 150, 400, 150, 300],
     data: { url: urlPath || "/admin" },
+    actions: [
+      {
+        action: "open",
+        title: "⚡ Process Order",
+      },
+    ],
   };
 
   // 1. Primary: Use Service Worker (required on Android Chrome and Mobile PWAs)
