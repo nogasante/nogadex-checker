@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { AlertCircle, Loader2, AlertTriangle, X } from "lucide-react";
 import { PaymentChannelsBar } from "./PaymentLogos";
 import { LegalModal } from "./LegalModal";
-import { CustomDropdown } from "./CustomDropdown";
 import { DateOfBirthSelector } from "./DateOfBirthSelector";
 
 const EXAM_OPTIONS = [
@@ -143,28 +142,43 @@ export function StudentForm() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             
-            {/* Exam Type Custom Dropdown */}
-            <CustomDropdown
-              label="Exam Type"
-              options={EXAM_OPTIONS}
-              value={formData.examType}
-              onChange={(val) => {
-                const backendType = val === "BECE_PVT" ? "BECE" : val;
-                setFormData((prev) => ({ ...prev, examType: backendType }));
-                if (errorMessage) setErrorMessage("");
-              }}
-            />
+            {/* Exam Type Select */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-700">
+                Exam Type
+              </label>
+              <select
+                name="examType"
+                value={formData.examType}
+                onChange={handleChange}
+                className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
+              >
+                {EXAM_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value === "BECE_PVT" ? "BECE" : opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            {/* Exam Year Custom Dropdown */}
-            <CustomDropdown
-              label="Exam Year"
-              options={EXAM_YEARS}
-              value={formData.examYear}
-              onChange={(val) => {
-                setFormData((prev) => ({ ...prev, examYear: val }));
-                if (errorMessage) setErrorMessage("");
-              }}
-            />
+            {/* Exam Year Select */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-700">
+                Exam Year
+              </label>
+              <select
+                name="examYear"
+                value={formData.examYear}
+                onChange={handleChange}
+                className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
+              >
+                {EXAM_YEARS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {/* Index Number (Numbers Only) */}
             <div className="space-y-1.5 col-span-2 sm:col-span-1">

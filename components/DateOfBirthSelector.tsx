@@ -1,21 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { CustomDropdown } from "./CustomDropdown";
 
 const MONTHS = [
-  { value: "01", label: "January (01)" },
-  { value: "02", label: "February (02)" },
-  { value: "03", label: "March (03)" },
-  { value: "04", label: "April (04)" },
-  { value: "05", label: "May (05)" },
-  { value: "06", label: "June (06)" },
-  { value: "07", label: "July (07)" },
-  { value: "08", label: "August (08)" },
-  { value: "09", label: "September (09)" },
-  { value: "10", label: "October (10)" },
-  { value: "11", label: "November (11)" },
-  { value: "12", label: "December (12)" },
+  { value: "01", label: "01 - January" },
+  { value: "02", label: "02 - February" },
+  { value: "03", label: "03 - March" },
+  { value: "04", label: "04 - April" },
+  { value: "05", label: "05 - May" },
+  { value: "06", label: "06 - June" },
+  { value: "07", label: "07 - July" },
+  { value: "08", label: "08 - August" },
+  { value: "09", label: "09 - September" },
+  { value: "10", label: "10 - October" },
+  { value: "11", label: "11 - November" },
+  { value: "12", label: "12 - December" },
 ];
 
 const DAYS = Array.from({ length: 31 }, (_, i) => {
@@ -34,7 +33,6 @@ interface DateOfBirthSelectorProps {
 }
 
 export function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProps) {
-  // Parse existing value if any
   const parts = value ? value.split("-") : [];
   const initialYear = parts[0] || "2006";
   const initialMonth = parts[1] || "05";
@@ -44,17 +42,20 @@ export function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProp
   const [month, setMonth] = useState(initialMonth);
   const [year, setYear] = useState(initialYear);
 
-  const handleDayChange = (newDay: string) => {
+  const handleDayChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newDay = e.target.value;
     setDay(newDay);
     onChange(`${year}-${month}-${newDay}`);
   };
 
-  const handleMonthChange = (newMonth: string) => {
+  const handleMonthChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMonth = e.target.value;
     setMonth(newMonth);
     onChange(`${year}-${newMonth}-${day}`);
   };
 
-  const handleYearChange = (newYear: string) => {
+  const handleYearChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newYear = e.target.value;
     setYear(newYear);
     onChange(`${newYear}-${month}-${day}`);
   };
@@ -67,31 +68,43 @@ export function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProp
 
       <div className="grid grid-cols-3 gap-2">
         {/* Day */}
-        <CustomDropdown
-          label="Day"
-          options={DAYS}
+        <select
           value={day}
           onChange={handleDayChange}
-          placeholder="Day"
-        />
+          className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
+        >
+          {DAYS.map((d) => (
+            <option key={d.value} value={d.value}>
+              Day {d.label}
+            </option>
+          ))}
+        </select>
 
         {/* Month */}
-        <CustomDropdown
-          label="Month"
-          options={MONTHS}
+        <select
           value={month}
           onChange={handleMonthChange}
-          placeholder="Month"
-        />
+          className="w-full h-11 px-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs truncate"
+        >
+          {MONTHS.map((m) => (
+            <option key={m.value} value={m.value}>
+              {m.label}
+            </option>
+          ))}
+        </select>
 
         {/* Year */}
-        <CustomDropdown
-          label="Year"
-          options={YEARS}
+        <select
           value={year}
           onChange={handleYearChange}
-          placeholder="Year"
-        />
+          className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
+        >
+          {YEARS.map((y) => (
+            <option key={y.value} value={y.value}>
+              {y.label}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

@@ -1,13 +1,7 @@
-// Nogadex Consults Service Worker
-const CACHE_NAME = "nogadex-waec-v1";
-const STATIC_ASSETS = ["/", "/logo.png", "/manifest.webmanifest"];
+// Nogadex Consults Service Worker — Network First Strategy
+const CACHE_NAME = "nogadex-waec-v2";
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
-    })
-  );
   self.skipWaiting();
 });
 
@@ -16,33 +10,26 @@ self.addEventListener("activate", (event) => {
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
+          // Delete all old cached versions to prevent stale JS from freezing the browser
+          return caches.delete(key);
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
+// Network-First: Always fetch fresh code from the server, never serve stale crashing cache
 self.addEventListener("fetch", (event) => {
-  // Pass-through network-first strategy for API and live status calls
-  if (
-    event.request.url.includes("/api/") ||
-    event.request.url.includes("/status/") ||
-    event.request.url.includes("/admin")
-  ) {
-    return;
-  }
+  if (event.request.method !== "GET") return;
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request).then((cached) => cached || Response.error());
+      })
   );
 });
 

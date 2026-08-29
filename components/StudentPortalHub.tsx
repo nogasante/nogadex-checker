@@ -27,12 +27,16 @@ export function StudentPortalHub() {
 
   const handleSelectService = (service: "check" | "voucher" | "track") => {
     setSelectedService(service);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+    }
   };
 
   const handleBackToServices = () => {
     setSelectedService("none");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (typeof window !== "undefined") {
+      window.scrollTo(0, 0);
+    }
   };
 
   const handleTrackSubmit = (e: React.FormEvent) => {
