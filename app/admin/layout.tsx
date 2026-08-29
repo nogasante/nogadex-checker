@@ -12,6 +12,9 @@ import {
   Loader2,
   Menu,
   X,
+  Smartphone,
+  Download,
+  Share,
 } from "lucide-react";
 
 interface AdminUser {
@@ -28,17 +31,47 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const isLoginPage = pathname === "/admin/login";
   const [admin, setAdmin] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const isLoginPage = pathname === "/admin/login";
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showIosInstallModal, setShowIosInstallModal] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
     if (isLoginPage) {
       setLoading(false);
       return;
     }
+
+    // Switch manifest to dedicated Admin PWA manifest
+    if (typeof document !== "undefined") {
+      let manifestLink = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+      if (manifestLink) {
+        manifestLink.setAttribute("href", "/admin-manifest.json");
+      } else {
+        manifestLink = document.createElement("link");
+        manifestLink.rel = "manifest";
+        manifestLink.href = "/admin-manifest.json";
+        document.head.appendChild(manifestLink);
+      }
+      document.title = "Nogadex Admin Console";
+    }
+
+    // Check if running as standalone PWA
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
+    setIsInstalled(Boolean(standalone));
+
+    // Capture install prompt
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handleBeforeInstall);
 
     async function checkAuth() {
       try {
@@ -64,7 +97,30 @@ export default function AdminLayout({
         console.log("Admin SW registration note:", err);
       });
     }
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
+    };
   }, [pathname, isLoginPage, router]);
+
+  const handleAdminInstallClick = async () => {
+    if (deferredPrompt) {
+      await deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      if (choice.outcome === "accepted") {
+        setDeferredPrompt(null);
+        setIsInstalled(true);
+      }
+    } else {
+      // If iOS or already prompted
+      const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+      if (isIos) {
+        setShowIosInstallModal(true);
+      } else {
+        alert("To install the Admin App on Android: Tap the 3 dots menu in Chrome and select 'Add to Home Screen' / 'Install App'.");
+      }
+    }
+  };
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -148,6 +204,17 @@ export default function AdminLayout({
 
           {/* Right Actions (Desktop) */}
           <div className="hidden md:flex items-center gap-3">
+            {!isInstalled && (
+              <button
+                onClick={handleAdminInstallClick}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 transition-colors cursor-pointer"
+                title="Install standalone Admin PWA on your device"
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>Install Admin App</span>
+              </button>
+            )}
+
             <Link
               href="/"
               target="_blank"
@@ -174,6 +241,16 @@ export default function AdminLayout({
 
           {/* Mobile Quick Action Buttons */}
           <div className="flex md:hidden items-center gap-1.5">
+            {!isInstalled && (
+              <button
+                onClick={handleAdminInstallClick}
+                className="px-2 py-1 rounded-lg text-[11px] font-bold bg-red-600/20 text-red-400 border border-red-500/30 transition-colors"
+                title="Install Admin App"
+              >
+                Install App
+              </button>
+            )}
+
             <Link
               href="/admin"
               className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
@@ -207,6 +284,50 @@ export default function AdminLayout({
 
         </div>
       </header>
+
+      {/* iOS Admin Install Modal */}
+      {showIosInstallModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-4">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-slate-200">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center text-white font-bold">
+                  ⚡
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white">Install Nogadex Admin App</h4>
+                  <p className="text-xs text-slate-400">Standalone Ops &amp; Order Notifications</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowIosInstallModal(false)}
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2 text-xs">
+              <div className="flex items-center gap-2 text-white font-semibold">
+                <Share className="w-4 h-4 text-red-400" />
+                <span>On iPhone Safari:</span>
+              </div>
+              <ol className="list-decimal list-inside space-y-1 text-slate-300 text-[11px] leading-relaxed">
+                <li>Tap the <strong>Share</strong> button at the bottom of Safari.</li>
+                <li>Scroll down and tap <strong>&quot;Add to Home Screen&quot;</strong>.</li>
+                <li>Tap <strong>Add</strong> in the top right corner.</li>
+              </ol>
+            </div>
+
+            <button
+              onClick={() => setShowIosInstallModal(false)}
+              className="w-full py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-semibold text-white transition-colors"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Admin Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-3.5 sm:p-6 lg:p-8">
