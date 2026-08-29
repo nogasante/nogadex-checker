@@ -3,23 +3,24 @@
 import { useState } from "react";
 
 const MONTHS = [
-  { value: "01", label: "01 - January" },
-  { value: "02", label: "02 - February" },
-  { value: "03", label: "03 - March" },
-  { value: "04", label: "04 - April" },
-  { value: "05", label: "05 - May" },
-  { value: "06", label: "06 - June" },
-  { value: "07", label: "07 - July" },
-  { value: "08", label: "08 - August" },
-  { value: "09", label: "09 - September" },
-  { value: "10", label: "10 - October" },
-  { value: "11", label: "11 - November" },
-  { value: "12", label: "12 - December" },
+  { value: "01", label: "January" },
+  { value: "02", label: "February" },
+  { value: "03", label: "March" },
+  { value: "04", label: "April" },
+  { value: "05", label: "May" },
+  { value: "06", label: "June" },
+  { value: "07", label: "July" },
+  { value: "08", label: "August" },
+  { value: "09", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
 ];
 
 const DAYS = Array.from({ length: 31 }, (_, i) => {
-  const d = (i + 1).toString().padStart(2, "0");
-  return { value: d, label: d };
+  const num = (i + 1).toString();
+  const val = (i + 1).toString().padStart(2, "0");
+  return { value: val, label: num };
 });
 
 const YEARS = Array.from({ length: 2016 - 1960 + 1 }, (_, i) => {
@@ -68,43 +69,52 @@ export function DateOfBirthSelector({ value, onChange }: DateOfBirthSelectorProp
 
       <div className="grid grid-cols-3 gap-2">
         {/* Day */}
-        <select
-          value={day}
-          onChange={handleDayChange}
-          className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
-        >
-          {DAYS.map((d) => (
-            <option key={d.value} value={d.value}>
-              Day {d.label}
-            </option>
-          ))}
-        </select>
+        <div className="space-y-1">
+          <span className="text-[10px] text-slate-400 font-medium block">Day</span>
+          <select
+            value={day}
+            onChange={handleDayChange}
+            className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
+          >
+            {DAYS.map((d) => (
+              <option key={d.value} value={d.value}>
+                {d.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Month */}
-        <select
-          value={month}
-          onChange={handleMonthChange}
-          className="w-full h-11 px-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs truncate"
-        >
-          {MONTHS.map((m) => (
-            <option key={m.value} value={m.value}>
-              {m.label}
-            </option>
-          ))}
-        </select>
+        <div className="space-y-1">
+          <span className="text-[10px] text-slate-400 font-medium block">Month</span>
+          <select
+            value={month}
+            onChange={handleMonthChange}
+            className="w-full h-11 px-2.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs truncate"
+          >
+            {MONTHS.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Year */}
-        <select
-          value={year}
-          onChange={handleYearChange}
-          className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
-        >
-          {YEARS.map((y) => (
-            <option key={y.value} value={y.value}>
-              {y.label}
-            </option>
-          ))}
-        </select>
+        <div className="space-y-1">
+          <span className="text-[10px] text-slate-400 font-medium block">Year</span>
+          <select
+            value={year}
+            onChange={handleYearChange}
+            className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
+          >
+            {YEARS.map((y) => (
+              <option key={y.value} value={y.value}>
+                {y.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );
