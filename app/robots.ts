@@ -8,6 +8,11 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/admin/", "/api/"],
       },
+      {
+        userAgent: ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "PerplexityBot", "ClaudeBot", "Google-Extended", "Bingbot"],
+        allow: "/",
+        disallow: ["/admin/", "/api/"],
+      },
     ],
     sitemap: "https://nogadexconsults.app/sitemap.xml",
   };
