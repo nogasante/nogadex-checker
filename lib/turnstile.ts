@@ -1,7 +1,7 @@
 export async function verifyTurnstileToken(token: string, remoteIp?: string): Promise<{ success: boolean; error?: string }> {
   const secretKey =
     process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY ||
-    "0x4AAAAAAEfx6XPrg1H_eoMvd9RdDpOSpaY";
+    "1x0000000000000000000000000000000AA";
 
   if (!token) {
     return { success: false, error: "Missing Turnstile verification token." };

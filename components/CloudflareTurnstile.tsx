@@ -29,7 +29,7 @@ export function CloudflareTurnstile({
 
   const siteKey =
     process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY ||
-    "0x4AAAAAAEfx6fM0UthbhpMU";
+    "1x00000000000000000000AA";
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
