@@ -281,21 +281,10 @@ export function StudentForm() {
           </div>
         </div>
 
-        {/* ── Price Breakdown ── */}
-        <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1.5 text-[13px]">
-          <div className="flex justify-between text-slate-600">
-            <span>Genuine WAEC Checker PIN</span>
-            <span className="font-mono tabular-nums font-semibold">GH₵24.00</span>
-          </div>
-          <div className="flex justify-between text-slate-600">
-            <span>PDF Formatting &amp; Delivery</span>
-            <span className="font-mono tabular-nums font-semibold">GH₵6.00</span>
-          </div>
-          <div className="h-px bg-slate-200 my-1" />
-          <div className="flex justify-between font-bold text-slate-900 text-sm">
-            <span>Total Payable</span>
-            <span className="font-mono tabular-nums text-red-600 text-base font-extrabold">GH₵30.00</span>
-          </div>
+        {/* ── Total Price ── */}
+        <div className="flex justify-between items-center p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
+          <span className="font-medium text-slate-700 text-xs sm:text-sm">Total Payable</span>
+          <span className="font-mono tabular-nums text-red-600 text-base sm:text-lg font-extrabold">GH₵30.00</span>
         </div>
 
         {/* ── Terms & Privacy Checkbox ── */}
