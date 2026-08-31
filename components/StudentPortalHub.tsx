@@ -1,31 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { StudentForm } from "./StudentForm";
 import { VoucherOnlyCard } from "./VoucherOnlyCard";
 import { PaymentChannelsBar } from "./PaymentLogos";
 import { WhatsAppOutlineIcon } from "./WhatsAppIcon";
+import { TrackSlipModal } from "./TrackSlipModal";
 import {
-  Search,
   ArrowLeft,
 } from "lucide-react";
 
 export function StudentPortalHub() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const initialService = searchParams.get("service") as "check" | "voucher" | "track" | null;
+  const initialService = searchParams.get("service") as "check" | "voucher" | null;
   
-  const [selectedService, setSelectedService] = useState<"none" | "check" | "voucher" | "track">(
-    initialService && ["check", "voucher", "track"].includes(initialService) ? initialService : "none"
+  const [selectedService, setSelectedService] = useState<"none" | "check" | "voucher">(
+    initialService && ["check", "voucher"].includes(initialService) ? initialService : "none"
   );
-  const [trackQuery, setTrackQuery] = useState("");
+  const [isTrackModalOpen, setIsTrackModalOpen] = useState(false);
 
   const whatsappNumber =
     process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "233534908166";
 
-  const handleSelectService = (service: "check" | "voucher" | "track") => {
+  const handleSelectService = (service: "check" | "voucher") => {
     setSelectedService(service);
     if (typeof window !== "undefined") {
       window.scrollTo(0, 0);
@@ -37,13 +36,6 @@ export function StudentPortalHub() {
     if (typeof window !== "undefined") {
       window.scrollTo(0, 0);
     }
-  };
-
-  const handleTrackSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!trackQuery.trim()) return;
-    const cleanId = trackQuery.trim().toUpperCase();
-    router.push(`/status/${cleanId}`);
   };
 
   // ─── SCREEN 1: SERVICE SELECTION (2x2 GRID WITH TRANSPARENT 3D ICONS) ───
@@ -88,10 +80,10 @@ export function StudentPortalHub() {
 
             <div className="space-y-1 pt-2">
               <h2 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
-                Check Result &amp; PDF
+                Check Result &amp; Get PDF
               </h2>
               <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
-                We check grades &amp; email a printable PDF slip.
+                We check &amp; deliver your official printable slip via email.
               </p>
             </div>
           </button>
@@ -106,7 +98,7 @@ export function StudentPortalHub() {
               <div className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0">
                 <Image
                   src="/images/3d/key.png"
-                  alt="Checker PIN Key"
+                  alt="Checker PIN"
                   fill
                   sizes="(max-width: 640px) 48px, 56px"
                   className="object-contain drop-shadow-sm"
@@ -120,10 +112,10 @@ export function StudentPortalHub() {
 
             <div className="space-y-1 pt-2">
               <h2 className="font-bold text-slate-900 text-xs sm:text-sm leading-snug">
-                Buy Checker PIN
+                Buy PIN Only
               </h2>
               <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed line-clamp-2">
-                Instant SMS &amp; WhatsApp scratch card delivery.
+                Genuine WAEC Scratch Card PIN sent instantly via SMS.
               </p>
             </div>
           </button>
@@ -131,7 +123,7 @@ export function StudentPortalHub() {
           {/* Card 3: Track Existing Order (Bottom Left) */}
           <button
             type="button"
-            onClick={() => handleSelectService("track")}
+            onClick={() => setIsTrackModalOpen(true)}
             className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-colors text-left flex flex-col justify-between cursor-pointer min-h-[170px] sm:min-h-[185px] group"
           >
             <div className="flex items-start justify-between w-full">
@@ -198,6 +190,12 @@ export function StudentPortalHub() {
         {/* Ghanaian Payment Channels Bar */}
         <PaymentChannelsBar />
 
+        {/* Track Modal when Card 3 is clicked */}
+        <TrackSlipModal
+          isOpen={isTrackModalOpen}
+          onClose={() => setIsTrackModalOpen(false)}
+        />
+
       </div>
     );
   }
@@ -253,43 +251,6 @@ export function StudentPortalHub() {
           </div>
         )}
 
-        {/* VIEW C: TRACK EXISTING ORDER */}
-        {selectedService === "track" && (
-          <div className="space-y-5">
-            <div className="border-b border-slate-100 pb-3">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                Track Existing Result Slip
-              </h2>
-              <p className="text-xs text-slate-500 leading-relaxed pt-1">
-                Enter the Request ID from your confirmation screen or SMS (e.g. <span className="font-mono font-bold text-slate-800">NGX-100234</span>).
-              </p>
-            </div>
-
-            <form onSubmit={handleTrackSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="block text-xs font-semibold text-slate-700">
-                  Request ID
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={trackQuery}
-                  onChange={(e) => setTrackQuery(e.target.value)}
-                  placeholder="NGX-XXXXXX"
-                  className="w-full h-11 input-clean px-3.5 font-mono uppercase text-sm"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full h-12 rounded-xl font-semibold text-sm flex items-center justify-center bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white shadow-md shadow-red-600/20 transition-all cursor-pointer"
-              >
-                Track Order
-              </button>
-            </form>
-          </div>
-        )}
-
       </div>
 
       {/* Support Link */}
@@ -305,6 +266,12 @@ export function StudentPortalHub() {
           <span>WhatsApp Help Desk (+233 534 908 166)</span>
         </a>
       </div>
+
+      {/* Track Modal */}
+      <TrackSlipModal
+        isOpen={isTrackModalOpen}
+        onClose={() => setIsTrackModalOpen(false)}
+      />
 
     </div>
   );
