@@ -109,3 +109,47 @@ export async function PATCH(
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getAdminSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { id } = await params;
+
+    const request = await prisma.resultRequest.findFirst({
+      where: {
+        OR: [{ id }, { requestId: id }],
+      },
+    });
+
+    if (!request) {
+      return NextResponse.json({ error: "Request not found" }, { status: 404 });
+    }
+
+    await prisma.resultRequest.delete({
+      where: { id: request.id },
+    });
+
+    await logAudit({
+      action: "REQUEST_DELETED",
+      adminEmail: session.email,
+      details: `Admin ${session.name} deleted request ${request.requestId} (${request.fullName})`,
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `Request ${request.requestId} successfully deleted.`,
+    });
+  } catch (error: unknown) {
+    console.error("Delete request error:", error);
+    const msg = error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
+}
+

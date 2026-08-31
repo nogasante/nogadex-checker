@@ -29,7 +29,11 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    if (paymentStatus && paymentStatus !== "ALL") {
+    // By default, only show real, verified PAID orders.
+    // Abandoned / incomplete payment attempts are void and excluded.
+    if (!paymentStatus || paymentStatus === "PAID") {
+      where.paymentStatus = "PAID";
+    } else if (paymentStatus !== "ALL") {
       where.paymentStatus = paymentStatus;
     }
 
@@ -75,15 +79,42 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
-    const deletedLogs = await prisma.auditLog.deleteMany({});
-    const deletedRequests = await prisma.resultRequest.deleteMany({});
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const confirmPurge = searchParams.get("confirmPurge");
 
-    return NextResponse.json({
-      success: true,
-      message: `Cleared ${deletedRequests.count} orders and ${deletedLogs.count} audit logs. Fresh slate ready.`,
-    });
+    // Single item deletion via query param ?id=...
+    if (id) {
+      const request = await prisma.resultRequest.findFirst({
+        where: { OR: [{ id }, { requestId: id }] },
+      });
+      if (!request) {
+        return NextResponse.json({ error: "Request not found" }, { status: 404 });
+      }
+      await prisma.resultRequest.delete({ where: { id: request.id } });
+      return NextResponse.json({
+        success: true,
+        message: `Order ${request.requestId} deleted successfully.`,
+      });
+    }
+
+    // Bulk purge requires explicit ?confirmPurge=true safety flag
+    if (confirmPurge === "true") {
+      const deletedLogs = await prisma.auditLog.deleteMany({});
+      const deletedRequests = await prisma.resultRequest.deleteMany({});
+
+      return NextResponse.json({
+        success: true,
+        message: `Cleared ${deletedRequests.count} orders and ${deletedLogs.count} audit logs.`,
+      });
+    }
+
+    return NextResponse.json(
+      { error: "Missing 'id' or 'confirmPurge=true' parameter. Unconditional bulk deletion is blocked for safety." },
+      { status: 400 }
+    );
   } catch (error: unknown) {
-    console.error("Purge requests error:", error);
+    console.error("Delete request error:", error);
     const msg = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json({ error: msg }, { status: 500 });
   }

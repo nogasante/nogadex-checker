@@ -2,7 +2,11 @@ import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const JWT_SECRET = process.env.JWT_SECRET || "nogadex-waec-checker-fallback-secret-2026";
+const JWT_SECRET = process.env.JWT_SECRET || (process.env.NODE_ENV === "production" ? (() => {
+  console.warn("WARNING: JWT_SECRET environment variable is missing in production! Using emergency fallback.");
+  return "nogadex-waec-checker-fallback-secret-2026";
+})() : "nogadex-waec-checker-fallback-secret-2026");
+
 const encodedSecret = new TextEncoder().encode(JWT_SECRET);
 export const ADMIN_COOKIE_NAME = "ngx_admin_session";
 

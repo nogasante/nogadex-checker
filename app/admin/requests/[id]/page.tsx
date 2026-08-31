@@ -409,6 +409,28 @@ function parseVoucherText(raw: string): { pin?: string; serial?: string } {
         </div>
       )}
 
+      {/* Unpaid / Incomplete Payment Safety Alert */}
+      {request.paymentStatus !== "PAID" && (
+        <div className="p-4 rounded-2xl bg-rose-500/15 border-2 border-rose-500/40 text-rose-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg shadow-rose-950/40">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-rose-600 flex items-center justify-center text-white shrink-0 font-bold">
+              ⛔
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-white uppercase tracking-wide">
+                VOID / UNPAID ORDER ({request.paymentStatus})
+              </h3>
+              <p className="text-xs text-rose-300 mt-0.5">
+                The candidate has NOT completed payment (GH₵{request.paymentAmount.toFixed(2)}). Do NOT purchase or assign a WAEC PIN to this candidate.
+              </p>
+            </div>
+          </div>
+          <span className="px-3 py-1 rounded-lg text-xs font-bold bg-rose-600 text-white shrink-0">
+            Payment Incomplete
+          </span>
+        </div>
+      )}
+
       {/* Operations Control Bar */}
       <div className="p-3.5 sm:p-5 rounded-2xl surface-card space-y-3">
         <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">

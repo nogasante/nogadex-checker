@@ -56,7 +56,7 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("ALL");
+  const [paymentStatus, setPaymentStatus] = useState("PAID");
   const [processingStatus, setProcessingStatus] = useState("ALL");
   const [examYear, setExamYear] = useState("ALL");
   const [page, setPage] = useState(1);
@@ -499,10 +499,10 @@ export default function AdminDashboardPage() {
             }}
             className="w-full h-8 sm:h-9 bg-[#0f172a] input-tech rounded-lg px-2.5 text-xs text-white cursor-pointer"
           >
-            <option value="ALL">Payment: All</option>
-            <option value="PAID">PAID</option>
-            <option value="PENDING">PENDING</option>
-            <option value="FAILED">FAILED</option>
+            <option value="PAID">Paid Orders Only (Active)</option>
+            <option value="ALL">All (Including Abandoned)</option>
+            <option value="PENDING">Abandoned / Incomplete</option>
+            <option value="FAILED">Failed Payments</option>
           </select>
 
           <select
