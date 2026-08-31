@@ -293,16 +293,16 @@ export function StudentPortalHub() {
       </div>
 
       {/* Support Link */}
-      <div className="text-center text-xs text-slate-500">
-        Need help?{" "}
+      <div className="flex items-center justify-center gap-2 text-xs text-slate-500 pt-1">
+        <span>Have a question?</span>
         <a
           href={`https://wa.me/${whatsappNumber}?text=Hello%20Nogadex,%20I%20need%20assistance`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 font-semibold text-slate-800 hover:text-slate-950 underline transition-colors"
+          className="inline-flex items-center gap-1.5 font-semibold text-slate-800 hover:text-slate-950 bg-slate-100/90 hover:bg-slate-200/80 px-3 py-1 rounded-full border border-slate-200 transition-colors shadow-2xs"
         >
           <WhatsAppOutlineIcon className="w-3.5 h-3.5 text-emerald-600 inline" />
-          <span>Contact WhatsApp Support (+233 534 908 166)</span>
+          <span>WhatsApp Help Desk (+233 534 908 166)</span>
         </a>
       </div>
 

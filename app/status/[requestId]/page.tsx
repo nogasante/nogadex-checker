@@ -251,9 +251,15 @@ function StatusContent({ requestId }: { requestId: string }) {
 
         {/* Notification Enabled Badge */}
         {!isCompleted && notifPermission === "granted" && (
-          <div className="px-3 py-2 rounded-xl bg-emerald-50/70 border border-emerald-200/60 text-emerald-800 text-[11px] font-medium flex items-center gap-2">
-            <BellRing className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-            <span>Browser alerts active: We will notify you the moment your PDF is ready.</span>
+          <div className="px-3.5 py-2 rounded-xl bg-slate-100/90 border border-slate-200 text-slate-700 text-xs font-medium flex items-center justify-between gap-2 shadow-2xs">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span>Live Order Tracking Active</span>
+            </div>
+            <span className="text-[11px] text-slate-500 font-mono">Auto-alerting</span>
           </div>
         )}
 
@@ -303,66 +309,76 @@ function StatusContent({ requestId }: { requestId: string }) {
           </div>
         )}
 
-        {/* 3-Step Lifecycle Visual */}
-        <div className="space-y-3 pt-1">
-          <h3 className="text-xs font-semibold text-slate-500">
+        {/* Connected Progress Timeline */}
+        <div className="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 space-y-3.5">
+          <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
             Order Progress
           </h3>
 
-          <div className="space-y-2 text-xs">
+          <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
             {/* Step 1: Payment */}
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+            <div className="relative flex items-center justify-between text-xs">
               <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
-                  isPaid ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-600"
+                className={`absolute -left-6 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                  isPaid
+                    ? "bg-emerald-600 text-white ring-4 ring-emerald-100"
+                    : "bg-slate-300 text-slate-700"
                 }`}
               >
                 {isPaid ? "✓" : "1"}
               </div>
-              <div className="flex-1 flex justify-between items-center">
-                <span className="font-medium text-slate-900">Payment</span>
-                <span className="text-[11px] font-semibold text-slate-500">
-                  {isPaid ? "Received (GH₵30.00)" : "Pending (GH₵30.00)"}
-                </span>
-              </div>
+              <span className="font-semibold text-slate-900">Payment</span>
+              <span
+                className={`text-[11px] font-semibold ${
+                  isPaid ? "text-emerald-700 font-mono" : "text-amber-700"
+                }`}
+              >
+                {isPaid ? "Confirmed (GH₵30.00)" : "Pending (GH₵30.00)"}
+              </span>
             </div>
 
             {/* Step 2: WAEC Verification */}
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+            <div className="relative flex items-center justify-between text-xs">
               <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
+                className={`absolute -left-6 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
                   isCompleted
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-emerald-600 text-white ring-4 ring-emerald-100"
                     : isPaid
-                    ? "bg-slate-900 text-white"
-                    : "bg-slate-200 text-slate-600"
+                    ? "bg-slate-900 text-white ring-4 ring-slate-200 animate-pulse"
+                    : "bg-slate-200 text-slate-500"
                 }`}
               >
                 {isCompleted ? "✓" : "2"}
               </div>
-              <div className="flex-1 flex justify-between items-center">
-                <span className="font-medium text-slate-900">WAEC Portal Verification</span>
-                <span className="text-[11px] font-semibold text-slate-500">
-                  {isCompleted ? "Grades Retrieved" : isPaid ? "Processing…" : "Waiting for payment"}
-                </span>
-              </div>
+              <span className="font-semibold text-slate-900">
+                WAEC Portal Check
+              </span>
+              <span className="text-[11px] text-slate-500">
+                {isCompleted
+                  ? "Grades Retrieved"
+                  : isPaid
+                  ? "Retrieving from portal..."
+                  : "Awaiting payment"}
+              </span>
             </div>
 
             {/* Step 3: PDF Delivery */}
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+            <div className="relative flex items-center justify-between text-xs">
               <div
-                className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
-                  isCompleted ? "bg-emerald-600 text-white" : "bg-slate-200 text-slate-600"
+                className={`absolute -left-6 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                  isCompleted
+                    ? "bg-emerald-600 text-white ring-4 ring-emerald-100"
+                    : "bg-slate-200 text-slate-500"
                 }`}
               >
                 {isCompleted ? "✓" : "3"}
               </div>
-              <div className="flex-1 flex justify-between items-center">
-                <span className="font-medium text-slate-900">Printable PDF Delivery</span>
-                <span className="text-[11px] font-semibold text-slate-500">
-                  {isCompleted ? "Sent to Email" : "Pending"}
-                </span>
-              </div>
+              <span className="font-semibold text-slate-900">
+                Printable PDF Slip
+              </span>
+              <span className="text-[11px] text-slate-500">
+                {isCompleted ? "Delivered to Email" : "Pending"}
+              </span>
             </div>
           </div>
         </div>
@@ -395,7 +411,7 @@ function StatusContent({ requestId }: { requestId: string }) {
           </div>
         )}
 
-        {/* COMPLETED STATE ACTION: Direct PDF Download & Viral WhatsApp Share */}
+        {/* COMPLETED STATE ACTION: Direct PDF Download & Clean WhatsApp Share */}
         {request && isCompleted && (
           <div className="pt-2 space-y-2.5">
             <a
@@ -423,10 +439,10 @@ function StatusContent({ requestId }: { requestId: string }) {
               )}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full h-11 rounded-xl font-medium text-xs flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 transition-colors"
+              className="w-full h-11 rounded-xl font-semibold text-xs flex items-center justify-center gap-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 shadow-2xs transition-colors"
             >
               <Share2 className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Share Nogadex with Classmates on WhatsApp</span>
+              <span>Share Link with Classmates on WhatsApp</span>
             </a>
           </div>
         )}
@@ -462,9 +478,9 @@ function StatusContent({ requestId }: { requestId: string }) {
           href={`https://wa.me/${supportNumber}?text=${encodeURIComponent(whatsappMessage)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold transition-colors shrink-0 cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-[0.98] text-white font-bold text-xs shadow-2xs transition-all shrink-0 cursor-pointer"
         >
-          <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+          <MessageCircle className="w-3.5 h-3.5 fill-white text-white" />
           <span>Chat on WhatsApp</span>
         </a>
       </div>
