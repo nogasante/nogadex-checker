@@ -23,26 +23,18 @@ export async function GET(
     });
 
     if (!request) {
-      return NextResponse.json(
-        { success: false, error: "Order not found. Please check your tracking number." },
-        { status: 404 }
-      );
+      return NextResponse.redirect(new URL(`/?error=order_not_found`, req.url));
     }
 
     if (request.paymentStatus !== "PAID") {
-      return NextResponse.json(
-        { success: false, error: "Payment has not been confirmed for this request." },
-        { status: 403 }
+      return NextResponse.redirect(
+        new URL(`/status/${request.requestId}?notice=unpaid`, req.url)
       );
     }
 
     if (!request.pdfPath) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Your result slip is currently being processed by our team. Please check back in a few minutes.",
-        },
-        { status: 404 }
+      return NextResponse.redirect(
+        new URL(`/status/${request.requestId}?notice=processing`, req.url)
       );
     }
 

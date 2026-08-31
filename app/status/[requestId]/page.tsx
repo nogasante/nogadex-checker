@@ -41,12 +41,19 @@ interface RequestData {
 function StatusContent({ requestId }: { requestId: string }) {
   const searchParams = useSearchParams();
   const refFromQuery = searchParams.get("ref") || "";
+  const noticeFromQuery = searchParams.get("notice") || "";
 
   const [request, setRequest] = useState<RequestData | null>(null);
   const [loading, setLoading] = useState(true);
   const [verifying, setVerifying] = useState(false);
   const [error, setError] = useState("");
-  const [paymentNotice, setPaymentNotice] = useState("");
+  const [paymentNotice, setPaymentNotice] = useState(
+    noticeFromQuery === "unpaid"
+      ? "Payment has not been confirmed for this order yet. Complete or verify payment below to unlock your PDF download."
+      : noticeFromQuery === "processing"
+      ? "Your result slip is currently being processed by our team. It will be available for download here in a few moments."
+      : ""
+  );
   const [notifPermission, setNotifPermission] = useState<string>("default");
 
   const supportNumber =

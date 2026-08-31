@@ -35,7 +35,7 @@ export function StudentForm() {
     indexNumber: "",
     dateOfBirth: "2006-05-15",
     examType: "WASSCE",
-    examYear: "2025",
+    examYear: "2026",
     email: "",
     whatsappNumber: "",
   });
