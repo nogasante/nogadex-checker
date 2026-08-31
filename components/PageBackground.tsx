@@ -10,24 +10,6 @@ export function PageBackground() {
       {/* 1. Ambient Background Tint */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-slate-50/95 to-slate-100/90" />
 
-      {/* 2. Geometric Grid Pattern */}
-      <svg
-        className="absolute inset-0 w-full h-full stroke-slate-900/[0.035]"
-        aria-hidden="true"
-      >
-        <defs>
-          <pattern
-            id="page-grid"
-            width="36"
-            height="36"
-            patternUnits="userSpaceOnUse"
-          >
-            <path d="M.5 36V.5H36" fill="none" strokeWidth="1" />
-            <circle cx="18" cy="18" r="0.75" fill="currentColor" fillOpacity="0.3" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" strokeWidth="0" fill="url(#page-grid)" />
-      </svg>
 
 
       {/* 4. WAEC Sunburst Logo Watermark */}
