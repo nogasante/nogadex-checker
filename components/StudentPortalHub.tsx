@@ -168,13 +168,13 @@ export function StudentPortalHub() {
             className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-colors text-left flex flex-col justify-between cursor-pointer min-h-[170px] sm:min-h-[185px] group"
           >
             <div className="flex items-start justify-between w-full">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0 rounded-xl overflow-hidden shadow-2xs border border-slate-200/80">
                 <Image
-                  src="/images/3d/grad.png"
+                  src="/images/real/university-students.png"
                   alt="Admissions Graduation"
                   fill
                   sizes="(max-width: 640px) 48px, 56px"
-                  className="object-contain drop-shadow-sm"
+                  className="object-cover group-hover:scale-105 transition-transform"
                   priority
                 />
               </div>

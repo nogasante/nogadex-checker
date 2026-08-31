@@ -66,10 +66,10 @@ export const metadata: Metadata = {
     siteName: "Nogadex Consults",
     images: [
       {
-        url: "/logo.png",
-        width: 800,
-        height: 800,
-        alt: "Nogadex Consults WAEC Results Checker",
+        url: "/images/real/wassce-candidate.png",
+        width: 1200,
+        height: 630,
+        alt: "Nogadex Consults Official WAEC Result Checker Ghana",
       },
     ],
     locale: "en_GH",
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     title: "WAEC Result Checker & PDF Delivery | Nogadex Consults",
     description:
       "Check WASSCE, NOVDEC & BECE results with instant PDF delivery. GH₵30.00.",
-    images: ["/logo.png"],
+    images: ["/images/real/wassce-candidate.png"],
   },
 };
 
