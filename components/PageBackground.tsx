@@ -29,10 +29,6 @@ export function PageBackground() {
         <rect width="100%" height="100%" strokeWidth="0" fill="url(#page-grid)" />
       </svg>
 
-      {/* 3. Subtle Ambient Gradients (No heavy blur filters) */}
-      <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[340px] sm:w-[500px] h-[220px] sm:h-[300px] rounded-full bg-gradient-to-b from-red-100/40 via-rose-50/20 to-transparent pointer-events-none" />
-      <div className="absolute top-1/3 -right-20 w-60 h-60 rounded-full bg-blue-50/40 pointer-events-none" />
-      <div className="absolute bottom-10 -left-20 w-60 h-60 rounded-full bg-amber-50/40 pointer-events-none" />
 
       {/* 4. WAEC Sunburst Logo Watermark */}
       <div className="absolute -top-4 -right-4 sm:top-8 sm:right-16 w-28 h-28 sm:w-36 sm:h-36 opacity-[0.06] -rotate-12">
