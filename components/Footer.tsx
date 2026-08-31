@@ -27,29 +27,28 @@ export function Footer() {
           </a>
         </div>
 
-        {/* Legal Links & Trust Badges */}
-        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1.5 text-xs pt-1 border-t border-slate-100">
+        {/* Clean Modern Navigation Links */}
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-5 gap-y-2 text-xs pt-2 border-t border-slate-100 font-medium">
           <Link
             href="/terms"
-            className="text-slate-500 hover:text-slate-900 transition-colors underline underline-offset-2"
+            className="text-slate-500 hover:text-slate-900 transition-colors"
           >
             Terms of Service
           </Link>
-          <span className="text-slate-300">•</span>
           <Link
             href="/privacy"
-            className="text-slate-500 hover:text-slate-900 transition-colors underline underline-offset-2"
+            className="text-slate-500 hover:text-slate-900 transition-colors"
           >
             Privacy Policy
           </Link>
-          <span className="text-slate-300">•</span>
           <a
             href="https://www.trustpilot.com/review/nogadexconsults.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-slate-500 hover:text-slate-900 transition-colors underline underline-offset-2"
+            className="text-slate-500 hover:text-slate-900 transition-colors inline-flex items-center gap-1"
           >
-            Trustpilot Reviews
+            <span>Trustpilot Reviews</span>
+            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">★ 4.9</span>
           </a>
         </div>
 
