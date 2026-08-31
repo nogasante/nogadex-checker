@@ -17,13 +17,13 @@ import {
   Download,
   Terminal,
   X,
-  Loader2,
-  MessageCircle,
-  ShoppingCart,
   KeyRound,
   Sparkles,
   Clipboard,
+  Loader2,
+  ShoppingCart,
 } from "lucide-react";
+import { WhatsAppBrandIcon } from "@/components/WhatsAppIcon";
 import {
   formatCandidateSummary,
   generateWaecAutofillScript,
@@ -644,7 +644,7 @@ function parseVoucherText(raw: string): { pin?: string; serial?: string } {
                     rel="noopener noreferrer"
                     className="text-emerald-400 hover:text-emerald-300 p-1 flex items-center gap-1"
                   >
-                    <MessageCircle className="w-3.5 h-3.5" />
+                    <WhatsAppBrandIcon className="w-3.5 h-3.5 text-emerald-400" />
                   </a>
                 )}
               </div>

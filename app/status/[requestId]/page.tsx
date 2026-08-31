@@ -14,11 +14,11 @@ import {
   Loader2,
   ArrowLeft,
   Download,
-  MessageCircle,
   Bell,
   BellRing,
   Share2,
 } from "lucide-react";
+import { WhatsAppBrandIcon } from "@/components/WhatsAppIcon";
 
 interface RequestData {
   requestId: string;
@@ -485,9 +485,9 @@ function StatusContent({ requestId }: { requestId: string }) {
           href={`https://wa.me/${supportNumber}?text=${encodeURIComponent(whatsappMessage)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-[0.98] text-white font-bold text-xs shadow-2xs transition-all shrink-0 cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-[0.98] text-white font-bold text-xs shadow-xs transition-all shrink-0 cursor-pointer"
         >
-          <MessageCircle className="w-3.5 h-3.5 fill-white text-white" />
+          <WhatsAppBrandIcon className="w-4 h-4 text-white" />
           <span>Chat on WhatsApp</span>
         </a>
       </div>
