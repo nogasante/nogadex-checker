@@ -15,6 +15,7 @@ import {
   Smartphone,
   Download,
   Share,
+  Layers,
 } from "lucide-react";
 
 interface AdminUser {
@@ -190,6 +191,18 @@ export default function AdminLayout({
             </Link>
 
             <Link
+              href="/admin/services"
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                pathname === "/admin/services"
+                  ? "bg-red-600/15 text-red-400 border border-red-500/25"
+                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Services</span>
+            </Link>
+
+            <Link
               href="/admin/audit-logs"
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                 pathname === "/admin/audit-logs"
@@ -253,7 +266,7 @@ export default function AdminLayout({
 
             <Link
               href="/admin"
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
+              className={`px-2 py-1 rounded-lg text-xs font-semibold transition-colors ${
                 pathname === "/admin"
                   ? "bg-red-600/20 text-red-400 border border-red-500/30"
                   : "text-slate-400 hover:text-white"
@@ -263,8 +276,19 @@ export default function AdminLayout({
             </Link>
 
             <Link
+              href="/admin/services"
+              className={`px-2 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                pathname === "/admin/services"
+                  ? "bg-red-600/20 text-red-400 border border-red-500/30"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Services
+            </Link>
+
+            <Link
               href="/admin/audit-logs"
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
+              className={`px-2 py-1 rounded-lg text-xs font-semibold transition-colors ${
                 pathname === "/admin/audit-logs"
                   ? "bg-red-600/20 text-red-400 border border-red-500/30"
                   : "text-slate-400 hover:text-white"

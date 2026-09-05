@@ -69,9 +69,21 @@ model AuditLog {
   id          String         @id @default(uuid())
   requestId   String?
   request     ResultRequest? @relation(fields: [requestId], references: [id], onDelete: Cascade)
-  action      String         // PAYMENT_VERIFIED, REQUEST_OPENED, WAEC_PROCESSING_STARTED, RESULT_MARKED_CHECKED, PDF_UPLOADED, EMAIL_SENT, EMAIL_RESENT, REQUEST_COMPLETED, STATUS_UPDATED
+  action      String         // PAYMENT_VERIFIED, REQUEST_OPENED, WAEC_PROCESSING_STARTED, RESULT_MARKED_CHECKED, PDF_UPLOADED, EMAIL_SENT, EMAIL_RESENT, REQUEST_COMPLETED, STATUS_UPDATED, SERVICE_TOGGLED
   adminEmail  String?
   details     String?
   ipAddress   String?
   createdAt   DateTime       @default(now())
+}
+
+model ServiceSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique // e.g. "service_check_result", "service_buy_pin", "exam_wassce", etc.
+  name        String
+  category    String   // "SERVICE" | "EXAM_TYPE"
+  enabled     Boolean  @default(true)
+  message     String?  // Optional custom notice / reason when disabled
+  price       Float?   // Optional custom price override
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
 }

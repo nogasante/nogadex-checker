@@ -4,6 +4,7 @@ import { generateUniqueRequestId } from "@/lib/id-generator";
 import { StudentSubmissionSchema } from "@/lib/validation";
 import { initializePaystackTransaction } from "@/lib/paystack";
 import { verifyTurnstileToken } from "@/lib/turnstile";
+import { isServiceOrExamEnabled, getServiceSetting } from "@/lib/services";
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,9 +24,37 @@ export async function POST(req: NextRequest) {
 
     const validatedData = StudentSubmissionSchema.parse(body);
 
+    // 2. Check if the "Check Result & PDF" service is enabled
+    const serviceCheck = await isServiceOrExamEnabled("service_check_result");
+    if (!serviceCheck.enabled) {
+      return NextResponse.json(
+        {
+          error:
+            serviceCheck.message ||
+            "The Result Checking & PDF service is temporarily paused for maintenance. Please check back shortly or reach out on WhatsApp.",
+        },
+        { status: 503 }
+      );
+    }
+
+    // 3. Check if the specific examination type is enabled
+    const examCheck = await isServiceOrExamEnabled(validatedData.examType);
+    if (!examCheck.enabled) {
+      return NextResponse.json(
+        {
+          error:
+            examCheck.message ||
+            `Checking results for ${examCheck.name} is currently unavailable. Please try again later.`,
+        },
+        { status: 503 }
+      );
+    }
+
+    const serviceSetting = await getServiceSetting("service_check_result");
+    const amountInGHS = serviceSetting.price && serviceSetting.price > 0 ? serviceSetting.price : 30.0;
+
     const requestId = await generateUniqueRequestId();
     const paymentReference = `NGX_PAY_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
-    const amountInGHS = 30.0;
 
     // Check if Paystack secret key is configured
     const isPaystackConfigured =

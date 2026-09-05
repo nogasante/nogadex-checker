@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, Loader2, AlertTriangle, X } from "lucide-react";
+import { AlertCircle, Loader2, AlertTriangle, X, ShieldAlert } from "lucide-react";
 import { PaymentChannelsBar } from "./PaymentLogos";
 import { LegalModal } from "./LegalModal";
 import { DateOfBirthSelector } from "./DateOfBirthSelector";
+import { ServiceConfig, getExamSettingKey } from "@/lib/services";
 
 const EXAM_OPTIONS = [
-  { value: "WASSCE", label: "WASSCE (May/June)" },
-  { value: "NOVDEC", label: "NOVDEC (Nov/Dec Pvt)" },
-  { value: "BECE", label: "BECE (School)" },
-  { value: "BECE_PVT", label: "BECE (Private)" },
-  { value: "GBCE", label: "GBCE (General Business)" },
-  { value: "ABCE", label: "ABCE (Advanced Business)" },
+  { value: "WASSCE", label: "WASSCE (May/June)", key: "exam_wassce" },
+  { value: "NOVDEC", label: "NOVDEC (Nov/Dec Pvt)", key: "exam_novdec" },
+  { value: "BECE", label: "BECE (School)", key: "exam_bece_school" },
+  { value: "BECE_PVT", label: "BECE (Private)", key: "exam_bece_private" },
+  { value: "GBCE", label: "GBCE (General Business)", key: "exam_gbce" },
+  { value: "ABCE", label: "ABCE (Advanced Business)", key: "exam_abce" },
 ];
 
 // Generate every individual year from 2026 down to 1990
@@ -22,13 +23,47 @@ const EXAM_YEARS = Array.from({ length: 2026 - 1990 + 1 }, (_, i) => {
   return { value: y, label: y };
 });
 
-export function StudentForm() {
+export function StudentForm({
+  serviceSettings,
+  price = 30.0,
+}: {
+  serviceSettings?: Record<string, ServiceConfig>;
+  price?: number;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [legalModalType, setLegalModalType] = useState<"terms" | "privacy" | "refund" | null>(null);
+
+  const [localSettings, setLocalSettings] = useState<Record<string, ServiceConfig>>(serviceSettings || {});
+
+  useEffect(() => {
+    if (serviceSettings) {
+      setLocalSettings(serviceSettings);
+      return;
+    }
+
+    async function load() {
+      try {
+        const res = await fetch("/api/services");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.services) {
+            const map: Record<string, ServiceConfig> = {};
+            data.services.forEach((s: ServiceConfig) => {
+              map[s.key] = s;
+            });
+            setLocalSettings(map);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching services in form:", err);
+      }
+    }
+    load();
+  }, [serviceSettings]);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -39,6 +74,10 @@ export function StudentForm() {
     email: "",
     whatsappNumber: "",
   });
+
+  const currentExamSettingKey = getExamSettingKey(formData.examType);
+  const currentExamSetting = localSettings[currentExamSettingKey];
+  const isCurrentExamDisabled = currentExamSetting?.enabled === false;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -62,6 +101,14 @@ export function StudentForm() {
   const handlePreSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
+
+    if (isCurrentExamDisabled) {
+      setErrorMessage(
+        currentExamSetting?.message ||
+          `Checking results for ${formData.examType} is currently unavailable.`
+      );
+      return;
+    }
 
     if (!formData.fullName.trim() || formData.fullName.length < 3) {
       setErrorMessage("Enter your full name as registered for the exam.");
@@ -124,8 +171,23 @@ export function StudentForm() {
   return (
     <div className="space-y-6">
       
-      {/* Error */}
-      {errorMessage && (
+      {/* Error / Disabled Banner */}
+      {isCurrentExamDisabled && (
+        <div className="px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[13px] flex items-start gap-2.5 shadow-2xs">
+          <ShieldAlert className="w-5 h-5 shrink-0 mt-0.5 text-amber-600" />
+          <div className="space-y-0.5">
+            <span className="font-bold block">
+              {currentExamSetting?.name || formData.examType} Checking Paused
+            </span>
+            <span className="text-xs text-amber-800 leading-relaxed">
+              {currentExamSetting?.message ||
+                "Checking for this examination is temporarily unavailable. Please choose another exam type or reach out on WhatsApp."}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {errorMessage && !isCurrentExamDisabled && (
         <div className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-[13px] flex items-start gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-500" />
           <span>{errorMessage}</span>
@@ -153,11 +215,18 @@ export function StudentForm() {
                 onChange={handleChange}
                 className="w-full h-11 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 cursor-pointer transition-colors shadow-2xs"
               >
-                {EXAM_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value === "BECE_PVT" ? "BECE" : opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
+                {EXAM_OPTIONS.map((opt) => {
+                  const setting = localSettings[opt.key];
+                  const isDisabled = setting?.enabled === false;
+                  return (
+                    <option
+                      key={opt.value}
+                      value={opt.value === "BECE_PVT" ? "BECE_PRIVATE" : opt.value}
+                    >
+                      {opt.label} {isDisabled ? "— (Unavailable)" : ""}
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
@@ -284,7 +353,9 @@ export function StudentForm() {
         {/* ── Total Price ── */}
         <div className="flex justify-between items-center p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl">
           <span className="font-medium text-slate-700 text-xs sm:text-sm">Total Payable</span>
-          <span className="font-mono tabular-nums text-red-600 text-base sm:text-lg font-extrabold">GH₵30.00</span>
+          <span className="font-mono tabular-nums text-red-600 text-base sm:text-lg font-extrabold">
+            GH₵{price.toFixed(2)}
+          </span>
         </div>
 
         {/* ── Terms & Privacy Checkbox ── */}
@@ -320,9 +391,9 @@ export function StudentForm() {
         {/* ── Pay button ── */}
         <button
           type="submit"
-          disabled={!agreedToTerms || loading}
+          disabled={!agreedToTerms || loading || isCurrentExamDisabled}
           className={`w-full h-12 rounded-xl font-semibold text-sm flex items-center justify-center transition-all ${
-            agreedToTerms && !loading
+            agreedToTerms && !loading && !isCurrentExamDisabled
               ? "bg-red-600 hover:bg-red-700 active:scale-[0.99] text-white shadow-md shadow-red-600/20 cursor-pointer"
               : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
           }`}
@@ -332,6 +403,8 @@ export function StudentForm() {
               <Loader2 className="w-4 h-4 animate-spin text-white" />
               <span>Processing...</span>
             </div>
+          ) : isCurrentExamDisabled ? (
+            "Examination Currently Unavailable"
           ) : (
             "Proceed to Payment"
           )}
@@ -408,7 +481,7 @@ export function StudentForm() {
                     <span>Connecting to Paystack…</span>
                   </>
                 ) : (
-                  <span>Pay Now</span>
+                  <span>Pay GH₵{price.toFixed(2)}</span>
                 )}
               </button>
 
