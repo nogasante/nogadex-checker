@@ -39,7 +39,7 @@ export async function sendResultEmail({
   const htmlContent = generateResultEmailHtml(data);
   const textContent = generateResultEmailText(data);
   const fromAddress =
-    process.env.EMAIL_FROM || "Nogadex Consults <results@nogadexconsults.app>";
+    process.env.EMAIL_FROM || "Nogadex Consults <results@results.nogadexconsults.app>";
 
   // 1. Try Resend API if API key is configured
   if (process.env.RESEND_API_KEY) {
@@ -211,7 +211,7 @@ export async function sendAdminNewOrderAlertEmail(data: AdminOrderAlertData): Pr
   `;
 
   const textContent = `🚨 NEW PAID ORDER: ${data.fullName} (GH₵${data.amount.toFixed(2)})\nIndex: ${data.indexNumber}\nExam: ${data.examType} ${data.examYear}\nEmail: ${data.customerEmail}\nOpen in Admin: ${adminOrderUrl}`;
-  const fromAddress = process.env.EMAIL_FROM || "Nogadex Alerts <alerts@nogadexconsults.app>";
+  const fromAddress = process.env.EMAIL_FROM || "Nogadex Alerts <alerts@results.nogadexconsults.app>";
 
   if (process.env.RESEND_API_KEY) {
     try {
